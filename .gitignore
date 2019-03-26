@@ -78,7 +78,8 @@ target/
 .ipynb_checkpoints/
 
 # exclude data from source control by default
-/data/
+qc/
+data/
 
 # ignore slurm logs
 slurm_out/
