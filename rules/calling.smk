@@ -5,15 +5,18 @@
 rule hap_caller:
 	input:
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
-		bam = "data/raw/{sample}.rg.dedup.bam",
-		bai = "data/raw/{sample}.rg.dedup.bai"
+		bam = "data/interim/{sample}.rg.dedup.bam",
+		bai = "data/interim/{sample}.rg.dedup.bai"
 	output:
-		temp("data/sdturner/{sample}.raw.snps.indels.g.vcf")
+		"data/interim/{sample}.raw.snps.indels.g.vcf"
+	params:
+		regions = ",".join(chr)
 	run:
 		shell("gatk HaplotypeCaller \
 		-I {input.bam} \
 		-O {output} \
 		-R {input.ref} \
+		-L {params.regions} \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
 		--emit-ref-confidence GVCF")
@@ -26,7 +29,7 @@ rule combine_gvcfs:
 	input:
 		expand("data/sdturner/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
-		temp(directory("data/interim/combined_database"))
+		directory("data/interim/combined_database")
 	params:
 		files = lambda wildcards, input: " -V ".join(input)
 	run:
