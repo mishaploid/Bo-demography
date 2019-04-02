@@ -5,12 +5,12 @@
 rule hap_caller:
 	input:
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
-		bam = "data/interim/{sample}.rg.dedup.bam",
-		bai = "data/interim/{sample}.rg.dedup.bai"
+		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
+		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
 		"data/interim/{sample}.raw.snps.indels.g.vcf"
 	params:
-		regions = ",".join(chr)
+		regions = "data/raw/b_oleracea.interval_list"
 	run:
 		shell("gatk HaplotypeCaller \
 		-I {input.bam} \
@@ -27,18 +27,19 @@ rule hap_caller:
 # expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES.remove("SRR7881031"))
 rule combine_gvcfs:
 	input:
-		expand("data/sdturner/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
 		directory("data/interim/combined_database")
 	params:
-		files = lambda wildcards, input: " -V ".join(input)
+		files = lambda wildcards, input: " -V ".join(input),
+		regions = "data/raw/b_oleracea.interval_list"
 	run:
 		shell("gatk GenomicsDBImport \
 		-V {params.files} \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
 		--genomicsdb-workspace-path {output} \
-		--intervals C1,C2,C3,C4,C5,C6,C7,C8,C9")
+		--intervals {params.regions}")
 
 # joint genotyping - raw SNP and indel VCF
 rule joint_geno:

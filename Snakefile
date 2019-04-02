@@ -12,10 +12,14 @@
 
 # get sample names
 # SAMPLES = glob_wildcards("data/external/fastq_raw/{sample}_pass_1.fastq.gz").sample
-SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
-SAMPLES.append('SRR7881031')
-# SAMPLES = ['SamC_010']
+
+# SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
+# SAMPLES.append('SRR7881031')
+# SAMPLES = ['SamC_010', 'SamC_011', 'SamC_013', 'SamC_024', 'SamC_028']
 # SAMPLES2 = [s for s in SAMPLES if s not in {"SRR7881031"}]
+
+
+SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 
 print(SAMPLES)
 
@@ -36,9 +40,9 @@ rule all:
 		# sort_bam - output is sorted BAM files for each sample
 		expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
 		# mark_dups - output is BAM files with duplicates marked
-		expand(temp("data/raw/{sample}.dedup.bam"), sample = SAMPLES),
+		expand("data/interim/dedup/{sample}.dedup.bam", sample = SAMPLES),
 		# add_rg - add read group information to BAM files
-		expand(temp("data/raw/{sample}.rg.dedup.bam"), sample = SAMPLES),
+		expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
 		# hap_caller - output is GVCF file for each sample
 		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# combine_gvcfs - database for combining multiple gvcf files
