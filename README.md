@@ -44,7 +44,7 @@ Need to manually download FASTQ files, then unhash trimmomatic_pe & bwa_map rule
     
 **To run the workflow:**
 
-1. Download FASTQ files to `data/external/fastq_raw` using `fastq-dump`
+1. Use `fastq-dump` to download FASTQ files to `data/external/fastq_raw`
 
 2. Create a conda environment (only need to do this once)  
 `conda env create bo-demography --file environment.yaml`
