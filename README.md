@@ -38,7 +38,7 @@ Need to manually download FASTQ files, then unhash trimmomatic_pe & bwa_map rule
     + combine GVCFs (gatk/GenomicsDBImport)
     + joing genotyping (gatk/GenotypeGVCFs)
     
-3. **_filtering.smk_** - (in progress) - 
+3. **_filtering.smk_** - filter SNPs (in progress) 
     + select SNPs (gatk/SelectVariants)
     + apply SNP filters (gatk/VariantFiltration)
     
