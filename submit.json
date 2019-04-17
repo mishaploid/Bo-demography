@@ -36,19 +36,25 @@
     },
     "hap_caller" :
     {
-      "cpus-per-task" : 8,
+      "cpus-per-task" : 16,
       "p" : "med2",
       "o" : "slurm_out/hap_caller/{wildcards}.%j.out"
     },
+    "rename_samples" :
+    {
+      "cpus-per-task" : 8,
+      "p" : "med2",
+      "o" : "slurm_out/rename_samples_%j.out"
+    },
     "combine_gvcfs" :
     {
-      "cpus-per-task" : 10,
+      "cpus-per-task" : 24,
       "p" : "med2",
       "o" : "slurm_out/combine_gvcfs_%j.out"
     },
     "joint_geno" :
     {
-      "cpus-per-task" : 10,
+      "cpus-per-task" : 24,
       "p" : "med2",
       "o" : "slurm_out/joint_geno_%j.out"
     },

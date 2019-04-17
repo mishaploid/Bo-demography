@@ -88,21 +88,24 @@ rule mark_dups:
 
 # add read groups with Picard
 # info is just dummy variables
+### TODO: test if changing -RGSM flag fixes sample naming
 rule add_rg:
-	input:
-		"data/interim/dedup/{sample}.dedup.bam"
-	output:
-		bam = temp("data/interim/add_rg/{sample}.rg.dedup.bam"),
-		index = temp("data/interim/add_rg/{sample}.rg.dedup.bai"),
-		tmp = temp(directory("/scratch/sdturner/add_rg/{sample}"))
-	run:
-		shell("gatk AddOrReplaceReadGroups \
-		-I={input} \
-		-O={output.bam} \
-		--CREATE_INDEX=true \
-		-RGID=4 \
-		-RGLB=lib1 \
-		-RGPL=illumina \
-		-RGPU=unit1 \
-		-RGSM=20 \
-		--TMP_DIR {output.tmp}")
+    input:
+    	"data/interim/dedup/{sample}.dedup.bam"
+    output:
+    	bam = temp("data/interim/add_rg/{sample}.rg.dedup.bam"),
+    	index = temp("data/interim/add_rg/{sample}.rg.dedup.bai"),
+    	tmp = temp(directory("/scratch/sdturner/add_rg/{sample}"))
+    params:
+        sample = "{sample}"
+    run:
+    	shell("gatk AddOrReplaceReadGroups \
+    	-I={input} \
+    	-O={output.bam} \
+    	--CREATE_INDEX=true \
+    	-RGID=4 \
+    	-RGLB=lib1 \
+    	-RGPL=illumina \
+    	-RGPU=unit1 \
+    	-RGSM={params.sample} \
+    	--TMP_DIR {output.tmp}")

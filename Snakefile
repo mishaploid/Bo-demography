@@ -38,21 +38,23 @@ rule all:
 		# bwa_map - output is aligned BAM files for each sample
 		# expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES),
 		# sort_bam - output is sorted BAM files for each sample
-		expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
+		# expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
 		# mark_dups - output is BAM files with duplicates marked
-		expand("data/interim/dedup/{sample}.dedup.bam", sample = SAMPLES),
+		# expand("data/interim/dedup/{sample}.dedup.bam", sample = SAMPLES),
 		# add_rg - add read group information to BAM files
-		expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
+		# expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
 		# hap_caller - output is GVCF file for each sample
-		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		# expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		# rename samples
+		expand("data/interim/{sample}.renamed.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# combine_gvcfs - database for combining multiple gvcf files
-		directory("data/interim/combined_database"),
-		# joint_geno - outputs joint SNP calls for gvcf files
-		"data/raw/raw_variants.vcf",
-		# get_snps
-		"data/raw/raw_snps.vcf",
-		# filter_snps
-		"data/processed/filtered_snps.vcf"
+		directory(expand("data/interim/combined_database/{chr}", chr = chr))
+		# # # joint_geno - outputs joint SNP calls for gvcf files
+		#"data/raw/raw_variants.vcf"
+		# # get_snps
+		# "data/raw/raw_snps.vcf",
+		# # filter_snps
+		# "data/processed/filtered_snps.vcf"
 
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
