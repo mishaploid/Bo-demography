@@ -6,11 +6,11 @@
 rule get_snps:
 	input:
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
-		vcf = "data/raw/raw_variants.vcf"
+		vcf = "data/raw/{chr}.raw.snps.indels.vcf"
 	output:
-		"data/raw/raw_snps.vcf"
+		"data/raw/{chr}.raw.snps.vcf"
 	run:
-		shell("{gatk}/gatk SelectVariants \
+		shell("gatk SelectVariants \
 		-R {input.ref} \
 		-V {input.vcf} \
 		-select-type SNP \
@@ -23,11 +23,11 @@ rule get_snps:
 rule filter_snps:
 	input:
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
-		vcf = "data/raw/raw_snps.vcf"
+		vcf = "data/raw/{chr}.raw.snps.vcf"
 	output:
-		"data/processed/filtered_snps.vcf"
+		"data/processed/{chr}.filtered.snps.vcf"
 	run:
-		shell("{gatk}/gatk VariantFiltration \
+		shell("gatk VariantFiltration \
 		-filter \"QD < 2.0\" --filter-name \"QD2\" \
 		-filter \"QUAL < 30.0\" --filter-name \"QUAL30\" \
 		-filter \"SOR > 3.0\" --filter-name \"SOR3\" \

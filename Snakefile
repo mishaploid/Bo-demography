@@ -24,8 +24,8 @@ SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 print(SAMPLES)
 
 # chromosome ids
+# chr = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
 chr = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
-
 # paths to required software executables
 # trimmomatic = "../software/Trimmomatic-0.38/trimmomatic-0.38.jar"
 # gatk = "../software/gatk-4.0.12.0"
@@ -48,11 +48,11 @@ rule all:
 		# rename samples
 		expand("data/interim/{sample}.renamed.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# combine_gvcfs - database for combining multiple gvcf files
-		directory(expand("data/interim/combined_database/{chr}", chr = chr))
-		# # # joint_geno - outputs joint SNP calls for gvcf files
-		#"data/raw/raw_variants.vcf"
-		# # get_snps
-		# "data/raw/raw_snps.vcf",
+		directory(expand("data/interim/combined_database/{chr}", chr = chr)),
+		# joint_geno - outputs joint SNP calls for gvcf files
+		expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
+		# get_snps
+		expand("data/processed/{chr}.filtered.snps.vcf", chr = chr)
 		# # filter_snps
 		# "data/processed/filtered_snps.vcf"
 

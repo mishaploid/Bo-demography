@@ -58,18 +58,16 @@ rule combine_gvcfs:
 # joint genotyping - raw SNP and indel VCF
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database"),
+		dir = directory("data/interim/combined_database/{chr}"),
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa"
 	output:
-		"data/raw/raw_variants.vcf"
+		"data/raw/{chr}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database"
-	threads: 10
+		db = "gendb://data/interim/combined_database/{chr}"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \
 		-V {params.db} \
-		-nt {threads} \
 		-new-qual \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
