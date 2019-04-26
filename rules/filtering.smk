@@ -3,6 +3,7 @@
 # Note: Variant Quality Score Recalibration is not an option (need truth/training sets)
 
 # extract SNPs
+
 rule get_snps:
 	input:
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
@@ -28,6 +29,7 @@ rule filter_snps:
 		"data/processed/{chr}.filtered.snps.vcf"
 	run:
 		shell("gatk VariantFiltration \
+		-V {input.vcf} \
 		-filter \"QD < 2.0\" --filter-name \"QD2\" \
 		-filter \"QUAL < 30.0\" --filter-name \"QUAL30\" \
 		-filter \"SOR > 3.0\" --filter-name \"SOR3\" \
@@ -39,3 +41,4 @@ rule filter_snps:
 
 # evaluate filtering parameters
 # https://software.broadinstitute.org/gatk/documentation/article.php?id=11069
+# not sure this is possible for this data set... need dbSNP info

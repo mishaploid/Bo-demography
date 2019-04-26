@@ -1,6 +1,6 @@
 # Step 2: variant discovery!
 
-# haplotype caller
+# run GATK haplotype caller
 
 rule hap_caller:
 	input:
@@ -22,27 +22,28 @@ rule hap_caller:
 		--emit-ref-confidence GVCF")
 
 # replace sample names
-rule rename_samples:
-	input:
-		"data/interim/{sample}.raw.snps.indels.g.vcf"
-	output:
-		"data/interim/{sample}.renamed.raw.snps.indels.g.vcf"
-	params:
-		sample = "{sample}"
-	run:
-		shell("gatk RenameSampleInVcf \
-		-I={input} \
-		-O={output} \
-		--NEW_SAMPLE_NAME={params.sample} \
-		--CREATE_INDEX=true")
+
+# rule rename_samples:
+# 	input:
+# 		"data/interim/{sample}.raw.snps.indels.g.vcf"
+# 	output:
+# 		"data/interim/{sample}.renamed.raw.snps.indels.g.vcf"
+# 	params:
+# 		sample = "{sample}"
+# 	run:
+# 		shell("gatk RenameSampleInVcf \
+# 		-I={input} \
+# 		-O={output} \
+# 		--NEW_SAMPLE_NAME={params.sample} \
+# 		--CREATE_INDEX=true")
 
 # combine GVCFs
 # https://software.broadinstitute.org/gatk/documentation/article?id=11813
 # snakemake considerations - https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
-# expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES.remove("SRR7881031"))
+
 rule combine_gvcfs:
 	input:
-		expand("data/interim/{sample}.renamed.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
 		directory("data/interim/combined_database/{chr}")
 	params:
@@ -56,9 +57,10 @@ rule combine_gvcfs:
 		--intervals {params.region}")
 
 # joint genotyping - raw SNP and indel VCF
+
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database/{chr}"),
+		dir = "data/interim/combined_database/{chr}/vcfheader.vcf",
 		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa"
 	output:
 		"data/raw/{chr}.raw.snps.indels.vcf"

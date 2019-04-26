@@ -69,5 +69,23 @@
       "cpus-per-task" : 32,
       "p" : "med2",
       "o" : "slurm_out/filter_snps_%j.out"
+    },
+    "bgzip_vcf" :
+    {
+      "cpus-per-task" : 1,
+      "p" : "med2",
+      "o" : "slurm_out/bgzip_{wildcards}_%j.out"
+    },
+    "admix_input" :
+    {
+      "cpus-per-task" : 24,
+      "p" : "med2",
+      "o" : "slurm_out/admix_input_%j.out"
+    },
+    "admixture" :
+    {
+      "cpus-per-task" : 32,
+      "p" : "med2",
+      "o" : "slurm_out/admixture_%j.out"
     }
 }

@@ -10,6 +10,8 @@ module load R
 module load maven
 module load java
 module load GATK/4.0
+module load bcftools
+module load plink/1.90
 
 snakemake --jobs 120 --use-conda \
 --rerun-incomplete \

@@ -46,16 +46,22 @@ rule all:
 		# hap_caller - output is GVCF file for each sample
 		# expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# rename samples
-		expand("data/interim/{sample}.renamed.raw.snps.indels.g.vcf", sample = SAMPLES),
+		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# combine_gvcfs - database for combining multiple gvcf files
-		directory(expand("data/interim/combined_database/{chr}", chr = chr)),
+		expand("data/interim/combined_database/{chr}/vcfheader.vcf", chr = chr),
 		# joint_geno - outputs joint SNP calls for gvcf files
 		expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
 		# get_snps
-		expand("data/processed/{chr}.filtered.snps.vcf", chr = chr)
-		# # filter_snps
-		# "data/processed/filtered_snps.vcf"
+		expand("data/processed/{chr}.filtered.snps.vcf", chr = chr),
+		# bgzip_vcf
+		expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr),
+		# admix_input
+		"models/admixture/combined.pruned.bed",
+		# admixture
+		expand("models/admixture/combined.pruned.{k}.Q", k = [2,4,6])
+
 
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
 include: "rules/filtering.smk"
+include: "rules/admixture.smk"

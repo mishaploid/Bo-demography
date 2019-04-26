@@ -80,6 +80,7 @@ target/
 # exclude data from source control by default
 qc/
 data/
+models/
 
 # ignore slurm logs
 slurm_out/
