@@ -22,62 +22,50 @@ rule get_ref:
 # cat SraRunInfo.csv | grep oleracea > Sra_oleracea.csv
 # sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
 
-rule fastq_dump:
+rule fastq2bam:
     input:
-        "data/external/Sra_oleracea.csv"
+        samp_ids = "data/external/Sra_oleracea.csv",
+        ref = "data/external/ref/Boleracea_chromosomes.fasta"
     output:
-        temp(expand("data/external/fastq_raw/{sample}_pass_1.fastq.gz", sample = SAMPLES)),
-        temp(expand("data/external/fastq_raw/{sample}_pass_2.fastq.gz", sample = SAMPLES))
-    shell:
-        "Rscript src/get_sra_archive.R"
-
-# trim adapters
-rule trimmomatic_pe:
-    input:
-        "data/external/fastq_raw/{sample}_pass_1.fastq.gz",
-        "data/external/fastq_raw/{sample}_pass_2.fastq.gz"
-    output:
-        temp("data/interim/trimmed_reads/{sample}.1.fastq.gz"),
-        temp("data/interim/trimmed_reads/{sample}.1.unpaired.fastq.gz"),
-        touch(temp("data/interim/trimmed_reads/{sample}.2.fastq.gz")),
-        touch(temp("data/interim/trimmed_reads/{sample}.2.unpaired.fastq.gz"))
-    log:
-        "logs/trimmomatic/{sample}.log"
+        temp("data/interim/mapped_reads/{sample}.bam")
+    params:
+        temp = "/scratch/sdturner",
+        sample = "{sample}",
+        SRR = lambda wildcards: sample_dict[wildcards.sample],
+        stem = "/scratch/sdturner/{sample}"
+    threads: 24
     run:
-        shell("java -jar $trimmomatic PE {input} {output} \
+        print({params.sample}, {params.SRR})
+        shell("fasterq-dump \
+        {params.SRR} \
+        -O {params.temp} \
+        -o {params.sample} \
+        -t {params.temp} \
+        -e {threads} \
+        -p")
+        shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
+        {params.stem}_1.fastq {params.stem}_2.fastq \
+        {params.stem}.forward.1.fastq \
+        {params.stem}.unpaired.1.fastq \
+        {params.stem}.reverse.2.fastq \
+        {params.stem}.unpaired.2.fastq \
 		LEADING:3 \
 		TRAILING:3 \
 		SLIDINGWINDOW:4:15 \
-		MINLEN:36 2> {log}")
-#
-# # LEADING:3 - remove leading low quality or N bases (quality < 3)
-# # TRAILING:3 - remove trailing low quality or N bases (quality < 3)
-# # SLIDINGWINDOW: scan read with 4-base sliding window, cutting when average quality
-# # drops below 15
-# # MINLEN:36 - drop reads below 36 bases long
-# # note: check sizes of paired vs. unpaired output files (expect paired to be larger)
-#
-# map to reference (TO1000 v2.1 from Parkin et al. 2014)
-# rule bwa_map:
-#     input:
-#        "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
-#        "data/interim/trimmed_reads/{sample}.1.fastq.gz",
-#        "data/interim/trimmed_reads/{sample}.2.fastq.gz"
-#     output:
-#        touch(temp("data/interim/mapped_reads/{sample}.bam"))
-# 	log:
-#        "logs/bwa/{sample}.log"
-# 	threads: 8
-# 	run:
-# 		shell("(bwa mem -t {threads} {input} | \
-# 		samtools view -Sb > {output}) 2> {log}")
+		MINLEN:36")
+        shell("(bwa mem -t {threads} \
+        {input.ref} \
+        {params.stem}.forward.1.fastq \
+        {params.stem}.reverse.2.fastq | \
+        samtools view -Sb > {output})")
+        shell("rm -rf {params.temp}")
 
 # sort BAM files with Picard
 rule sort_bam:
     input:
         "data/interim/mapped_reads/{sample}.bam"
     output:
-    	bam = "data/raw/sorted_reads/{sample}.sorted.bam",
+    	bam = protected("data/raw/sorted_reads/{sample}.sorted.bam"),
     	tmp = temp(directory("/scratch/sdturner/sort_bam/{sample}"))
     run:
     	shell("gatk SortSam \
