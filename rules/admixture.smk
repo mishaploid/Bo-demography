@@ -14,6 +14,31 @@ rule bgzip_vcf:
         shell("bgzip {input}")
         shell("tabix -p vcf {output}")
 
+# phasing - beagle 4.1
+# consider adjusting window size and ibd paramaters
+rule phase_vcf:
+    input:
+        vcf = "data/processed/{chr}.filtered.snps.vcf.gz"
+        map =
+    output:
+        "models/beagle/{chr}.phased.filtered.snps.vcf.gz"
+    params:
+        out_prefix = "models/beagle/{chr}.phased.filtered.snps"
+        chrom = "{chr}"
+        ibd = "true"
+    threads: 32
+    run:
+        shell("beagle \
+        nthreads={threads}\
+        gt={input.vcf} \
+        chrom={params.chrom} \
+        out={params.out_prefix} \
+        map={input.map} \
+        ibd={params.ibd}")
+
+
+
+
 # need to use plink2 (see http://apol1.blogspot.com/2014/11/best-practice-for-converting-vcf-files.html)
 # download:
 # cd ~/bin
@@ -51,6 +76,12 @@ rule admix_input:
         --extract {params.stem}.prune.in \
         --out {params.pruned} \
         --make-bed")
+        shell("plink --bfile {params.stem} \
+        --extract {params.stem}.prune.in \
+        --out {params.pruned} \
+        --recode")
+
+# could use distruct for plotting...
 
 rule admixture:
     input:
@@ -62,5 +93,5 @@ rule admixture:
         k = "{k}"
     threads: 32
     run:
-        shell("cd models/admixture")
-        shell("admixture --cv -j{threads} {input.bed} {params.k}")
+        shell("admixture -B --cv -j{threads} {input.bed} {params.k}")
+        shell("mv combined.pruned.{params.k}.* models/admixture")

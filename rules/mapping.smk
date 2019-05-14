@@ -1,29 +1,54 @@
 ### Data cleanup
 
-# # fastq dump
-# rule fastq_dump:
-#     output:
-#         touch("data/external/fastq_raw/{sample}_pass_1.fastq.gz"),
-#         touch("data/external/fastq_raw/{sample}_pass_2.fastq.gz")
-#
-# # trim adapters
-# rule trimmomatic_pe:
-#     input:
-#         "data/external/fastq_raw/{sample}_pass_1.fastq.gz",
-#         "data/external/fastq_raw/{sample}_pass_2.fastq.gz"
-#     output:
-#         touch(temp("data/interim/trimmed_reads/{sample}.1.fastq.gz")),
-#         touch(temp("data/interim/trimmed_reads/{sample}.1.unpaired.fastq.gz")),
-#         touch(temp("data/interim/trimmed_reads/{sample}.2.fastq.gz")),
-#         touch(temp("data/interim/trimmed_reads/{sample}.2.unpaired.fastq.gz"))
-#     log:
-#         "logs/trimmomatic/{sample}.log"
-#     run:
-#         shell("java -jar {trimmomatic} PE {input} {output} \
-# 		LEADING:3 \
-# 		TRAILING:3 \
-# 		SLIDINGWINDOW:4:15 \
-# 		MINLEN:36 2> {log}")
+# download reference (wget)
+# generate BWA index (bwa index)
+# generate fasta index (samtools faidx)
+# generate sequence dictionary (gatk CreateSequenceDictionary)
+rule get_ref:
+    output:
+        ref = "data/external/ref/Boleracea_chromosomes.fasta",
+        dict = "data/external/ref/Boleracea_chromosomes.dict"
+    run:
+        shell("wget --directory-prefix=data/external/ref \
+        http://www.genoscope.cns.fr/externe/plants/data/Boleracea_chromosomes.fasta")
+        shell("bwa index -a bwtsw {output.ref}")
+        shell("samtools faidx {output.ref}")
+        shell("gatk CreateSequenceDictionary \
+        -R={output.ref} \
+        -O={output.dict}")
+
+# use fastq dump to download FASTQ files
+# get SRA info for B. oleracea:
+# cat SraRunInfo.csv | grep oleracea > Sra_oleracea.csv
+# sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
+
+rule fastq_dump:
+    input:
+        "data/external/Sra_oleracea.csv"
+    output:
+        temp(expand("data/external/fastq_raw/{sample}_pass_1.fastq.gz", sample = SAMPLES)),
+        temp(expand("data/external/fastq_raw/{sample}_pass_2.fastq.gz", sample = SAMPLES))
+    shell:
+        "Rscript src/get_sra_archive.R"
+
+# trim adapters
+rule trimmomatic_pe:
+    input:
+        "data/external/fastq_raw/{sample}_pass_1.fastq.gz",
+        "data/external/fastq_raw/{sample}_pass_2.fastq.gz"
+    output:
+        temp("data/interim/trimmed_reads/{sample}.1.fastq.gz"),
+        temp("data/interim/trimmed_reads/{sample}.1.unpaired.fastq.gz"),
+        touch(temp("data/interim/trimmed_reads/{sample}.2.fastq.gz")),
+        touch(temp("data/interim/trimmed_reads/{sample}.2.unpaired.fastq.gz"))
+    log:
+        "logs/trimmomatic/{sample}.log"
+    run:
+        shell("java -jar $trimmomatic PE {input} {output} \
+		LEADING:3 \
+		TRAILING:3 \
+		SLIDINGWINDOW:4:15 \
+		MINLEN:36 2> {log}")
 #
 # # LEADING:3 - remove leading low quality or N bases (quality < 3)
 # # TRAILING:3 - remove trailing low quality or N bases (quality < 3)

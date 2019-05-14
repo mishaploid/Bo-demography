@@ -1,0 +1,24 @@
+# automate download of SRA archive
+# www.sthda.com/english/wiki/print.php?id=51
+
+# use command line arguments
+args <- commandArgs(trailingOnly = TRUE)
+index <- as.numeric(args[1])
+
+# read in SRA info
+sri <- read.csv("SraRunInfo_oleracea.csv", stringsAsFactors = FALSE)
+files <- basename(sri$download_path)
+
+# extract accession names
+accession <- gsub("Brassica oleracea ", "", sri[,30])
+
+print(accession[index])
+print(files[index])
+
+# send command to terminal
+cmd = paste("fastq-dump --outdir fastq_raw --gzip --skip-technical --read-filter pass --dumpbase --split-3 --clip --accession", accession[index], files[index])
+# see fastq-dump -h for details
+      
+cat(cmd, "\n") # print current command
+
+system(cmd) # invoke command 

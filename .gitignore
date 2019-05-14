@@ -85,6 +85,9 @@ models/
 # ignore slurm logs
 slurm_out/
 
+# ignore scratch
+scratch/
+
 # Mac OS-specific storage files
 .DS_Store
 
