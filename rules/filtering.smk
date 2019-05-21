@@ -6,7 +6,7 @@
 
 rule get_snps:
 	input:
-		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
+		ref = "data/external/ref/Boleracea_chromosomes.fasta",
 		vcf = "data/raw/{chr}.raw.snps.indels.vcf"
 	output:
 		"data/raw/{chr}.raw.snps.vcf"
@@ -23,7 +23,7 @@ rule get_snps:
 
 rule filter_snps:
 	input:
-		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
+		ref = "data/external/ref/Boleracea_chromosomes.fasta",
 		vcf = "data/raw/{chr}.raw.snps.vcf"
 	output:
 		"data/processed/{chr}.filtered.snps.vcf"

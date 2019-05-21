@@ -19,9 +19,7 @@
 # SAMPLES2 = [s for s in SAMPLES if s not in {"SRR7881031"}]
 
 
-# SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
-
-SAMPLES = "SamC_001"
+SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 
 # dictionary of SRA identifiers
 import csv
@@ -57,30 +55,30 @@ rule all:
 		# bwa_map - output is aligned BAM files for each sample
 		# expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES),
 		# sort_bam - output is sorted BAM files for each sample
-		expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES)
+		expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
 		# mark_dups - output is BAM files with duplicates marked
-		# expand("data/interim/dedup/{sample}.dedup.bam", sample = SAMPLES),
+		expand("data/interim/mark_dups/{sample}.dedup.bam", sample = SAMPLES),
 		# add_rg - add read group information to BAM files
-		# expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
+		expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
 		# hap_caller - output is GVCF file for each sample
-		# expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# rename samples
 		# expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		# # combine_gvcfs - database for combining multiple gvcf files
-		# expand("data/interim/combined_database/{chr}/vcfheader.vcf", chr = chr),
-		# # joint_geno - outputs joint SNP calls for gvcf files
-		# expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
-		# # get_snps
-		# expand("data/processed/{chr}.filtered.snps.vcf", chr = chr),
-		# # bgzip_vcf
-		# expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr),
-		# # admix_input
-		# "models/admixture/combined.pruned.bed",
-		# # admixture
-		# expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8])
+		# combine_gvcfs - database for combining multiple gvcf files
+		expand("data/interim/combined_database/{chr}/vcfheader.vcf", chr = chr),
+		# joint_geno - outputs joint SNP calls for gvcf files
+		expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
+		# get_snps
+		expand("data/processed/{chr}.filtered.snps.vcf", chr = chr),
+		# bgzip_vcf
+		expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr),
+		# admix_input
+		"models/admixture/combined.pruned.bed",
+		# admixture
+		expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8])
 
 
 include: "rules/mapping.smk"
-# include: "rules/calling.smk"
-# include: "rules/filtering.smk"
-# include: "rules/admixture.smk"
+include: "rules/calling.smk"
+include: "rules/filtering.smk"
+include: "rules/admixture.smk"

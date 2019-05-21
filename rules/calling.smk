@@ -4,7 +4,7 @@
 
 rule hap_caller:
 	input:
-		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa",
+		ref = "data/external/ref/Boleracea_chromosomes.fasta",
 		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
 		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
@@ -61,7 +61,7 @@ rule combine_gvcfs:
 rule joint_geno:
 	input:
 		dir = "data/interim/combined_database/{chr}/vcfheader.vcf",
-		ref = "data/external/ref/Brassica_oleracea.v2.1.dna.toplevel.fa"
+		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
 		"data/raw/{chr}.raw.snps.indels.vcf"
 	params:
