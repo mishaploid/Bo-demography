@@ -10,15 +10,12 @@ Follows GATK4 best practices (https://software.broadinstitute.org/gatk/best-prac
 Implemented as a Snakemake workflow (https://snakemake.readthedocs.io/en/stable/index.html)  
 
 #### STATUS
-Works up to get_snps rule (still need to check filtering step)  
-Need to manually download FASTQ files, then unhash trimmomatic_pe & bwa_map rules in rules/mapping.smk
+Works all the way through variant filtration step (yay)  
+Added rule to download new ref and obtain fastq files with 'fasterq-dump'  
+Using scratch but not in a very elegant way
 
 #### TODO
-* Update mapping.smk (fastq-dump, trimmomatic, and bwa mem)
-    + use temp() to set inputs/outputs as temporary so they are removed after running (snakemake currently views as missing inputs)
-    + add shell command for fastq-dump
 * Add a config file to specify samples/reference/paths/etc. (will make workflow more general)
-* use shadow directory to use node-specific scratch directory (https://snakemake.readthedocs.io/en/stable/project_info/faq.html)
 * Find a better solution to create input for ADMIXTURE (right now requires manual edit of chr names and snp ids)
 
 ### Workflow
@@ -28,8 +25,9 @@ Need to manually download FASTQ files, then unhash trimmomatic_pe & bwa_map rule
 **/rules** contains rules (*.smk) that tell snakemake what jobs to run; organized broadly into categories
 
 1. **_mapping.smk_** - map reads to reference genome
+    + download fastq files (fasterq-dump)
     + trim adapters (Trimmomatic PE)
-    + map to reference genome (bwa mem; B. oleracea TO1000 reference)
+    + map to reference genome (bwa mem; B. oleracea HDEM reference)
     + sort BAM files (gatk/SortSam)
     + mark duplicates with Picard (gatk/MarkDuplicates)
     + add read groups with Picard (gatk/AddOrReplaceReadGroups)
@@ -45,19 +43,17 @@ Need to manually download FASTQ files, then unhash trimmomatic_pe & bwa_map rule
 
 **To run the workflow:**
 
-1. Use `fastq-dump` to download FASTQ files to `data/external/fastq_raw`
-
-2. Create a conda environment (only need to do this once)  
+1. Create a conda environment (only need to do this once)  
 `conda env create bo-demography --file environment.yaml`
     + to access for future use, start a screen session with `screen` and use:  
     `source activate bo-demography`
 
-3. If running on a cluster, update the cluster config file (submit.json)
+2. If running on a cluster, update the cluster config file (submit.json)
 
-4. Dry run to test that everything is in place...
+3. Dry run to test that everything is in place...
 `snakemake -n`
 
-5. Submit the workflow with `./submit.sh`
+4. Submit the workflow with `./submit.sh`
 
 
 

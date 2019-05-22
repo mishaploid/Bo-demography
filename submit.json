@@ -1,86 +1,86 @@
 {
     "__default__" :
     {
-        "partition" : "med",
+        "partition" : "med2",
         "time" : "7-00:00",
         "name" : "{rule}.{wildcards}"
     },
     "get_ref" :
     {
       "cpus-per-task" : 8,
-      "p" : "med",
+      "p" : "med2",
       "o":"slurm_out/get_ref.%j.out"
     },
     "fastq2bam" :
     {
       "cpus-per-task" : 24,
-      "p" : "med",
+      "p" : "med2",
       "o":"slurm_out/fastq2bam_{wildcards}.%j.out"
     },
     "sort_bam" :
     {
       "cpus-per-task" : 8,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/sort_bam/{wildcards}.%j.out"
     },
     "mark_dups" :
     {
       "cpus-per-task" : 24,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/mark_dups/{wildcards}.%j.out"
     },
     "add_rg" :
     {
       "cpus-per-task" : 8,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/add_rg/{wildcards}.%j.out"
     },
     "hap_caller" :
     {
-      "cpus-per-task" : 16,
-      "p" : "med",
+      "cpus-per-task" : 8,
+      "p" : "bigmemm",
       "o" : "slurm_out/hap_caller/{wildcards}.%j.out"
     },
     "combine_gvcfs" :
     {
-      "cpus-per-task" : 32,
-      "p" : "med",
+      "cpus-per-task" : 16,
+      "p" : "bigmemm",
       "o" : "slurm_out/combine_gvcfs_%j.out"
     },
     "joint_geno" :
     {
       "cpus-per-task" : 32,
-      "p" : "med",
+      "p" : "bigmemm",
       "o" : "slurm_out/joint_geno_%j.out"
     },
     "get_snps" :
     {
       "cpus-per-task" : 24,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/get_snps_%j.out"
     },
     "filter_snps" :
     {
       "cpus-per-task" : 32,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/filter_snps_%j.out"
     },
     "bgzip_vcf" :
     {
       "cpus-per-task" : 1,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/bgzip_{wildcards}_%j.out"
     },
     "admix_input" :
     {
       "cpus-per-task" : 24,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/admix_input_%j.out"
     },
     "admixture" :
     {
       "cpus-per-task" : 32,
-      "p" : "med",
+      "p" : "med2",
       "o" : "slurm_out/admixture_%j.out"
     }
 }
