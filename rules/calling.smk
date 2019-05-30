@@ -21,23 +21,7 @@ rule hap_caller:
 		-G AS_StandardAnnotation \
 		--emit-ref-confidence GVCF")
 
-# replace sample names
-
-# rule rename_samples:
-# 	input:
-# 		"data/interim/{sample}.raw.snps.indels.g.vcf"
-# 	output:
-# 		"data/interim/{sample}.renamed.raw.snps.indels.g.vcf"
-# 	params:
-# 		sample = "{sample}"
-# 	run:
-# 		shell("gatk RenameSampleInVcf \
-# 		-I={input} \
-# 		-O={output} \
-# 		--NEW_SAMPLE_NAME={params.sample} \
-# 		--CREATE_INDEX=true")
-
-# combine GVCFs
+# combine GVCFs with GenomicsDBImport
 # https://software.broadinstitute.org/gatk/documentation/article?id=11813
 # snakemake considerations - https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
 
@@ -48,6 +32,7 @@ rule combine_gvcfs:
 		directory("data/interim/combined_database/{chr}")
 	params:
 		files = lambda wildcards, input: " -V ".join(input),
+		dir = "data/interim/combined_database/{chr}",
 		region = "{chr}"
 	run:
 		shell("gatk GenomicsDBImport \
@@ -56,11 +41,11 @@ rule combine_gvcfs:
 		--batch-size 50 \
 		--intervals {params.region}")
 
-# joint genotyping - raw SNP and indel VCF
+# joint genotyping to produce VCF (raw SNPs & indels)
 
 rule joint_geno:
 	input:
-		dir = "data/interim/combined_database/{chr}/vcfheader.vcf",
+		dir = directory("data/interim/combined_database/{chr}"),
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
 		"data/raw/{chr}.raw.snps.indels.vcf"

@@ -12,9 +12,10 @@ module load java
 module load GATK/4.0
 module load bcftools
 module load plink/1.90
+module load angsd
 
 snakemake --jobs 120 --use-conda \
 --rerun-incomplete \
 --latency-wait 60 \
 --cluster-config submit.json \
---cluster "sbatch -p {cluster.p} -o {cluster.o} --cpus-per-task {cluster.cpus-per-task} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file
+--cluster "sbatch -p {cluster.p} -o {cluster.o} --mem {cluster.mem} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file

@@ -30,7 +30,7 @@ rule fastq2bam:
         samp_ids = "data/external/Sra_oleracea.csv",
         ref = "data/external/ref/Boleracea_chromosomes.fasta"
     output:
-        temp("data/interim/mapped_reads/{sample}.bam")
+        temp(touch("data/interim/mapped_reads/{sample}.bam"))
     params:
         tmp = "/scratch/sdturner/map_reads/{sample}",
         sample = "{sample}",
@@ -88,8 +88,8 @@ rule mark_dups:
     input:
         "data/raw/sorted_reads/{sample}.sorted.bam"
     output:
-        bam = temp("data/interim/mark_dups/{sample}.dedup.bam"),
-        index = temp("data/interim/mark_dups/{sample}.dedup.bai"),
+        bam = temp(touch("data/interim/mark_dups/{sample}.dedup.bam")),
+        index = temp(touch("data/interim/mark_dups/{sample}.dedup.bai")),
         metrics = "qc/mark_dup/{sample}_metrics.txt"
     params:
         tmp = "/scratch/sdturner/mark_dups/{sample}"
@@ -116,8 +116,8 @@ rule add_rg:
     input:
     	"data/interim/mark_dups/{sample}.dedup.bam"
     output:
-    	bam = temp("data/interim/add_rg/{sample}.rg.dedup.bam"),
-    	index = temp("data/interim/add_rg/{sample}.rg.dedup.bai")
+    	bam = temp(touch("data/interim/add_rg/{sample}.rg.dedup.bam")),
+    	index = temp(touch("data/interim/add_rg/{sample}.rg.dedup.bai"))
     params:
         sample = "{sample}",
         tmp = "/scratch/sdturner/add_rg/{sample}"

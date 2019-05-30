@@ -81,6 +81,7 @@ target/
 qc/
 data/
 models/
+reports/
 
 # ignore slurm logs
 slurm_out/
