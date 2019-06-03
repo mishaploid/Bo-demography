@@ -1,6 +1,8 @@
-# ngsTools from https://github.com/mfumagalli/ngsTools
-
 # STEP 1: assess depth (overall and per individual)
+
+# Note - originally was using ANGSD for coverage, but don't like output format much
+# switched to samtools depth & moved to filtering.smk
+
     # -b                input (txt with list of BAM files)
     # -ref              reference sequence (B. oleracea HDEM assembly)
     # -out              prefix for output
@@ -17,37 +19,37 @@
     # -doCounts         frequency of different bases (must include for -dofasta 1)
     # -maxDepth         sites with depth => value are binned together
 
-rule angsd_depth:
-    input:
-        all = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
-        bamlist = "models/angsd/ALL.bamlist",
-        ref = "data/external/ref/Boleracea_chromosomes.fasta"
-    output:
-        "reports/ALL.{chr}.qc.depthGlobal",
-        "reports/ALL.{chr}.qc.depthSample",
-        "reports/ALL.{chr}.qc.qs"
-    threads: 8
-    params:
-        chr = "{chr}",
-        stem = "reports/ALL.{chr}.qc"
-    shell:
-        "angsd -P {threads} \
-        -b {input.bamlist} \
-        -ref {input.ref} \
-        -r {params.chr} \
-        -out {params.stem} \
-        -uniqueOnly 1 \
-        -remove_bads 1 \
-        -only_proper_pairs 1 \
-        -trim 0 \
-        -C 50 \
-        -baq 1 \
-    	-minMapQ 30 \
-        -minQ 20 \
-        -doQsDist 1 \
-        -doDepth 1 \
-        -doCounts 1 \
-        -maxDepth 500"
+# rule angsd_depth:
+#     input:
+#         all = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
+#         bamlist = "models/angsd/ALL.bamlist",
+#         ref = "data/external/ref/Boleracea_chromosomes.fasta"
+#     output:
+#         "reports/ALL.{chr}.qc.depthGlobal",
+#         "reports/ALL.{chr}.qc.depthSample",
+#         "reports/ALL.{chr}.qc.qs"
+#     threads: 8
+#     params:
+#         chr = "{chr}",
+#         stem = "reports/ALL.{chr}.qc"
+#     shell:
+#         "angsd -P {threads} \
+#         -b {input.bamlist} \
+#         -ref {input.ref} \
+#         -r {params.chr} \
+#         -out {params.stem} \
+#         -uniqueOnly 1 \
+#         -remove_bads 1 \
+#         -only_proper_pairs 1 \
+#         -trim 0 \
+#         -C 50 \
+#         -baq 1 \
+#     	-minMapQ 30 \
+#         -minQ 20 \
+#         -doQsDist 1 \
+#         -doDepth 1 \
+#         -doCounts 1 \
+#         -maxDepth 500"
 
 # STEP 2: create a fasta file for ancestral reference
 # input: short reads from B. rapa reference (Chiifu-401) mapped to B. oleracea reference (HDEM)
@@ -72,7 +74,7 @@ rule anc_fasta:
 	params:
 		out = "data/processed/anc/B_rapa_HDEM"
 	shell:
-		"{ANGSD}/angsd \
+		"angsd \
 		-i {input.anc} \
 		-out {params.out} \
 		-ref {input.ref} \
@@ -87,7 +89,37 @@ rule anc_fasta:
 		-minMapQ 30 \
 		-minQ 20"
 
-# STEP 3: estimate inbreeding coefficients
+# STEP 3: pcangsd input
+rule pcangsd:
+    input:
+        "models/ALL.bamlist.txt"
+    output:
+        "models/pcangsd/"
+    params:
+        out = "data/processed/pcangsd/all.cov.npy",
+        out2 = "models/pcangsd/all"
+    shell:
+        "angsd \
+        -GL 1 \
+        -out {params.out} \
+        -nThreads {threads} \
+        -doGlf 2 \
+        -doMajorMinor 1 \
+        -doMaf 2 \
+        -SNP_pval 1e-6 \
+        -uniqueOnly 1 \
+        -remove_bads 1 \
+        -only_proper_pairs 1 \
+        -C 50 \
+        -baq 1 \
+        -minMapQ 30 \
+        -minQ 20 \
+        -bam {input.filelist}"
+        "python pcangsd.py \
+        -beagle {params.out}.beagle.gz \
+        -inbreed 2 \
+        -threads {threads} \
+        -o {out}"
 
 
 

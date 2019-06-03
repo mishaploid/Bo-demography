@@ -42,3 +42,47 @@ rule filter_snps:
 # evaluate filtering parameters
 # https://software.broadinstitute.org/gatk/documentation/article.php?id=11069
 # not sure this is possible for this data set... need dbSNP info
+
+# quality metrics with qualimap
+rule bamqc:
+	input:
+		all = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES)
+	output:
+		"reports/bamqc/report.pdf"
+	params:
+		outdir = "reports/bamqc",
+		infile = "models/bamqc_list.txt"
+	run:
+		shell("ls -rt data/raw/sorted_reads/*.bam > models/ALL.bamlist.txt")
+		import pandas as pd
+		data = pd.read_csv("models/ALL.bamlist.txt", sep = " ", header = None, names = ['filename'])
+		data['sample'] = data['filename'].str.split('.').str[0].str.split('/').str[3]
+		data = data.drop([119], axis = 0)
+		data = data.sort_values('sample', axis = 0, ascending = True)
+		data = data[['sample','filename']]
+		data.to_csv(r'models/bamqc_list.txt', header = None, index = None, sep = ' ', mode = 'a')
+		shell("qualimap multi-bamqc \
+		--data {params.infile} \
+		--paint-chromosome-limits \
+		-outdir {params.outdir} \
+		-outformat PDF \
+		--run-bamqc \
+		--java-mem-size=60G")
+
+# depth of coverage
+# rule coverage_depth:
+#     input:
+#         all = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
+#         bamlist = "models/angsd/ALL.bamlist",
+#         ref = "data/external/ref/Boleracea_chromosomes.fasta"
+#     output:
+#         "reports/coverage/{chr}.coverage.txt"
+#     params:
+#         chr = "{chr}"
+#     shell:
+#         "samtools depth \
+#         -f models/angsd/ALL.bamlist \
+#         -q 20 \
+#         -Q 30 \
+#         -r {params.chr} \
+#         --reference {input.ref} > {output}"

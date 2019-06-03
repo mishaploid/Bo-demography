@@ -51,8 +51,10 @@ rule all:
 		# expand("data/interim/mark_dups/{sample}.dedup.bam", sample = SAMPLES),
 		# add_rg - add read group information to BAM files
 		# expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
+		# coverage_depth
+		"reports/bamqc/report.pdf",
 		# hap_caller - output is GVCF file for each sample
-		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 		# combine_gvcfs - database for combining multiple gvcf files
 		# expand("data/interim/combined_database/{chr}/vcfheader.vcf", chr = chr),
 		# directory(expand("data/interim/combined_database/{chr}", chr = chr))
@@ -67,7 +69,7 @@ rule all:
 		# # # admixture
 		# expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8]),
 		# # angsd_depth
-		expand("reports/ALL.{chr}.qc.depthGlobal", chr = chr)
+		# expand("reports/ALL.{chr}.qc.depthGlobal", chr = chr)
 
 
 include: "rules/mapping.smk"

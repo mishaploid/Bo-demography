@@ -11,6 +11,7 @@ module load maven
 module load java
 module load GATK/4.0
 module load bcftools
+module load qualimap/2.1.1
 module load plink/1.90
 module load angsd
 

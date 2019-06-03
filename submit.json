@@ -35,6 +35,12 @@
       "p" : "med2",
       "o" : "slurm_out/add_rg/{wildcards}.%j.out"
     },
+    "bamqc" :
+    {
+      "mem" : "60G",
+      "p" : "bigmemm",
+      "o" : "slurm_out/bamqc.%j.out"
+    },
     "hap_caller" :
     {
       "mem" : "32G",
