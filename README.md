@@ -33,12 +33,12 @@ Using scratch space but not in a very elegant way
     + mark duplicates with Picard (gatk/MarkDuplicates)
     + add read groups with Picard (gatk/AddOrReplaceReadGroups)
 
-2. **_calling.smk_** - call variants (in progress)
+2. **_calling.smk_** - call variants
     + identify raw SNPs/indels (gatk/HaplotypeCaller)
     + combine GVCFs (gatk/GenomicsDBImport)
     + joing genotyping (gatk/GenotypeGVCFs)
 
-3. **_filtering.smk_** - filter SNPs (in progress)
+3. **_filtering.smk_** - filter SNPs
     + select SNPs (gatk/SelectVariants)
     + apply SNP filters (gatk/VariantFiltration)
 
