@@ -8,7 +8,7 @@ rule hap_caller:
 		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
 		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
-		"data/interim/{sample}.raw.snps.indels.g.vcf"
+		"data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf"
 	params:
 		regions = "data/raw/b_oleracea.interval_list"
 	run:
@@ -27,7 +27,7 @@ rule hap_caller:
 
 rule combine_gvcfs:
 	input:
-		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
 		directory("data/interim/combined_database/{chr}")
 	params:

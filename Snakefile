@@ -15,8 +15,6 @@
 SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 SAMPLES2 = SAMPLES + ['B_rapa']
 
-# print(SAMPLES)
-
 # dictionary of SRA identifiers from downloaded project info
 import csv
 
@@ -37,6 +35,7 @@ ngsTools = "../software/ngsTools"
 # wget https://people.maths.bris.ac.uk/~madjl/finestructure/fs_4.0.1.zip
 # unzip fs_4.0.1.zip
 fs = "../bin/fs_4.0.1"
+snpable = "../software/seqbility-20091110"
 
 # a pseudo-rule that collects the target files (expected outputs)
 rule all:
@@ -52,22 +51,27 @@ rule all:
 		# add_rg - add read group information to BAM files
 		# expand("data/interim/add_rg/{sample}.rg.dedup.bam", sample = SAMPLES),
 		# coverage_depth
-		"reports/bamqc/report.pdf",
+		expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES2),
+		"reports/multisampleBamQcReport.html",
 		# hap_caller - output is GVCF file for each sample
-		expand("data/interim/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		# combine_gvcfs - database for combining multiple gvcf files
 		# expand("data/interim/combined_database/{chr}/vcfheader.vcf", chr = chr),
 		# directory(expand("data/interim/combined_database/{chr}", chr = chr))
-		# # joint_geno - outputs joint SNP calls for gvcf files
-		# expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
-		# # # get_snps
+		# joint_geno - outputs joint SNP calls for gvcf files
+		expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
+		# get_snps
 		# expand("data/processed/{chr}.filtered.snps.vcf", chr = chr),
-		# # # bgzip_vcf
-		# expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr),
-		# # # admix_input
+		# bgzip_vcf
+		expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr),
+		# merge vcfs
+		"data/processed/merged.vcf.gz",
+		# make_kmers
+		expand("data/interim/masks/{chr}_mask_100_50.fa", chr = chr)
+		# admix_input
 		# "models/admixture/combined.pruned.bed",
-		# # # admixture
-		# expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8]),
+		# admixture
+		# expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8])
 		# # angsd_depth
 		# expand("reports/ALL.{chr}.qc.depthGlobal", chr = chr)
 
@@ -75,5 +79,6 @@ rule all:
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
 include: "rules/filtering.smk"
-include: "rules/admixture.smk"
-include: "rules/angsd.smk"
+include: "rules/mask.smk"
+# include: "rules/admixture.smk"
+# include: "rules/angsd.smk"

@@ -37,9 +37,15 @@
     },
     "bamqc" :
     {
-      "mem" : "60G",
-      "p" : "bigmemm",
-      "o" : "slurm_out/bamqc.%j.out"
+      "mem" : "24G",
+      "p" : "med2",
+      "o" : "slurm_out/bamqc_{wildcards}.%j.out"
+    },
+    "multibamqc" :
+    {
+      "mem" : "40G",
+      "p" : "med2",
+      "o" : "slurm_out/multibamqc.%j.out"
     },
     "hap_caller" :
     {
@@ -55,20 +61,20 @@
     },
     "joint_geno" :
     {
-      "cpus-per-task" : "120G",
-      "p" : "bigmemm",
+      "mem" : "8G",
+      "p" : "med2",
       "o" : "slurm_out/joint_geno_%j.out"
     },
     "get_snps" :
     {
-      "mem" : "60G",
-      "p" : "med2",
+      "mem" : "100G",
+      "p" : "bigmemm",
       "o" : "slurm_out/get_snps_%j.out"
     },
     "filter_snps" :
     {
-      "mem" : "60G",
-      "p" : "med2",
+      "mem" : "100G",
+      "p" : "bigmemm",
       "o" : "slurm_out/filter_snps_%j.out"
     },
     "bgzip_vcf" :
@@ -76,6 +82,18 @@
       "mem" : "8G",
       "p" : "med2",
       "o" : "slurm_out/bgzip_{wildcards}_%j.out"
+    },
+    "combine_vcfs" :
+    {
+      "mem" : "10G",
+      "p" : "med2",
+      "o" : "slurm_out/combine_vcfs.out"
+    },
+    "make_mask" :
+    {
+      "mem" : "60G",
+      "p" : "med2",
+      "o" : "slurm_out/make_mask_%j.out"
     },
     "admix_input" :
     {

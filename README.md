@@ -12,10 +12,11 @@ Implemented as a Snakemake workflow (https://snakemake.readthedocs.io/en/stable/
 #### STATUS
 Works all the way through variant filtration step (yay)  
 Added rule to download new ref and obtain fastq files with 'fasterq-dump'  
-Using scratch but not in a very elegant way
+Using scratch space but not in a very elegant way
 
 #### TODO
 * Add a config file to specify samples/reference/paths/etc. (will make workflow more general)
+  - include variable for scratch directory
 * Find a better solution to create input for ADMIXTURE (right now requires manual edit of chr names and snp ids)
 
 ### Workflow
