@@ -21,16 +21,18 @@
 # should be more stringent?
 # better to use sampe?
 
+# note had to update gzip.open in makeMappabilityMask.py from 'w' to 'wt'
+
 rule make_mask:
     input:
         "data/external/ref/Boleracea_chromosomes.fasta"
     output:
-        fa = "data/interim/masks/{chr}_mask_100_50.fa"
-        # bed = expand("data/processed/masks/Boleracea_{chr}.mask.bed.gz", chr = chr)
+        "data/processed/masks/Boleracea_{chr}.mask.bed.gz"
     params:
         tmp = "/scratch/sdturner/{chr}",
         chr = "{chr}",
-        newfasta = "data/external/ref/Boleracea_{chr}.fa"
+        newfasta = "data/external/ref/Boleracea_{chr}.fa",
+        famask = "data/interim/masks/{chr}_mask_100_50.fa"
     threads: 16
     run:
         shell("mkdir -p {params.tmp}")
@@ -40,6 +42,6 @@ rule make_mask:
         shell("bwa aln -R 1000000 -O 3 -E 3 -t {threads} {input} {params.tmp}/simu_reads.fq > {params.tmp}/simu_reads.sai")
         shell("bwa samse {input} {params.tmp}/simu_reads.sai {params.tmp}/simu_reads.fq > {params.tmp}/simu_reads.sam")
         shell("perl {snpable}/gen_raw_mask.pl {params.tmp}/simu_reads.sam > {params.tmp}/raw_mask_100.fa")
-        shell("{snpable}/gen_mask -l 100 -r 0.5  {params.tmp}/raw_mask_100.fa > {output.fa}")
+        shell("{snpable}/gen_mask -l 100 -r 0.5  {params.tmp}/raw_mask_100.fa > {params.famask}")
         shell("rm -rf {params.tmp}")
-        # shell("src/makeMappabilityMask.py {output.fa}")
+        shell("./src/makeMappabilityMask.py {params.famask}")

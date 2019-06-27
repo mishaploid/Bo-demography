@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/sdturner/.conda/envs/bo-demography/bin/python3
 
 import gzip
 import sys
@@ -8,7 +8,7 @@ class MaskGenerator:
     self.lastCalledPos = -1
     self.lastStartPos = -1
     sys.stderr.write("making mask {}\n".format(filename))
-    self.file = gzip.open(filename, "w")
+    self.file = gzip.open(filename, "wt")
     self.chr = chr
 # assume 1-based coordinate, output in bed format
   def addCalledPosition(self, pos):

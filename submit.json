@@ -107,10 +107,22 @@
       "p" : "med2",
       "o" : "slurm_out/admixture_%j.out"
     },
-    "angsd_depth" :
+    "marginal_vcf2smc" :
     {
-      "mem" : "80G",
+      "mem" : "45G",
+      "p" : "med2",
+      "o" : "slurm_out/vcf2smc_{wildcards}_%j.out"
+    },
+    "marginal_estimate" :
+    {
+      "mem" : "100G",
       "p" : "bigmemm",
-      "o" : "slurm_out/angsd_depth_{wildcards}_%j.out"
+      "o" : "slurm_out/marginal_estimate_{wildcards}_%j.out"
+    },
+    "plot_estimate" :
+    {
+      "mem" : "2.5G",
+      "p" : "med2",
+      "o" : "slurm_out/plot_estimate_{wildcards}_%j.out"
     }
 }
