@@ -7,7 +7,7 @@
 rule get_snps:
 	input:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta",
-		vcf = "data/raw/{chr}.raw.snps.indels.vcf"
+		vcf = ancient("data/raw/{chr}.raw.snps.indels.vcf")
 	output:
 		"data/raw/{chr}.raw.snps.vcf"
 	run:
@@ -24,7 +24,7 @@ rule get_snps:
 rule filter_snps:
 	input:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta",
-		vcf = "data/raw/{chr}.raw.snps.vcf"
+		vcf = ancient("data/raw/{chr}.raw.snps.vcf")
 	output:
 		"data/processed/{chr}.filtered.snps.vcf"
 	run:
@@ -42,18 +42,18 @@ rule filter_snps:
 
 rule bgzip_vcf:
     input:
-        "data/processed/{chr}.filtered.snps.vcf"
+        "data/processed/filtered_snps/{chr}.filtered.snps.vcf"
     output:
-        "data/processed/{chr}.filtered.snps.vcf.gz"
+        "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz"
     run:
         shell("bgzip {input}")
         shell("tabix -p vcf {output}")
 
 rule combine_vcfs:
 	input:
-		expand("data/processed/{chr}.filtered.snps.vcf.gz", chr = chr)
+		expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr)
 	output:
-		"data/processed/merged.vcf.gz"
+		"data/processed/filtered_snps/merged.vcf.gz"
 	run:
 		shell("bcftools concat {input} -Oz -o {output}")
 

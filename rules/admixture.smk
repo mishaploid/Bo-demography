@@ -27,7 +27,6 @@
 #         map={input.map} \
 #         ibd={params.ibd}")
 
-
 # need to use plink2 (see http://apol1.blogspot.com/2014/11/best-practice-for-converting-vcf-files.html)
 # download:
 # cd ~/bin
