@@ -18,6 +18,7 @@ Using scratch space but not in a very elegant way
 * Add a config file to specify samples/reference/paths/etc. (will make workflow more general)
   - include variable for scratch directory
 * Find a better solution to create input for ADMIXTURE (right now requires manual edit of chr names and snp ids)
+* Consider breaking this out as a separate alignment workflow...
 
 ### Workflow
 

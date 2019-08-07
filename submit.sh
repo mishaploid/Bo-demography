@@ -5,6 +5,7 @@ date=$(date "+%Y_%m_%d")
 echo $date
 # echo $file
 
+module load fastqc
 module load trimmomatic/0.36
 module load R
 module load maven

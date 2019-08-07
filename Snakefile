@@ -1,7 +1,6 @@
 ## SNP calling pipeline for Brassica oleracea
 ## Follows GATK best practices https://software.broadinstitute.org/gatk/documentation/article.php?id=3893
 ## Sarah Turner-Hissong
-## 4 March 2019
 
 # requires a conda environment to run:
 # conda env create --name bo-demography --file environment.yaml
@@ -10,6 +9,24 @@
 
 # get sample names (option 1: pull unique identifier from fastq files)
 # SAMPLES = glob_wildcards("data/external/fastq_raw/{sample}_pass_1.fastq.gz").sample
+
+# new sequence data!
+# parsing of filenames & creation of dictonary from:
+# https://stackoverflow.com/questions/53379629/snakefile-and-wildcard-regex-for-output-file-naming
+FASTQ = glob_wildcards("data/raw/fastq/{fastq}.fastq.gz")
+IDS = [filename.split('_', 1)[0] for filename in FASTQ.fastq]
+# samps = {filename: filename.split('_', 1)[0] for filename in FASTQ.fastq}
+# print(samps)
+
+# need to specify fastq files..
+# solution from https://www.biostars.org/p/296020/
+import glob
+
+def get_fq1(wildcards):
+    return sorted(glob.glob(wildcards.sample + '*_R1_001.fastq.gz'))
+
+def get_fq2(wildcards):
+    return sorted(glob.glob(wildcards.sample + '*_R2_001.fastq.gz'))
 
 # get sample names (option 2: manual entries)
 SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
@@ -25,7 +42,7 @@ SAMP_MSMC = ['SamC_001']
 # 'SamC_116', 'SamC_117',
 # 'SamC_118', 'SamC_119']
 
-# dictionary of SRA identifiers from downloaded project info
+# create a dictionary of SRA identifiers from downloaded project info
 import csv
 import os
 
@@ -54,7 +71,6 @@ beagle = "../software/beagle.11Mar19.69c.jar"
 
 # msmc-tools (directory for helper scripts)
 msmc_tools = "../software/msmc-tools"
-
 
 ## dictionaries for SMC++
 # create all of the dictionaries
@@ -126,17 +142,21 @@ def model_chooser(WC):
 # a pseudo-rule that collects the target files (expected outputs)
 rule all:
 	input:
-		### MAPPING
+		# SEQUENCE QUALITY
+		fastqc = expand("qc/fastqc/{sample}_fastqc.zip", sample = FASTQ.fastq),
+		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
+		# MAPPING
 		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
-		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES2),
-		### CALLING
-		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		joint_geno = expand("data/raw/{chr}.raw.snps.indels.vcf", chr = chr),
-		### FILTERING
-		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES2),
-		multibamqc = "reports/multisampleBamQcReport.html",
-		# bgzip_vcf = expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr),
-		merge_vcfs = "data/processed/filtered_snps/merged.vcf.gz",
+		# sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES2),
+		sort_bam2 = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = IDS),
+		# CALLING
+		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = IDS),
+		joint_geno = expand("data/raw/vcf/{chr}.raw.snps.indels.vcf", chr = chr)
+		# ### FILTERING
+		# bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES2),
+		# multibamqc = "reports/multisampleBamQcReport.html",
+		# # bgzip_vcf = expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr),
+		# merge_vcfs = "data/processed/filtered_snps/merged.vcf.gz",
 		### SMC round 2
 		# smc = expand("models/smc/cv_1e3_1e6/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1'])
 		# smc = expand("models/smc/estimate_tp/{pop}/model.final.json", pop = pops),
@@ -144,17 +164,20 @@ rule all:
 		# jointvcf2smc = expand("models/smc/split/{pop_pair}.{chr}.smc.gz", pop_pair = ['wild_alboglabra', 'alboglabra_wild'], chr = chr)
 		# split = "models/smc/split/model.final.json"
 		### PHASING
-		phased = expand("data/processed/phased/{chr}.phased.filtered.vcf.gz", chr = chr),
+		# phased = expand("data/processed/phased/{chr}.phased.filtered.vcf.gz", chr = chr),
 		### MSMC
+		# depth = expand("models/msmc/indiv_masks/{sample}.{chr}.depth", sample = SAMP_MSMC, chr = chr),
 		# mappability = expand("data/processed/mappability_masks/Boleracea_chr{chr}.mask.bed.gz", chr = chr),
-		# masks = expand("models/msmc/indiv_masks/{sample}.{chr}.mask.bed", sample = SAMP_MSMC, chr = chr)
+		# masks = expand("models/msmc/indiv_masks/{sample}.{chr}.mask.bed", sample = SAMP_MSMC, chr = chr),
+		# phased = expand("models/msmc/vcf/{sample}.{chr}.phased.vcf.gz", sample = SAMP_MSMC, chr = chr),
+		# msmcin = expand("models/msmc/input/capitata.{chr}.multihetsep.txt", chr = chr)
 
-
+include: "rules/fastqc.smk"
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
-include: "rules/filtering.smk"
+# include: "rules/filtering.smk"
 # include: "rules/msmc.smk"
-include: "rules/phasing.smk"
+# include: "rules/phasing.smk"
 # include: "rules/smc.smk"
 # include: "rules/demography.smk"
 # include: "rules/admixture.smk"

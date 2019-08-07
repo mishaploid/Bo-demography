@@ -48,7 +48,7 @@ rule joint_geno:
 		dir = directory("data/interim/combined_database/{chr}"),
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
-		"data/raw/{chr}.raw.snps.indels.vcf"
+		"data/raw/vcf/{chr}.raw.snps.indels.vcf"
 	params:
 		db = "gendb://data/interim/combined_database/{chr}"
 	run:

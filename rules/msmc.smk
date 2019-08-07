@@ -58,54 +58,53 @@ rule mappability_mask:
 
 rule subset_vcf:
     input:
-        vcfin = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz"
+        vcfin = "data/processed/phased/{chr}.phased.filtered.vcf.gz"
     output:
-        vcfout = "models/msmc/vcf/{sample}.{chr}.vcf.gz"
-    params:
-        sample = "{sample}"
+        vcfout = "models/msmc/vcf/{sample}.{chr}.phased.vcf.gz"
     run:
-        shell("bcftools view -s {params.sample} -o {output.vcfout} -O z {input.vcfin}")
+        shell("bcftools view -s {wildcards.sample} -o {output.vcfout} -O z {input.vcfin}")
+
+rule get_depth:
+    input:
+        bam = "data/raw/sorted_reads/{sample}.sorted.bam"
+    output:
+        depth = temp("models/msmc/indiv_masks/{sample}.{chr}.depth")
+    run:
+        shell("samtools depth -r {wildcards.chr} {input.bam} | \
+        awk '{{sum += $3}} END {{print sum / NR}}' > {output.depth}")
 
 rule indiv_mask:
     input:
-        vcf = "models/msmc/vcf/{sample}.{chr}.vcf.gz",
-        ref = "data/external/ref/Boleracea_chromosomes.fasta",
-        bam = "data/raw/sorted_reads/{sample}.sorted.bam"
+        vcf = "models/msmc/vcf/{sample}.{chr}.phased.vcf.gz",
+        depth = "models/msmc/indiv_masks/{sample}.{chr}.depth"
     output:
+        mask = "models/msmc/indiv_masks/{sample}.{chr}.mask.bed.gz"
+    params:
         mask = "models/msmc/indiv_masks/{sample}.{chr}.mask.bed"
-    params:
-        name = "models/msmc/indiv_masks/{sample}.{chr}.mask.bed",
-        chr = "{chr}"
     run:
-        shell("./src/MSMC_mask.py \
-        -v {input.vcf} \
-        -o {params.name} \
-        -d <(samtools depth -r {params.chr} {input.bam} | awk '{{sum += $3}} END {{print sum / NR}}') \
-        -g")
+        import subprocess
+        depth = open(input.depth, "r")
+        callString = "./src/MSMC_Mask.py -v " + str(input.vcf) + \
+        " -o " + str(params.mask) + \
+        " -d " + depth.read().rstrip() + " -g"
+        print(callString)
+        shell("python3 " + callString)
+        shell("bgzip {params.mask}")
 
-# phasing - beagle 4.1
-
-rule beagle_phasing:
-    input:
-        "models/msmc/vcf/{sample}.{chr}.vcf.gz"
-    output:
-        "models/msmc/vcf/{sample}.{chr}.phased.vcf.gz"
-    params:
-        outstring = "models/msmc/vcf/{sample}.{chr}.phased"
-    run:
-        shell("java -Xmx8g -jar {beagle} gt={input} out={params.outstring}")
 
 # generate input files for msmc
 ### NEED TO EXPAND INPUTS TO LIST ALL SAMPLES WITH FLAGS
 rule msmc_input:
     input:
-        indv_mask = "models/msmc/indiv_masks/{sample}.{chr}.mask.bed.gz",
-        map_mask = "data/processed/mappability_masks/Boleracea_chr{chr}.mask.bed.gz",
-        vcf = "models/msmc/vcf/{sample}.{chr}.phased.vcf.gz"
+        expand("models/msmc/indiv_masks/{sample}.{{chr}}.mask.bed.gz", sample = SAMP_MSMC),
     output:
         "models/msmc/input/capitata.{chr}.multihetsep.txt"
+    params:
+        map_mask = "data/processed/mappability_masks/Boleracea_chr{chr}.mask.bed.gz",
+        vcf = expand("models/msmc/vcf/{sample}.{{chr}}.phased.vcf.gz", sample = SAMP_MSMC),
+        masks = lambda wildcards, input: " --mask=".join(input)
     shell:
         "./{msmc_tools}/generate_multihetsep.py \
-        --mask {input.indv_mask} \
-        --mask={input.map_mask} \
-        {input.vcf} > {output}"
+        --mask={params.masks} \
+        --mask={params.map_mask} \
+        {params.vcf} > {output}"
