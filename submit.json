@@ -28,8 +28,8 @@
     },
     "bwa_mem" :
     {
-      "mem" : "48G",
-      "p" : "bigmemm"
+      "mem" : "24G",
+      "p" : "med2"
     },
     "sort_bam" :
     {
@@ -39,7 +39,7 @@
     "mark_dups" :
     {
       "mem" : "60G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "add_rg" :
     {
@@ -69,7 +69,7 @@
     "joint_geno" :
     {
       "mem" : "8G",
-      "p" : "med2"
+      "p" : "bigmemh"
     },
     "get_snps" :
     {

@@ -4,10 +4,10 @@
 
 rule fastqc:
 	input:
-		"data/raw/fastq/{sample}.fastq.gz"
+		"data/raw/fastq/{sample}_{readgroup}_001.fastq.gz"
 	output:
-		"qc/fastqc/{sample}_fastqc.html",
-		"qc/fastqc/{sample}_fastqc.zip"
+		touch("qc/fastqc/{sample}_{readgroup}_fastqc.html"),
+		touch("qc/fastqc/{sample}_{readgroup}_fastqc.zip")
 	params:
 		"qc/fastqc/"
 	threads: 4
@@ -28,9 +28,9 @@ rule multiqc:
 	input:
 		expand("qc/fastqc/{sample}_fastqc.zip", sample = FASTQ)
 	output:
-		"qc/STJRI01_multiqc.html",
-		"qc/STJRI02_multiqc.html",
-		"qc/STJRI03_multiqc.html"
+		touch("qc/STJRI01_multiqc.html"),
+		touch("qc/STJRI02_multiqc.html"),
+		touch("qc/STJRI03_multiqc.html")
 	params:
 		indir = "qc/fastqc",
 		outdir = "qc/"

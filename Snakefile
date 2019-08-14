@@ -13,24 +13,16 @@
 # new sequence data!
 # parsing of filenames & creation of dictonary from:
 # https://stackoverflow.com/questions/53379629/snakefile-and-wildcard-regex-for-output-file-naming
-FASTQ = glob_wildcards("data/raw/fastq/{fastq}.fastq.gz")
-IDS = [filename.split('_', 1)[0] for filename in FASTQ.fastq]
-# samps = {filename: filename.split('_', 1)[0] for filename in FASTQ.fastq}
-# print(samps)
-
-# need to specify fastq files..
-# solution from https://www.biostars.org/p/296020/
-import glob
-
-def get_fq1(wildcards):
-    return sorted(glob.glob(wildcards.sample + '*_R1_001.fastq.gz'))
-
-def get_fq2(wildcards):
-    return sorted(glob.glob(wildcards.sample + '*_R2_001.fastq.gz'))
+FASTQ = glob_wildcards("data/raw/fastq/{fastq}_R1_001.fastq.gz").fastq
+# IDS = [filename.split('_', 1)[0] for filename in FASTQ.fastq]
+# samps = {filename.split('_', 1)[0]: 'data/raw/fastq/' + filename for filename in FASTQ.fastq}
 
 # get sample names (option 2: manual entries)
 SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 SAMPLES2 = SAMPLES + ['B_rapa']
+
+# all samples
+ALL_SAMPS = SAMPLES + FASTQ
 
 SAMP_MSMC = ['SamC_001']
 # ['SamC_001' + 'SamC_010', 'SamC_030', 'SamC_033', 'SamC_044',
@@ -143,18 +135,18 @@ def model_chooser(WC):
 rule all:
 	input:
 		# SEQUENCE QUALITY
-		fastqc = expand("qc/fastqc/{sample}_fastqc.zip", sample = FASTQ.fastq),
+		# fastqc = expand("qc/fastqc/{sample}_{readgroup}_fastqc.zip", sample = FASTQ, readgroup = ['R1', 'R2']),
 		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
 		# MAPPING
 		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
 		# sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES2),
-		sort_bam2 = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = IDS),
+		sort_bam2 = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = FASTQ),
+		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = FASTQ),
+		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = IDS),
+		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = ALL_SAMPS),
 		joint_geno = expand("data/raw/vcf/{chr}.raw.snps.indels.vcf", chr = chr)
 		# ### FILTERING
-		# bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES2),
-		# multibamqc = "reports/multisampleBamQcReport.html",
 		# # bgzip_vcf = expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr),
 		# merge_vcfs = "data/processed/filtered_snps/merged.vcf.gz",
 		### SMC round 2

@@ -82,6 +82,9 @@ qc/
 data/
 models/
 reports/
+Bo-popgen/data/
+Bo-popgen/models/
+Bo-popgen/reports/
 
 # ignore slurm logs
 slurm_out/

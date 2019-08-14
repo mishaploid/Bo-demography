@@ -27,7 +27,7 @@ rule hap_caller:
 
 rule combine_gvcfs:
 	input:
-		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = ALL_SAMPS)
 	output:
 		directory("data/interim/combined_database/{chr}")
 	params:
