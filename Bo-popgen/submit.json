@@ -1,0 +1,19 @@
+{
+    "__default__" :
+    {
+      "partition" : "med2",
+      "time" : "7-00:00",
+      "name" : "{rule}.{wildcards}",
+      "o" : "slurm_out/{rule}_{wildcards}.%j.out"
+    },
+    "anc_fasta" :
+    {
+      "mem" : "24G",
+      "p" : "med2"
+    },
+    "beaglegl" :
+    {
+      "mem" : "200G",
+      "p" : "med2"
+    }
+}
