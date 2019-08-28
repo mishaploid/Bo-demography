@@ -8,7 +8,7 @@ rule hap_caller:
 		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
 		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
-		"data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf"
+		"/group/jrigrp7/sdturner/gvcf_files/{sample}.raw.snps.indels.g.vcf"
 	params:
 		regions = "data/raw/b_oleracea.interval_list"
 	run:
@@ -27,7 +27,7 @@ rule hap_caller:
 
 rule combine_gvcfs:
 	input:
-		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = ALL_SAMPS)
+		expand("/group/jrigrp7/sdturner/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = TEMP)
 	output:
 		directory("data/interim/combined_database/{chr}")
 	params:
@@ -38,7 +38,7 @@ rule combine_gvcfs:
 		shell("gatk GenomicsDBImport \
 		-V {params.files} \
 		--genomicsdb-workspace-path {output} \
-		--batch-size 50 \
+		--batch-size 100 \
 		--intervals {params.region}")
 
 # joint genotyping to produce VCF (raw SNPs & indels)

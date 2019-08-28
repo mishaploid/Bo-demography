@@ -13,7 +13,7 @@
 # new sequence data!
 # parsing of filenames & creation of dictonary from:
 # https://stackoverflow.com/questions/53379629/snakefile-and-wildcard-regex-for-output-file-naming
-FASTQ = glob_wildcards("data/raw/fastq/{fastq}_R1_001.fastq.gz").fastq
+FASTQ = glob_wildcards("data/raw/sorted_reads/{fastq}.sorted.bam").fastq
 # IDS = [filename.split('_', 1)[0] for filename in FASTQ.fastq]
 # samps = {filename.split('_', 1)[0]: 'data/raw/fastq/' + filename for filename in FASTQ.fastq}
 
@@ -21,8 +21,11 @@ FASTQ = glob_wildcards("data/raw/fastq/{fastq}_R1_001.fastq.gz").fastq
 SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 SAMPLES2 = SAMPLES + ['B_rapa']
 
+TEMP = glob_wildcards("/group/jrigrp7/sdturner/gvcf_files/{temp}.raw.snps.indels.g.vcf").temp
+
 # all samples
-ALL_SAMPS = SAMPLES + FASTQ
+# ALL_SAMPS = SAMPLES + FASTQ
+ALL_SAMPS = SAMPLES + TEMP
 
 SAMP_MSMC = ['SamC_001']
 # ['SamC_001' + 'SamC_010', 'SamC_030', 'SamC_033', 'SamC_044',
@@ -144,7 +147,8 @@ rule all:
 		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = FASTQ),
 		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = ALL_SAMPS),
+		hap_caller = expand("/group/jrigrp7/sdturner/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = TEMP),
+		# hap_caller = expand("/group/jrigrp7/sdturner/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = ALL_SAMPS),
 		joint_geno = expand("data/raw/vcf/{chr}.raw.snps.indels.vcf", chr = chr)
 		# ### FILTERING
 		# # bgzip_vcf = expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr),
@@ -165,7 +169,7 @@ rule all:
 		# msmcin = expand("models/msmc/input/capitata.{chr}.multihetsep.txt", chr = chr)
 
 include: "rules/fastqc.smk"
-include: "rules/mapping.smk"
+# include: "rules/mapping.smk"
 include: "rules/calling.smk"
 # include: "rules/filtering.smk"
 # include: "rules/msmc.smk"
