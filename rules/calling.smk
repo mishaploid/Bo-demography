@@ -1,6 +1,18 @@
-# Step 2: variant discovery!
+################################################################################
+## Rules for variant discovery
+## HaplotypeCaller -> GenomicsDBImport -> GenotypeGVCFs
+################################################################################
 
-# run GATK haplotype caller
+################################################################################
+# Run HaplotypeCaller for each sample
+# calls SNPs and indels via local re-assembly of haplotypes
+# able to call difficult regions
+# -L = params file that specifies regions to call
+# -G = annotations to include
+#		StandardAnnotation
+#		AS_StandardAnnotation (allele specific)
+# --emit-ref-confidence = mode for emitting reference confidence scores (GVCF format here)
+################################################################################
 
 rule hap_caller:
 	input:
@@ -21,9 +33,12 @@ rule hap_caller:
 		-G AS_StandardAnnotation \
 		--emit-ref-confidence GVCF")
 
+################################################################################
 # combine GVCFs with GenomicsDBImport
 # https://software.broadinstitute.org/gatk/documentation/article?id=11813
-# snakemake considerations - https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
+# snakemake considerations:
+# 	https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
+################################################################################
 
 rule combine_gvcfs:
 	input:
@@ -47,6 +62,7 @@ rule combine_gvcfs:
 		--tmp-dir {params.tmp}")
 		shell("rm -rf {params.tmp}")
 
+################################################################################
 # joint genotyping to produce VCF (raw SNPs & indels)
 
 rule joint_geno:

@@ -1,4 +1,7 @@
 # SRA project info file
+# get SRA info for B. oleracea:
+# cat SraRunInfo.csv | grep oleracea > Sra_oleracea.csv
+# sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
 sra_info: data/external/Sra_oleracea.csv
 
 # add paths for locally installed software
