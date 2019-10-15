@@ -1,0 +1,19 @@
+# SRA project info file
+sra_info: data/external/Sra_oleracea.csv
+
+# add paths for locally installed software
+# ngsTools (https://github.com/mfumagalli/ngsTools)
+ngsTools: ../software/ngsTools
+
+# FINESTRUCTURE software (v4)
+# wget https://people.maths.bris.ac.uk/~madjl/finestructure/fs_4.0.1.zip
+# unzip fs_4.0.1.zip
+finestructure: ../bin/fs_4.0.1
+
+snpable: ../software/seqbility-20091110
+
+# BEAGLE 5.0
+beagle: ../software/beagle.11Mar19.69c.jar
+
+# msmc-tools (directory for helper scripts)
+msmc_tools: ../software/msmc-tools

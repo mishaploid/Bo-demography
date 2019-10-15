@@ -7,9 +7,9 @@
 rule get_snps:
 	input:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta",
-		vcf = ancient("data/raw/{chr}.raw.snps.indels.vcf")
+		vcf = "data/raw/vcf/{chr}.raw.snps.indels.vcf"
 	output:
-		"data/raw/{chr}.raw.snps.vcf"
+		"data/raw/vcf/{chr}.raw.snps.vcf"
 	run:
 		shell("gatk SelectVariants \
 		-R {input.ref} \
@@ -24,9 +24,9 @@ rule get_snps:
 rule filter_snps:
 	input:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta",
-		vcf = ancient("data/raw/{chr}.raw.snps.vcf")
+		vcf = ancient("data/raw/vcf/{chr}.raw.snps.vcf")
 	output:
-		"data/processed/{chr}.filtered.snps.vcf"
+		"data/processed/filtered_snps/{chr}.filtered.snps.vcf"
 	run:
 		shell("gatk VariantFiltration \
 		-V {input.vcf} \
@@ -53,7 +53,7 @@ rule combine_vcfs:
 	input:
 		expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr)
 	output:
-		"data/processed/filtered_snps/merged.vcf.gz"
+		"data/processed/filtered_snps/oleracea_combined.vcf.gz"
 	run:
 		shell("bcftools concat {input} -Oz -o {output}")
 

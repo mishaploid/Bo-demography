@@ -26,7 +26,7 @@ rule fastqc:
 
 rule multiqc:
 	input:
-		expand("qc/fastqc/{sample}_fastqc.zip", sample = FASTQ)
+		expand("qc/fastqc/{sample}_fastqc.zip", sample = SAMPLES)
 	output:
 		touch("qc/STJRI01_multiqc.html"),
 		touch("qc/STJRI02_multiqc.html"),
