@@ -20,6 +20,7 @@ rule get_snps:
 # apply filters
 # using base GATK recommendations
 # https://software.broadinstitute.org/gatk/documentation/article?id=23216#2
+# https://software.broadinstitute.org/gatk/documentation/article.php?id=3225
 
 rule filter_snps:
 	input:
@@ -40,20 +41,91 @@ rule filter_snps:
 		--set-filtered-genotype-to-no-call true \
 		-O {output}")
 
+# filtering diagnostics
+# https://evodify.com/gatk-in-non-model-organism/
+
+rule diagnostics:
+	input:
+		vcf = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz",
+		ref = "data/external/ref/Boleracea_chromosomes.fasta"
+	output:
+		# stats = "reports/filtering/gvcf_{chr}.table",
+		filtered = "reports/filtering/gvcf_{chr}.filtered"
+	run:
+		shell("gatk VariantsToTable \
+		-R {input.ref} \
+		-V {input.vcf} \
+		-F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR -F AD \
+		-O {output.filtered}")
+		# shell("gatk VariantsToTable \
+		# -R {input.ref} \
+		# -V {input.vcf} \
+		# -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR -F AD \
+		# -O {output.stats}")
+
+# add maxnocall fraction in sequential filtering step
+rule filter_nocall:
+	input:
+		ref = "data/external/ref/Boleracea_chromosomes.fasta",
+		vcf = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz"
+	output:
+		"data/processed/filtered_snps/{chr}.filtered.nocall.vcf"
+	run:
+		shell("gatk SelectVariants \
+		-V {input.vcf} \
+		--max-nocall-fraction 0 \
+		--exclude-filtered true \
+		--restrict-alleles-to BIALLELIC \
+		-O {output}")
+
+rule filter_depth:
+	input:
+		ref = "data/external/ref/Boleracea_chromosomes.fasta",
+		vcf = "data/processed/filtered_snps/{chr}.filtered.nocall.vcf"
+	output:
+		dp = "data/processed/filtered_snps/{chr}.filtered.dp6_200.snps.vcf",
+		dp2 = "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf"
+	run:
+		shell("gatk VariantFiltration \
+		-V {input.vcf} \
+		-G-filter \"DP < 6 || DP > 200\" \
+		-G-filter-name \"DP_6-200\" \
+		--set-filtered-genotype-to-no-call true \
+		-O {output.dp}")
+		shell("gatk SelectVariants \
+		-V {output.dp} \
+		--max-nocall-fraction 0.1 \
+		--exclude-filtered true \
+		--restrict-alleles-to BIALLELIC \
+		-O {output.dp2}")
+
+rule depth:
+	input:
+		vcf = "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf",
+		ref = "data/external/ref/Boleracea_chromosomes.fasta"
+	output:
+		dp = "reports/filtering/dp_{chr}.filtered.dp6_200"
+	run:
+		shell("gatk VariantsToTable \
+		-R {input.ref} \
+		-V {input.vcf} \
+		-F CHROM -F POS -GF DP \
+		-O {output.dp}")
+
 rule bgzip_vcf:
     input:
-        "data/processed/filtered_snps/{chr}.filtered.snps.vcf"
+        "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf"
     output:
-        "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz"
+        "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz"
     run:
         shell("bgzip {input}")
         shell("tabix -p vcf {output}")
 
 rule combine_vcfs:
 	input:
-		expand("data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz", chr = chr)
+		expand("data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr)
 	output:
-		"data/processed/filtered_snps/oleracea_combined.vcf.gz"
+		"data/processed/filtered_snps/oleracea_filtered.vcf.gz"
 	run:
 		shell("bcftools concat {input} -Oz -o {output}")
 

@@ -7,8 +7,8 @@
 
 rule marginal_vcf2smc:
     input:
-        vcf = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz",
-        index = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz.tbi"
+        vcf = "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz",
+        index = "data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz.tbi"
         # mask = "data/processed/masks/Boleracea_chr{chr}.mask.bed.gz"
     params:
         chrom = "{chr}",
@@ -40,71 +40,71 @@ rule smc_cv:
 	input:
 		smc_chr = lambda wildcards: expand('models/smc/input/{pop}.{chr}.smc.gz', chr = chr, pop = wildcards.pop)
 	output:
-		expand("models/smc/cv_1e3_1e6/{{pop}}/fold{fold}/model.final.json", fold = ['0','1'])
+		expand("models/smc/cv/{{pop}}/fold{fold}/model.final.json", fold = ['0','1'])
 	threads: 16
 	params:
 		model_in = "models/smc/input/{pop}.*",
-		model_out_dir = "models/smc/cv_1e3_1e6/{pop}",
+		model_out_dir = "models/smc/cv/{pop}",
 		mu = 7e-9
 	run:
 		shell("smc++ cv \
         --cores {threads} \
-        --timepoints 1e3 1e6 \
         --spline cubic \
 		-o {params.model_out_dir} {params.mu} {params.model_in}")
+        #         --timepoints 1e3 1e6 \
 
 rule smc_estimate:
 	input:
 		smc_chr = lambda wildcards: expand('models/smc/input/{pop}.{chr}.smc.gz', chr = chr, pop = wildcards.pop)
 	output:
-		"models/smc/estimate_tp/{pop}/model.final.json"
+		"models/smc/estimate/{pop}/model.final.json"
 	threads: 24
 	params:
 		model_in = "models/smc/input/{pop}.*",
-		model_out_dir = "models/smc/estimate_tp/{pop}",
+		model_out_dir = "models/smc/estimate/{pop}",
 		mu = 7e-9
 	run:
 		shell("smc++ estimate \
         --cores {threads} \
-        --timepoints 1e2 1e6 \
         --spline cubic \
 		-o {params.model_out_dir} {params.mu} {params.model_in}")
+#         --timepoints 1e2 1e6 \
 
-# #Generate vcf2smc files containing the joint frequency spectrum for both populations
-rule joint_vcf2smc:
-    input:
-        vcf = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz",
-        index = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz.tbi"
-    output:
-        pop_pair_out = "models/smc/split/{pop_pair}.{chr}.smc.gz"
-    threads: 12
-    params:
-    	chrom = "{chr}",
-        mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz",
-    	pop_pair_string = pair_string_choose
-    shell:
-    	"smc++ vcf2smc \
-        --cores {threads} \
-        -m {params.mask} \
-        {input.vcf} \
-        {output.pop_pair_out} {params.chrom} {params.pop_pair_string}"
-
-rule split:
-    input:
-        expand("models/smc/split/{pop_pair}.{chr}.smc.gz", pop_pair = ['botrytis_italica', 'italica_botrytis'], chr = chr),
-        expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr)
-    threads: 16
-    params:
-        model_out_dir = "models/smc/split/test",
-        marginal_models = model_chooser
-    output:
-        model_out = "models/smc/split/model.final.json"
-    shell:
-        "smc++ split \
-        -o {params.model_out_dir} \
-        --cores {threads} \
-        {params.marginal_models} \
-        {input}"
+# # #Generate vcf2smc files containing the joint frequency spectrum for both populations
+# rule joint_vcf2smc:
+#     input:
+#         vcf = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz",
+#         index = "data/processed/filtered_snps/{chr}.filtered.snps.vcf.gz.tbi"
+#     output:
+#         pop_pair_out = "models/smc/split/{pop_pair}.{chr}.smc.gz"
+#     threads: 12
+#     params:
+#     	chrom = "{chr}",
+#         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz",
+#     	pop_pair_string = pair_string_choose
+#     shell:
+#     	"smc++ vcf2smc \
+#         --cores {threads} \
+#         -m {params.mask} \
+#         {input.vcf} \
+#         {output.pop_pair_out} {params.chrom} {params.pop_pair_string}"
+#
+# rule split:
+#     input:
+#         expand("models/smc/split/{pop_pair}.{chr}.smc.gz", pop_pair = ['botrytis_italica', 'italica_botrytis'], chr = chr),
+#         expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr)
+#     threads: 16
+#     params:
+#         model_out_dir = "models/smc/split/test",
+#         marginal_models = model_chooser
+#     output:
+#         model_out = "models/smc/split/model.final.json"
+#     shell:
+#         "smc++ split \
+#         -o {params.model_out_dir} \
+#         --cores {threads} \
+#         {params.marginal_models} \
+#         {input}"
 
 
 # rule smc_cv_time:

@@ -1,7 +1,7 @@
 {
     "__default__" :
     {
-      "partition" : "med2",
+      "p" : "med2",
       "time" : "14-00:00",
       "name" : "{rule}.{wildcards}",
       "o" : "slurm_out/{rule}_{wildcards}.%j.out"
@@ -81,6 +81,16 @@
       "mem" : "100G",
       "p" : "bigmemm"
     },
+    "filter_nocall" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filter_depth" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
     "bgzip_vcf" :
     {
       "mem" : "8G",
@@ -91,6 +101,16 @@
       "mem" : "10G",
       "p" : "med2"
     },
+    "diagnostics" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "depth" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
     "make_mask" :
     {
       "mem" : "60G",
@@ -99,7 +119,7 @@
     "admix_input" :
     {
       "mem" : "60G",
-      "p" : "med2"
+      "p" : "bigmemm"
     },
     "admixture" :
     {
@@ -119,7 +139,7 @@
     "smc_cv" :
     {
       "mem" : "128G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "plot_estimate" :
     {
