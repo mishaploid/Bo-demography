@@ -20,3 +20,6 @@ beagle: ../software/beagle.11Mar19.69c.jar
 
 # msmc-tools (directory for helper scripts)
 msmc_tools: ../software/msmc-tools
+
+# RAiSD 2.0
+raisd: ../software/RAiSD

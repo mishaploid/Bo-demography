@@ -11,7 +11,8 @@
 # -G = annotations to include
 #		StandardAnnotation
 #		AS_StandardAnnotation (allele specific)
-# --emit-ref-confidence = mode for emitting reference confidence scores (GVCF format here)
+# --emit-ref-confidence = mode for emitting reference confidence scores (BP resolution chosen here)
+# 		see details: https://software.broadinstitute.org/gatk/documentation/article.php?id=4017
 ################################################################################
 
 rule hap_caller:
@@ -20,7 +21,7 @@ rule hap_caller:
 		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
 		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
-		"data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf"
+		"data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf"
 	params:
 		regions = "data/raw/b_oleracea.interval_list"
 	run:
@@ -31,7 +32,7 @@ rule hap_caller:
 		-L {params.regions} \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
-		--emit-ref-confidence GVCF")
+		--emit-ref-confidence BP_RESOLUTION")
 
 ################################################################################
 # combine GVCFs with GenomicsDBImport
@@ -42,12 +43,12 @@ rule hap_caller:
 
 rule combine_gvcfs:
 	input:
-		expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
-		directory("data/interim/combined_database/{chr}")
+		directory("data/interim/combined_database_bpres/{chr}")
 	params:
 		files = lambda wildcards, input: " -V ".join(input),
-		dir = "data/interim/combined_database/{chr}",
+		dir = "data/interim/combined_database_bpres/{chr}",
 		region = "{chr}",
 		tmp = "/scratch/sdturner/genomicsdbimport/{chr}"
 	threads: 25
@@ -67,12 +68,12 @@ rule combine_gvcfs:
 
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database/{chr}"),
+		dir = directory("data/interim/combined_database_bpres/{chr}"),
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
-		"data/raw/vcf/{chr}.raw.snps.indels.vcf"
+		"data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database/{chr}"
+		db = "gendb://data/interim/combined_database_bpres/{chr}"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \

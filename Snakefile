@@ -108,19 +108,20 @@ rule all:
 		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
 		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		hap_caller = expand("data/interim/gvcf_files/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		joint_geno = expand("data/raw/vcf/{chr}.raw.snps.indels.vcf", chr = chr),
+		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr),
 		# FILTERING
-		bgzip_vcf = expand("data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
-		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
-		filter_nocall = expand("data/processed/filtered_snps/{chr}.filtered.nocall.vcf", chr = chr),
-		diagnostics2 = expand("reports/filtering/gvcf_{chr}.filtered", chr = chr),
-		merge_vcfs = "data/processed/filtered_snps/oleracea_filtered.vcf.gz",
-		vcf2smc = expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr),
-		cv = expand("models/smc/cv/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1']),
-		estimate = expand("models/smc/estimate/{pop}/model.final.json", pop = pops),
-		admix_input = "models/admixture/combined.pruned.bed",
-		admixture = expand("models/admixture/combined.pruned.{k}.Q", k = range(0, 15))
+		filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
+		bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
+		diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
+		filter_nocall = expand("data/processed/filtered_snps_bpres/{chr}.filtered.nocall.vcf", chr = chr),
+		diagnostics2 = expand("reports/filtering_bpres/gvcf_{chr}.filtered", chr = chr),
+		merge_vcfs = "data/processed/filtered_snps_bpres/oleracea_filtered.vcf.gz"
+		# vcf2smc = expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr),
+		# cv = expand("models/smc/cv/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1']),
+		# estimate = expand("models/smc/estimate/{pop}/model.final.json", pop = pops),
+		# admix_input = "models/admixture/combined.pruned.bed",
+		# admixture = expand("models/admixture/combined.pruned.{k}.Q", k = range(0, 15))
 		# depth = expand("reports/filtering/dp_{chr}.filtered.dp6_200", chr = chr),
 		# filter_depth = expand("data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf", chr = chr)
 
@@ -133,10 +134,10 @@ include: "rules/fastqc.smk"
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
 include: "rules/filtering.smk"
+# include: "rules/admixture.smk"
+# include: "rules/smc.smk"
 # include: "rules/msmc.smk"
 # include: "rules/phasing.smk"
-include: "rules/smc.smk"
-include: "rules/admixture.smk"
 # include: "rules/demography.smk"
 # include: "rules/admixture.smk"
 # include: "rules/angsd.smk"
@@ -165,35 +166,6 @@ include: "rules/admixture.smk"
 # msmcin = expand("models/msmc/input/capitata.{chr}.multihetsep.txt", chr = chr)
 
 
-
-
-# capitata = ','.join(['SamC_' + str(x).rjust(3, '0') for x in range(1,46)])
-# gongylodes = ','.join(['SamC_' + str(x).rjust(3, '0') for x in range(46,65)])
-# italica = ','.join(['SamC_' + str(x).rjust(3, '0') for x in range(85,108)])
-# botrytis = ','.join(['SamC_' + str(x).rjust(3, '0') for x in range(65,85)])
-# alboglabra = ','.join(['SamC_108', 'SamC_109', 'SamC_110', 'SamC_111'])
-# gemmifera = ','.join(['SamC_112', 'SamC_113'])
-# acephala = ','.join(['SamC_114', 'SamC_115'])
-# sabellica = ','.join(['SamC_116', 'SamC_117'])
-# wild = ','.join(['SamC_118', 'SamC_119'])
-#
-# pops = ['capitata', 'gongylodes', 'italica', 'botrytis', 'alboglabra', 'gemmifera', 'acephala', 'sabellica', 'wild']
-#
-# # pop_pair = ['botrytis_italica', 'italica_botrytis']
-#
-# # dictionary of population and corresponding samples
-# popdict = {
-# 'capitata':'capitata:' + capitata,
-# 'gongylodes':'gongylodes:' + gongylodes,
-# 'italica':'italica:' + italica,
-# 'botrytis':'botrytis:' + botrytis,
-# 'alboglabra' : 'alboglabra:' + alboglabra,
-# 'gemmifera' : 'gemmifera:' + gemmifera,
-# 'acephala' : 'acephala:' + acephala,
-# 'sabellica' : 'sabellica:' + sabellica,
-# 'wild' : 'wild:' + wild,
-# }
-#
 # # dictionary of population pairs to estimate divergence
 # pop_pair_dict = {'botrytis_italica':['botrytis', 'italica'],
 # 'italica_botrytis':['italica', 'botrytis'],
