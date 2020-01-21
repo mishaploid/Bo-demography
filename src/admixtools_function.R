@@ -47,25 +47,34 @@ pops2 <- c("alboglabra", "botrytis", "capitata", "sabauda", "costata",
           "gemmifera", "gongylodes", "italica", "oleracea",
           "medullosa", "ramosa", "viridis")
 
+pops <- c("palmifolia", "sabellica", "medullosa", "ramosa", "costata",
+          "botrytis", "sabauda", "italica", "gongylodes", "alboglabra", "capitata")
+
 # calculate D statistics (ABBA-BABA)
 
-D_result1 <- d(W = pops,
-            X = "capitata",
-            Y = "palmifolia",
+D_result1 <- d(W = "viridis",
+            X = "gemmifera",
+            Y = pops,
             Z = "Brassica_rupestris",
             data = snps)
 
-D_result2 <- d(W = pops2,
-            X = "sabellica",
-            Y = "palmifolia",
-            Z = "Brassica_rupestris",
-            data = snps)
-
-D_result3 <- d(W = pops2,
-            X = "palmifolia",
-            Y = "sabellica",
-            Z = "Brassica_rupestris",
-            data = snps)
+# D_result1 <- d(W = pops,
+#             X = "capitata",
+#             Y = "palmifolia",
+#             Z = "Brassica_rupestris",
+#             data = snps)
+#
+# D_result2 <- d(W = pops2,
+#             X = "sabellica",
+#             Y = "palmifolia",
+#             Z = "Brassica_rupestris",
+#             data = snps)
+#
+# D_result3 <- d(W = pops2,
+#             X = "palmifolia",
+#             Y = "sabellica",
+#             Z = "Brassica_rupestris",
+#             data = snps)
 
 # D_result2 <- d(W = pops,
 #             X = "gongylodes",
@@ -73,39 +82,39 @@ D_result3 <- d(W = pops2,
 #             Z = "Brassica_rupestris",
 #             data = snps)
 
-write.csv(D_result1, "results/capitata_palmifolia.csv")
-write.csv(D_result2, "results/sabellica_palmifolia.csv")
-write.csv(D_result3, "results/palmifolia_sabellica.csv")
+write.csv(D_result1, "results/viridis_gemmifera.csv")
+# write.csv(D_result2, "results/sabellica_palmifolia.csv")
+# write.csv(D_result3, "results/palmifolia_sabellica.csv")
 
 
 # D_result
 
-Dplot1 <- ggplot(D_result1, aes(fct_reorder(W, D), D, color = abs(Zscore) > 2)) +
+Dplot1 <- ggplot(D_result1, aes(fct_reorder(Y, D), D, color = abs(Zscore) > 2)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = 2) +
   geom_errorbar(aes(ymin = D - 2 * stderr, ymax = D + 2 * stderr)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
   xlab("Population")
 
-ggsave("results/capitata_palmifolia.png", height = 4, width = 6)
+ggsave("results/viridis_gemmifera.png", height = 4, width = 6)
 
-Dplot2 <- ggplot(D_result2, aes(fct_reorder(W, D), D, color = abs(Zscore) > 2)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_errorbar(aes(ymin = D - 2 * stderr, ymax = D + 2 * stderr)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
-  xlab("Population")
-
-ggsave("results/sabellica_palmifolia.png", height = 4, width = 6)
-
-Dplot2 <- ggplot(D_result3, aes(fct_reorder(W, D), D, color = abs(Zscore) > 2)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_errorbar(aes(ymin = D - 2 * stderr, ymax = D + 2 * stderr)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
-  xlab("Population")
-
-ggsave("results/palmifolia_sabellica.png", height = 4, width = 6)
+# Dplot2 <- ggplot(D_result2, aes(fct_reorder(W, D), D, color = abs(Zscore) > 2)) +
+#   geom_point() +
+#   geom_hline(yintercept = 0, linetype = 2) +
+#   geom_errorbar(aes(ymin = D - 2 * stderr, ymax = D + 2 * stderr)) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+#   xlab("Population")
+#
+# ggsave("results/sabellica_palmifolia.png", height = 4, width = 6)
+#
+# Dplot2 <- ggplot(D_result3, aes(fct_reorder(W, D), D, color = abs(Zscore) > 2)) +
+#   geom_point() +
+#   geom_hline(yintercept = 0, linetype = 2) +
+#   geom_errorbar(aes(ymin = D - 2 * stderr, ymax = D + 2 * stderr)) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+#   xlab("Population")
+#
+# ggsave("results/palmifolia_sabellica.png", height = 4, width = 6)
 
 # f4 statistics
 # departure from 0 indicates evidence of gene flow

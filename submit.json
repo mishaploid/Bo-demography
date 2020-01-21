@@ -58,12 +58,12 @@
     },
     "hap_caller" :
     {
-      "mem" : "200G",
+      "mem" : "180G",
       "p" : "med2"
     },
     "combine_gvcfs" :
     {
-      "mem" : "200G",
+      "mem" : "180G",
       "p" : "bigmemm"
     },
     "joint_geno" :

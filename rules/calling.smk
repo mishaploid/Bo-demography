@@ -51,15 +51,13 @@ rule combine_gvcfs:
 		dir = "data/interim/combined_database_bpres/{chr}",
 		region = "{chr}",
 		tmp = "/scratch/sdturner/genomicsdbimport/{chr}"
-	threads: 25
 	run:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk GenomicsDBImport \
 		-V {params.files} \
 		--genomicsdb-workspace-path {output} \
-		--batch-size 10 \
+		--batch-size 50 \
 		--intervals {params.region} \
-		--reader-threads {threads} \
 		--tmp-dir {params.tmp}")
 		shell("rm -rf {params.tmp}")
 

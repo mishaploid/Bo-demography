@@ -16,7 +16,7 @@ module load qualimap/2.1.1
 module load plink/1.90
 module load angsd
 
-snakemake --jobs 120 --use-conda \
+snakemake --jobs 200 --use-conda \
 --rerun-incomplete \
 --latency-wait 60 \
 --cluster-config submit.json \

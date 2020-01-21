@@ -109,14 +109,14 @@ rule all:
 		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
 		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr),
+		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
 		# FILTERING
-		filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
-		bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
-		diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
-		filter_nocall = expand("data/processed/filtered_snps_bpres/{chr}.filtered.nocall.vcf", chr = chr),
-		diagnostics2 = expand("reports/filtering_bpres/gvcf_{chr}.filtered", chr = chr),
-		merge_vcfs = "data/processed/filtered_snps_bpres/oleracea_filtered.vcf.gz"
+		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
+		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
+		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
+		# filter_nocall = expand("data/processed/filtered_snps_bpres/{chr}.filtered.nocall.vcf", chr = chr),
+		# diagnostics2 = expand("reports/filtering_bpres/gvcf_{chr}.filtered", chr = chr),
+		# merge_vcfs = "data/processed/filtered_snps_bpres/oleracea_filtered.vcf.gz"
 		# vcf2smc = expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr),
 		# cv = expand("models/smc/cv/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1']),
 		# estimate = expand("models/smc/estimate/{pop}/model.final.json", pop = pops),
@@ -133,7 +133,7 @@ rule all:
 include: "rules/fastqc.smk"
 include: "rules/mapping.smk"
 include: "rules/calling.smk"
-include: "rules/filtering.smk"
+# include: "rules/filtering.smk"
 # include: "rules/admixture.smk"
 # include: "rules/smc.smk"
 # include: "rules/msmc.smk"
