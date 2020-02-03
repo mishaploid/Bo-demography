@@ -53,7 +53,7 @@ rule fastq2bam:
         SRR = lambda wildcards: sample_dict[wildcards.sample],
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
     wildcard_constraints:
-        sample = "!Bo*"
+        sample = "!Bo.*"
     threads: 24
     run:
         print({params.sample}, {params.SRR})
@@ -106,7 +106,7 @@ rule bwa_mem:
         tmp = "/scratch/sdturner/map_reads/{sample}",
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
     wildcard_constraints:
-        sample = "Bo_*"
+        sample = "Bo_.*"
     run:
         shell("mkdir -p {params.tmp}")
         shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
