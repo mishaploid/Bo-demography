@@ -53,9 +53,13 @@ sample_dict.update({'B_rapa':'SRR7881031',
                     'B_cretica_D':'SRR9331106'})
 
 # remove completed samples from SRA dictionary
-[sample_dict.pop(key) for key in SAMPLES_BAM]
-
 SAMPLES_SRA = [*sample_dict] # unpack keys
+
+for i in SAMPLES_BAM:
+	try:
+		SAMPLES_SRA.remove(i)
+	except ValueError:
+		pass
 
 # combine sample names
 SAMPLES = SAMPLES_BAM + SAMPLES_SRA
