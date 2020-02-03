@@ -24,7 +24,7 @@
     "fastq2bam" :
     {
       "mem" : "64G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "bwa_mem" :
     {
