@@ -50,36 +50,77 @@ rule fastq2bam:
     params:
         tmp = "/scratch/sdturner/map_reads/{sample}",
         sample = "{sample}",
-        SRR = lambda wildcards: sample_dict[wildcards.sample],
+        SRR = if {wildcards.sample} in SAMPLES_SRA:
+                lambda wildcards: sample_dict[wildcards.sample],
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
     threads: 24
     run:
-        if {wildcards.sample} in SAMPLES_SRA:
-            print({params.sample}, {params.SRR})
-            shell("mkdir -p {params.tmp}")
-            shell("fasterq-dump \
-            {params.SRR} \
-            -O {params.tmp} \
-            -o {params.sample} \
-            -t {params.tmp} \
-            -e {threads} \
-            -p")
-            shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
-            {params.stem}_1.fastq {params.stem}_2.fastq \
-            {params.stem}.forward.1.fastq \
-            {params.stem}.unpaired.1.fastq \
-            {params.stem}.reverse.2.fastq \
-            {params.stem}.unpaired.2.fastq \
-            LEADING:3 \
-    		  TRAILING:3 \
-    		  SLIDINGWINDOW:4:15 \
-    		  MINLEN:36")
-            shell("(bwa mem -t {threads} \
-            {input.ref} \
-            {params.stem}.forward.1.fastq \
-            {params.stem}.reverse.2.fastq | \
-            samtools view -Sb > {output})")
-            shell("rm -rf {params.tmp}")
+        print({params.sample}, {params.SRR})
+        shell("mkdir -p {params.tmp}")
+        shell("fasterq-dump \
+        {params.SRR} \
+        -O {params.tmp} \
+        -o {params.sample} \
+        -t {params.tmp} \
+        -e {threads} \
+        -p")
+        shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
+        {params.stem}_1.fastq {params.stem}_2.fastq \
+        {params.stem}.forward.1.fastq \
+        {params.stem}.unpaired.1.fastq \
+        {params.stem}.reverse.2.fastq \
+        {params.stem}.unpaired.2.fastq \
+        LEADING:3 \
+		  TRAILING:3 \
+		  SLIDINGWINDOW:4:15 \
+		  MINLEN:36")
+        shell("(bwa mem -t {threads} \
+        {input.ref} \
+        {params.stem}.forward.1.fastq \
+        {params.stem}.reverse.2.fastq | \
+        samtools view -Sb > {output})")
+        shell("rm -rf {params.tmp}")
+
+
+# rule fastq2bam:
+#     input:
+#         samp_ids = "data/external/Sra_oleracea.csv",
+#         ref = "data/external/ref/Boleracea_chromosomes.fasta"
+#     output:
+#         temp(touch("data/interim/mapped_reads/{sample}.bam"))
+#     params:
+#         tmp = "/scratch/sdturner/map_reads/{sample}",
+#         sample = "{sample}",
+#         SRR = lambda wildcards: sample_dict[wildcards.sample],
+#         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
+#     threads: 24
+#     run:
+#         if {wildcards.sample} in SAMPLES_SRA:
+#             print({params.sample}, {params.SRR})
+#             shell("mkdir -p {params.tmp}")
+#             shell("fasterq-dump \
+#             {params.SRR} \
+#             -O {params.tmp} \
+#             -o {params.sample} \
+#             -t {params.tmp} \
+#             -e {threads} \
+#             -p")
+#             shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
+#             {params.stem}_1.fastq {params.stem}_2.fastq \
+#             {params.stem}.forward.1.fastq \
+#             {params.stem}.unpaired.1.fastq \
+#             {params.stem}.reverse.2.fastq \
+#             {params.stem}.unpaired.2.fastq \
+#             LEADING:3 \
+#     		  TRAILING:3 \
+#     		  SLIDINGWINDOW:4:15 \
+#     		  MINLEN:36")
+#             shell("(bwa mem -t {threads} \
+#             {input.ref} \
+#             {params.stem}.forward.1.fastq \
+#             {params.stem}.reverse.2.fastq | \
+#             samtools view -Sb > {output})")
+#             shell("rm -rf {params.tmp}")
 
 ################################################################################
 # OPTION 2: FASTQ files stored locally
