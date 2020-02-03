@@ -25,13 +25,13 @@ configfile: "config.yaml"
 
 # Option 2: use names from sorted bams
 # useful if you don't want to store fastq locally
-SAMPLES = glob_wildcards("data/raw/sorted_reads/{sample}.sorted.bam").sample
+SAMPLES_BAM = glob_wildcards("data/raw/sorted_reads/{sample}.sorted.bam").sample
 
 # Option 3: manual entry of file names
 # SAMPLES = ['SamC_' + str(x).rjust(3, '0') for x in range(1,120)]
 
 # remove Brassica rapa for now
-SAMPLES.remove('B_rapa')
+SAMPLES_BAM.remove('B_rapa')
 
 ################################################################################
 ## Dictionary of SRA identifiers for each sample
@@ -45,7 +45,19 @@ with open(config['sra_info'], mode = 'r') as infile:
 	sample_dict = {rows[29]:rows[0] for rows in reader}
 
 # add Brassica rapa reference (Chiifu) short reads
-sample_dict.update({'B_rapa':'SRR7881031'})
+# add additional Brassica cretica sequences from SRA
+sample_dict.update({'B_rapa':'SRR7881031',
+                    'B_cretica_A':'SRR9331103',
+                    'B_cretica_B':'SRR9331104',
+                    'B_cretica_C':'SRR9331105',
+                    'B_cretica_D':'SRR9331106'})
+
+# remove completed samples from SRA dictionary
+[sample_dict.pop(key) for key in SAMPLES]
+SAMPLES_SRA = [*sample_dict] # unpack keys
+
+# combine sample names
+SAMPLES = SAMPLES_BAM + SAMPLES_SRA
 
 ################################################################################
 ## List of chromosome names
@@ -104,13 +116,15 @@ rule all:
 		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
 		# MAPPING
 		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
-		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
-		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
-		multibamqc = "reports/multisampleBamQcReport.html",
+		fastq2bam = expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES_SRA),
+		bwa_mem = expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES_BAM),
+		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES)
+		# bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
+		# multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
-		# FILTERING
+		# hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		# joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
+		### # FILTERING
 		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
 		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
 		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
