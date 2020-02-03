@@ -89,6 +89,15 @@ rule get_ref:
 # align with bwa-mem
 ################################################################################
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+# TODO: add readgroup information at this step using tip from Michelle:
+# bwa mem -R $(echo "@RG\tID:${LANE}_${SAMPLE}\tSM:$SAMPLE\tLB:${SAMPLE}.1\tPL:ILLUMINA") -a $B73FA $R1 $R2
+
+=======
+>>>>>>> 21621b94737529e1094e2af8f5843862e5d0313c
+=======
+>>>>>>> 21621b94737529e1094e2af8f5843862e5d0313c
 rule bwa_mem:
     input:
         fastq1 = "data/raw/fastq/{sample}_R1_001.fastq.gz",
@@ -112,7 +121,20 @@ rule bwa_mem:
 		TRAILING:3 \
 		SLIDINGWINDOW:4:15 \
 		MINLEN:36")
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+        shell("(bwa mem \
+        -t {threads} \
+=======
         shell("(bwa mem -t {threads} \
+>>>>>>> 21621b94737529e1094e2af8f5843862e5d0313c
+=======
+        shell("(bwa mem -t {threads} \
+>>>>>>> 21621b94737529e1094e2af8f5843862e5d0313c
+=======
+        shell("(bwa mem -t {threads} \
+>>>>>>> 21621b94737529e1094e2af8f5843862e5d0313c
         {input.ref} \
         {params.stem}.forward.1.fastq \
         {params.stem}.reverse.2.fastq | \

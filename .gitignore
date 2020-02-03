@@ -102,3 +102,6 @@ scratch/
 
 # Mypy cache
 .mypy_cache/
+
+# other
+.ftpconfig
