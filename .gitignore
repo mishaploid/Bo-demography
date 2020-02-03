@@ -82,6 +82,7 @@ qc/
 data/
 models/
 reports/
+notebooks/
 Bo-popgen/data/
 Bo-popgen/models/
 Bo-popgen/reports/
