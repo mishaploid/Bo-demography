@@ -105,6 +105,8 @@ rule bwa_mem:
     params:
         tmp = "/scratch/sdturner/map_reads/{sample}",
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
+    wildcard_constraints:
+        pattern = "!cretica"
     run:
         shell("mkdir -p {params.tmp}")
         shell("java -jar /share/apps/Trimmomatic-0.36/trimmomatic.jar PE \
