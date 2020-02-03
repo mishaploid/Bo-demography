@@ -46,12 +46,14 @@ rule fastq2bam:
         samp_ids = "data/external/Sra_oleracea.csv",
         ref = "data/external/ref/Boleracea_chromosomes.fasta"
     output:
-        temp(touch("data/interim/mapped_reads_sra/{sample}.bam"))
+        temp(touch("data/interim/mapped_reads/{sample}.bam"))
     params:
         tmp = "/scratch/sdturner/map_reads/{sample}",
         sample = "{sample}",
         SRR = lambda wildcards: sample_dict[wildcards.sample],
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
+    wildcard_constraints:
+        sample = "cretica"
     threads: 24
     run:
         print({params.sample}, {params.SRR})
@@ -131,7 +133,7 @@ rule bwa_mem:
 
 rule sort_bam:
     input:
-        "data/interim/mapped_reads/{sample}.bam" if {wildcards.sample} in SAMPLES_BAM else "data/interim/mapped_reads_sra/{sample.bam}"
+        "data/interim/mapped_reads/{sample}.bam"
     output:
     	"data/raw/sorted_reads/{sample}.sorted.bam"
     params:

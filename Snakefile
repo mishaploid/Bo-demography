@@ -126,7 +126,7 @@ rule all:
 		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
 		# MAPPING
 		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
-		fastq2bam = expand("data/interim/mapped_reads_sra/{sample}.bam", sample = SAMPLES_SRA),
+		fastq2bam = expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES_SRA),
 		bwa_mem = expand("data/interim/mapped_reads/{sample}.bam", sample = SAMPLES_BAM),
 		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES)
 		# bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
