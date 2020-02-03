@@ -1,6 +1,6 @@
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - r
   - defaults
 dependencies:
@@ -12,3 +12,6 @@ dependencies:
   - snakemake=5.4.2
   - pyyaml=3.11
   - admixture=1.3.0
+  - snakemake=5.4.2
+  - pip:
+    - numpy==1.15.4
