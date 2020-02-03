@@ -61,6 +61,8 @@ for i in SAMPLES_BAM:
 	except ValueError:
 		pass
 
+print(SAMPLES_SRA)
+
 # combine sample names
 SAMPLES = SAMPLES_BAM + SAMPLES_SRA
 
