@@ -53,7 +53,7 @@ rule fastq2bam:
         SRR = lambda wildcards: sample_dict[wildcards.sample],
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
     wildcard_constraints:
-        sample = "!^Bo_"
+        sample = "^B_cretica|^SamC"
     threads: 24
     run:
         print({params.sample}, {params.SRR})
