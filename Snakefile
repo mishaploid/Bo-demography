@@ -54,6 +54,7 @@ sample_dict.update({'B_rapa':'SRR7881031',
 
 # remove completed samples from SRA dictionary
 SAMPLES_SRA = [*sample_dict] # unpack keys
+SAMPLES_SRA.remove('SampleName')
 
 for i in SAMPLES_BAM:
 	try:
