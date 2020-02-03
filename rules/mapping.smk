@@ -54,7 +54,7 @@ rule fastq2bam:
         stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
     threads: 24
     run:
-        if {params.sample} in SAMPLES_SRA:
+        if {wildcards.sample} in SAMPLES_SRA:
             print({params.sample}, {params.SRR})
             shell("mkdir -p {params.tmp}")
             shell("fasterq-dump \
