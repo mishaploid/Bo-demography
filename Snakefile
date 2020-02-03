@@ -112,6 +112,9 @@ def pop_choose(WC):
 	list = pops[WC.pop]
 	return list
 
+## set rule order for fastq2bam and bwa_mem
+ruleorder: bwa_mem > fastq2bam
+
 ################################################################################
 ##  a pseudo-rule that collects the target files (expected outputs)
 ################################################################################
