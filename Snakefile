@@ -127,11 +127,11 @@ rule all:
 		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
 		# MAPPING
 		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
-		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES)
-		# bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
-		# multibamqc = "reports/multisampleBamQcReport.html",
+		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
+		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
+		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		# hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 		# joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
 		### # FILTERING
 		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
