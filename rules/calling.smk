@@ -44,10 +44,11 @@ rule split_intervals:
 	input:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
-		expand("data/processed/scattered_intervals/")
+		expand("data/processed/scattered_intervals/{count}-scattered.intervals",
+		intervals = INTERVALS)
 	params:
 		regions = "data/raw/b_oleracea.interval_list",
-		count = 200,
+		count = len(INTERVALS),
 		outdir = "data/processed/scattered_intervals"
 	run:
 		shell("gatk SplitIntervals \

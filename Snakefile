@@ -76,6 +76,13 @@ SAMPLES.remove('B_rapa')
 chr = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
 
 ################################################################################
+## Number of intervals for GATK
+## set to 200 intervals
+################################################################################
+
+INTERVALS = ["{:03d}".format(x) for x in list(range(200))]
+
+################################################################################
 ## dictionaries for SMC++
 # create all of the dictionaries
 # sample ids for each population
