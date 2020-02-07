@@ -67,6 +67,8 @@ print(SAMPLES_SRA)
 # combine sample names
 SAMPLES = SAMPLES_BAM + SAMPLES_SRA
 
+SAMPLES.remove('B_rapa')
+
 ################################################################################
 ## List of chromosome names
 ################################################################################

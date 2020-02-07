@@ -35,6 +35,28 @@ rule hap_caller:
 		--emit-ref-confidence BP_RESOLUTION")
 
 ################################################################################
+# scatter reference into intervals using SplitIntervals
+# https://gatk.broadinstitute.org/hc/en-us/articles/360036348372-SplitIntervals
+# ``--scatter-count n` splits reference into n intervals
+################################################################################
+
+rule split_intervals:
+	input:
+		ref = "data/external/ref/Boleracea_chromosomes.fasta"
+	output:
+		expand("data/processed/scattered_intervals/")
+	params:
+		regions = "data/raw/b_oleracea.interval_list",
+		count = 200,
+		outdir = "data/processed/scattered_intervals"
+	run:
+		shell("gatk SplitIntervals \
+		-R {input.ref} \
+		-L {params.regions} \
+		--scatter-count {params.count} \
+		-O {params.outdir}")
+
+################################################################################
 # combine GVCFs with GenomicsDBImport
 # https://software.broadinstitute.org/gatk/documentation/article?id=11813
 # snakemake considerations:
@@ -79,4 +101,5 @@ rule joint_geno:
 		-new-qual \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
+		--include-non-variant-sites \
 		-O {output}")

@@ -43,7 +43,7 @@ rule get_ref:
 
 rule fastq2bam:
     input:
-        samp_ids = "data/external/Sra_oleracea.csv",
+        samp_ids = config['sra_info'],
         ref = "data/external/ref/Boleracea_chromosomes.fasta"
     output:
         temp(touch("data/interim/mapped_reads/{sample}.bam"))
