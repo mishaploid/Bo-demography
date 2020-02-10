@@ -61,14 +61,19 @@
       "mem" : "180G",
       "p" : "med2"
     },
+    "split_intervals" :
+    {
+      "mem" : "1G",
+      "p" : "med2"
+    },
     "combine_gvcfs" :
     {
-      "mem" : "240G",
+      "mem" : "80G",
       "p" : "bigmemm"
     },
     "joint_geno" :
     {
-      "mem" : "100G",
+      "mem" : "80G",
       "p" : "med2"
     },
     "get_snps" :
