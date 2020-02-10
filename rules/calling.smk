@@ -45,7 +45,7 @@ rule split_intervals:
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
 		expand("data/processed/scattered_intervals/{count}-scattered.intervals",
-		intervals = INTERVALS)
+		count = INTERVALS)
 	params:
 		regions = "data/raw/b_oleracea.interval_list",
 		count = len(INTERVALS),
