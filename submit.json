@@ -63,7 +63,7 @@
     },
     "split_intervals" :
     {
-      "mem" : "1G",
+      "mem" : "8G",
       "p" : "med2"
     },
     "combine_gvcfs" :
