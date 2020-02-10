@@ -68,12 +68,11 @@ rule combine_gvcfs:
 	input:
 		expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
-		directory("data/interim/combined_database_bpres/{count}-scattered")
+		directory("data/interim/combined_database_bpres/{count}")
 	params:
 		files = lambda wildcards, input: " -V ".join(input),
-		dir = "data/interim/combined_database_bpres/{chr}",
 		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
-		tmp = "/scratch/sdturner/genomicsdbimport/{chr}"
+		tmp = "/scratch/sdturner/genomicsdbimport/{count}"
 	run:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk GenomicsDBImport \
