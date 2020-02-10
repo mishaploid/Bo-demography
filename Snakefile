@@ -7,6 +7,7 @@
 
 import csv
 import os
+import pandas as pd
 
 configfile: "config.yaml"
 
@@ -89,7 +90,6 @@ INTERVALS = ["{:03d}".format(x) for x in list(range(200))]
 # https://stackoverflow.com/questions/18695605/python-pandas-dataframe-to-dictionary
 ################################################################################
 # read in list of sample/morphotype ids
-import pandas as pd
 df = pd.read_csv('models/smc/population_ids.txt', sep=" ")
 
 # create python dictionary for each morphotype
@@ -140,8 +140,10 @@ rule all:
 		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
 		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
-		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
-		# joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
+		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		split_intervals = expand("data/processed/scattered_intervals/{count}-scattered.intervals",
+		intervals = INTERVALS),
+		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
 		### # FILTERING
 		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
 		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
