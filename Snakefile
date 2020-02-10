@@ -142,8 +142,8 @@ rule all:
 		# CALLING
 		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		split_intervals = expand("data/processed/scattered_intervals/{count}-scattered.intervals",
-		intervals = INTERVALS),
-		joint_geno = expand("data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf", chr = chr)
+		count = INTERVALS),
+		joint_geno = expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS)
 		### # FILTERING
 		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
 		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),

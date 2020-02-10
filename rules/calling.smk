@@ -68,11 +68,11 @@ rule combine_gvcfs:
 	input:
 		expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
 	output:
-		directory("data/interim/combined_database_bpres/{chr}")
+		directory("data/interim/combined_database_bpres/{count}-scattered")
 	params:
 		files = lambda wildcards, input: " -V ".join(input),
 		dir = "data/interim/combined_database_bpres/{chr}",
-		region = "{chr}",
+		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
 		tmp = "/scratch/sdturner/genomicsdbimport/{chr}"
 	run:
 		shell("mkdir -p {params.tmp}")
@@ -89,12 +89,12 @@ rule combine_gvcfs:
 
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database_bpres/{chr}"),
+		dir = directory("data/interim/combined_database_bpres/{count}-scattered"),
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
-		"data/raw/vcf_bpres/{chr}.raw.snps.indels.vcf"
+		"data/raw/vcf_bpres/{count}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database_bpres/{chr}"
+		db = "gendb://data/interim/combined_database_bpres/{count}-scattered"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \
