@@ -2,7 +2,7 @@
 # https://software.broadinstitute.org/gatk/documentation/article.php?id=2806
 # Note: Variant Quality Score Recalibration is not an option (need truth/training sets)
 
-# extract SNPs
+# extract SNPs 
 
 rule get_snps:
 	input:
