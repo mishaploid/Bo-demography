@@ -88,12 +88,12 @@ rule combine_gvcfs:
 
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database_bpres/{count}-scattered"),
+		dir = directory("data/interim/combined_database_bpres/{count}"),
 		ref = "data/external/ref/Boleracea_chromosomes.fasta"
 	output:
 		"data/raw/vcf_bpres/{count}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database_bpres/{count}-scattered"
+		db = "gendb://data/interim/combined_database_bpres/{count}"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \
