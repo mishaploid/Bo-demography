@@ -81,7 +81,7 @@ rule combine_gvcfs:
 		--batch-size 50 \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp} \
-		--reader-threads 8")
+		--reader-threads 10")
 		shell("rm -rf {params.tmp}")
 
 ################################################################################
