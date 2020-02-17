@@ -68,7 +68,7 @@
     },
     "combine_gvcfs" :
     {
-      "mem" : "180G",
+      "mem" : "80G",
       "p" : "med2"
     },
     "joint_geno" :

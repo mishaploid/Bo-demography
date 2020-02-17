@@ -80,7 +80,8 @@ rule combine_gvcfs:
 		--genomicsdb-workspace-path {output} \
 		--batch-size 50 \
 		--intervals {params.region} \
-		--tmp-dir {params.tmp}")
+		--tmp-dir {params.tmp} \
+		--reader-threads 8")
 		shell("rm -rf {params.tmp}")
 
 ################################################################################
