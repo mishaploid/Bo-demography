@@ -72,13 +72,15 @@ rule combine_gvcfs:
 	params:
 		files = lambda wildcards, input: " -V ".join(input),
 		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
-		tmp = "/scratch/sdturner/genomicsdbimport/{count}"
+		tmp = "/scratch/sdturner/genomicsdbimport/{count}",
+		map = "data/processed/sample_map"
 	run:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk GenomicsDBImport \
 		-V {params.files} \
 		--genomicsdb-workspace-path {output} \
 		--batch-size 10 \
+		--sample-name-map {params.map} \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp}")
 		shell("rm -rf {params.tmp}")
