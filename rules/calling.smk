@@ -78,7 +78,7 @@ rule combine_gvcfs:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk GenomicsDBImport \
 		--genomicsdb-workspace-path {output} \
-		--batch-size 10 \
+		--batch-size 50 \
 		--sample-name-map {params.map} \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp}")
