@@ -77,13 +77,14 @@ rule combine_gvcfs:
 	run:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk GenomicsDBImport \
-		-V {params.files} \
 		--genomicsdb-workspace-path {output} \
 		--batch-size 10 \
 		--sample-name-map {params.map} \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp}")
 		shell("rm -rf {params.tmp}")
+
+# 		-V {params.files} \
 
 ################################################################################
 # joint genotyping to produce VCF (raw SNPs & indels)
