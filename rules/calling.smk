@@ -60,6 +60,7 @@ rule split_intervals:
 ################################################################################
 # combine GVCFs with GenomicsDBImport
 # https://software.broadinstitute.org/gatk/documentation/article?id=11813
+# recommendation is to scatter over number of intervals ~ number of samples
 # snakemake considerations:
 # 	https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
 ################################################################################
@@ -79,7 +80,7 @@ rule combine_gvcfs:
 		shell("gatk GenomicsDBImport \
 		--genomicsdb-workspace-path {output} \
 		--batch-size 50 \
-		--reader-threads 5 \
+		--reader-threads 2 \
 		--sample-name-map {params.map} \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp}")
