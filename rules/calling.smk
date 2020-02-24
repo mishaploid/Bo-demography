@@ -77,9 +77,10 @@ rule combine_gvcfs:
 		map = "data/processed/sample_map"
 	run:
 		shell("mkdir -p {params.tmp}")
-		shell("gatk GenomicsDBImport \
+		shell("gatk --java-options \"-Xmx80g -Xms80g\" \
+		GenomicsDBImport \
 		--genomicsdb-workspace-path {output} \
-		--batch-size 10 \
+		--batch-size 50 \
 		--reader-threads 8 \
 		--sample-name-map {params.map} \
 		--intervals {params.region} \
