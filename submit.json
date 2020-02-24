@@ -69,7 +69,7 @@
     "combine_gvcfs" :
     {
       "mem" : "100G",
-      "p" : "med2"
+      "p" : "bigmemh"
     },
     "joint_geno" :
     {
