@@ -107,5 +107,4 @@ rule joint_geno:
 		-new-qual \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
-		--include-non-variant-sites \
 		-O {output}")
