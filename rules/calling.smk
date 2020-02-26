@@ -99,11 +99,13 @@ rule joint_geno:
 	output:
 		"data/raw/vcf_bpres/{count}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database_bpres/{count}"
+		db = "gendb://data/interim/combined_database_bpres/{count}",
+		region = "data/processed/scattered_intervals/{count}-scattered.intervals"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \
 		-V {params.db} \
+		-L {params.region} \
 		-new-qual \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
