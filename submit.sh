@@ -10,7 +10,7 @@ module load trimmomatic/0.36
 module load R
 module load maven
 module load java
-module load GATK/4.0
+module load GATK
 module load bcftools
 module load qualimap/2.1.1
 module load plink/1.90
