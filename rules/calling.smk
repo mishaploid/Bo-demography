@@ -65,29 +65,29 @@ rule split_intervals:
 # 	https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
 ################################################################################
 
+# files = lambda wildcards, input: " -V ".join(input),
+# 		-V {params.files} \
+
 rule combine_gvcfs:
 	input:
-		expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES)
+		gvcfs = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
+		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
+		map = "data/processed/sample_map"
 	output:
 		directory("data/interim/combined_database_bpres/{count}")
 	params:
-		files = lambda wildcards, input: " -V ".join(input),
-		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
-		tmp = "/scratch/sdturner/genomicsdbimport/{count}",
-		map = "data/processed/sample_map"
+		tmp = "/scratch/sdturner/genomicsdbimport/{count}"
 	run:
 		shell("mkdir -p {params.tmp}")
-		shell("gatk --java-options \"-Xmx80g -Xms80g\" \
+		shell("gatk --java-options \"-Xmx60g -Xms60g\" \
 		GenomicsDBImport \
 		--genomicsdb-workspace-path {output} \
 		--batch-size 50 \
-		--reader-threads 8 \
+		--reader-threads 6 \
 		--sample-name-map {params.map} \
 		--intervals {params.region} \
 		--tmp-dir {params.tmp}")
 		shell("rm -rf {params.tmp}")
-
-# 		-V {params.files} \
 
 ################################################################################
 # joint genotyping to produce VCF (raw SNPs & indels)
@@ -107,4 +107,5 @@ rule joint_geno:
 		-new-qual \
 		-G StandardAnnotation \
 		-G AS_StandardAnnotation \
+		--include-non-variant-sites \
 		-O {output}")
