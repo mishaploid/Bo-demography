@@ -14,6 +14,7 @@ module load GATK
 module load bcftools
 module load qualimap/2.1.1
 module load plink/1.90
+module load plink2
 module load angsd
 
 snakemake --jobs 200 --use-conda \

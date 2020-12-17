@@ -19,8 +19,8 @@
 
 rule get_ref:
     output:
-        ref = "data/external/ref/Boleracea_chromosomes.fasta",
-        dict = "data/external/ref/Boleracea_chromosomes.dict"
+        ref = config['ref'],
+        dict = config['ref_dict']
     run:
         shell("wget --directory-prefix=data/external/ref \
         http://www.genoscope.cns.fr/externe/plants/data/Boleracea_chromosomes.fasta")
@@ -44,14 +44,14 @@ rule get_ref:
 rule fastq2bam:
     input:
         samp_ids = config['sra_info'],
-        ref = "data/external/ref/Boleracea_chromosomes.fasta"
+        ref = config['ref']
     output:
         temp(touch("data/interim/mapped_reads/{sample}.bam"))
     params:
-        tmp = "/scratch/sdturner/map_reads/{sample}",
         sample = "{sample}",
         SRR = lambda wildcards: sample_dict[wildcards.sample],
-        stem = "/scratch/sdturner/map_reads/{sample}/{sample}"
+        tmp = config['scratch'] + "map_reads/{sample}",
+        stem = config['scratch'] + "map_reads/{sample}/{sample}"
     wildcard_constraints:
         sample = "B_cretica_[A-D]|SamC_\d{3}"
     threads: 24
@@ -199,7 +199,7 @@ rule add_rg:
     	index = temp(touch("data/interim/add_rg/{sample}.rg.dedup.bai"))
     params:
         sample = "{sample}",
-        tmp = "/scratch/sdturner/add_rg/{sample}"
+        tmp = config['scratch'] + "add_rg/{sample}"
     run:
         shell("mkdir -p {params.tmp}")
     	shell("gatk AddOrReplaceReadGroups \
@@ -223,7 +223,7 @@ rule add_rg:
 rule bamqc:
 	input:
 		bam = "data/raw/sorted_reads/{sample}.sorted.bam",
-		gff = "data/external/ref/Boleracea_annotation.gff"
+		gff = config['gff']
 	output:
 		"reports/bamqc/{sample}_stats/qualimapReport.html"
 	params:

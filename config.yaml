@@ -1,10 +1,36 @@
+
+# reference genome
+# where to download assembly
+ref_source: http://www.genoscope.cns.fr/externe/plants/data/Boleracea_chromosomes.fasta
+# name of reference fasta
+ref: data/external/ref/Boleracea_chromosomes.fasta
+# dict file for reference assembly
+ref_dict: data/external/ref/Boleracea_chromosomes.dict
+# annotations for reference assembly
+gff_source: http://www.genoscope.cns.fr/externe/plants/data/Boleracea_annotation.gff
+# gff file
+gff: data/external/ref/Boleracea_annotation.gff
+# interval list (if you want to exclude specific regions)
+interval_list: data/raw/b_oleracea.interval_list
+
+# FASTQ source
+# options: 'SRA' or 'local'
+# TODO: add option for 'both'
+fastq_source: SRA
+
+# if FASTQ source = SRA
 # SRA project info file
-# get SRA info for B. oleracea:
 # cat SraRunInfo.csv | grep oleracea > Sra_oleracea.csv
 # sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
 sra_info: data/external/Sra_oleracea.csv
 
+# directory to use as scratch space
+scratch: /scratch/sdturner/
+
 # add paths for locally installed software
+# plink2
+plink2: ~/software/plink2
+
 # ngsTools (https://github.com/mfumagalli/ngsTools)
 ngsTools: ../software/ngsTools
 

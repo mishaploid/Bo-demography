@@ -1,3 +1,4 @@
+
 # run ADMIXTURE analysis
 
 # format input data
@@ -34,28 +35,29 @@
 # unzip plink2_linux_x86_64_20190402.zip
 # add `export PATH="/home/sdturner/bin:$PATH"` to ~/.bashrc profile
 
+# SCRATCH
+# ~/software/plink2 --vcf ../../data/processed/filtered_snps_bpres/all_samps.filtered.snps.invariant.vcf.gz --allow-extra-chr --max-alleles 2 --mind 0.2 --geno 0.2 --make-bed --out filtered.mind.2.geno.2
+
 rule admix_input:
     input:
     	ref = "data/external/ref/Boleracea_chromosomes.fasta",
         vcf = expand("data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr)
     output:
-    	"models/admixture/combined.pruned.bed"
+    	"models/admixture/biallelic_snps_geno0.1.pruned.bed"
     params:
         vcf = "data/processed/filtered_snps/oleracea_filtered.vcf.gz",
-        stem = "models/admixture/combined",
-        pruned = "models/admixture/combined.pruned"
+        stem = "models/admixture/biallelic_snps_geno0.1",
+        pruned = "models/admixture/biallelic_snps_geno0.1.pruned"
     run:
-        # need to do some command line magic here...
-        # sed 's/^C//g' file.bim > newname.bim
-        # awk 'BEGIN{FS=OFS="\t"}{$2=$1":"$4":"$5":"$6;print}' filename.bim
+		shell("bcftools concat {input.vcf} -Oz -o {output}")
+		shell("tabix -p vcf {output}")
         shell("~/software/plink2 --vcf {params.vcf} \
         --allow-extra-chr \
         --max-alleles 2 \
         --vcf-filter \
+        --geno 0.1 \
         --make-bed \
         --out {params.stem}")
-        # shell("""sed \"s/^C//g" {params.stem}.bim > {params.stem}2.bim""")
-        # shell("""awk "BEGIN{{FS=OFS="\\t"}}{{\$2=\$1":"\$4":"\$5":"\$6;print}}" {params.stem}2.bim > {params.stem}3.bim""")
         shell("~/software/plink2 --bfile {params.stem} \
         --indep-pairwise 50 10 0.1 \
         --out {params.stem}")
@@ -72,10 +74,10 @@ rule admix_input:
 
 rule admixture:
     input:
-        bed = "models/admixture/combined.pruned.bed"
+        bed = "models/admixture/biallelic_snps_geno0.1.pruned.bed"
     output:
-        "models/admixture/combined.pruned.{k}.Q",
-        "models/admixture/combined.pruned.{k}.P"
+        "models/admixture/biallelic_snps_geno0.1.pruned.{k}.Q",
+        "models/admixture/biallelic_snps_geno0.1.pruned.{k}.P"
     params:
         k = "{k}"
     threads: 32

@@ -81,17 +81,42 @@
       "mem" : "100G",
       "p" : "bigmemm"
     },
+    "filter_flags_snps" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filtered_to_nocall_snps" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
     "filter_snps" :
     {
       "mem" : "100G",
       "p" : "bigmemm"
     },
-    "filter_nocall" :
+    "filter_flags_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filtered_to_nocall_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "merge_filtered_snps" :
     {
       "mem" : "100G",
       "p" : "med2"
     },
-    "filter_depth" :
+    "merge_filtered_vcf" :
     {
       "mem" : "100G",
       "p" : "med2"
@@ -105,6 +130,36 @@
     {
       "mem" : "10G",
       "p" : "med2"
+    },
+    "vcf_concat" :
+    {
+      "mem" : "48G",
+      "p" : "med2"
+    },
+    "select_variant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "select_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_snps" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_nocall" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "snps_only" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
     },
     "diagnostics" :
     {
@@ -129,7 +184,7 @@
     "admixture" :
     {
       "mem" : "60G",
-      "p" : "med2"
+      "p" : "bigmemm"
     },
     "marginal_vcf2smc" :
     {

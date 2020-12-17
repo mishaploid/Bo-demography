@@ -74,7 +74,7 @@ SAMPLES.remove('B_rapa')
 ## List of chromosome names
 ################################################################################
 
-chr = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+CHR = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
 
 ################################################################################
 ## Number of intervals for GATK
@@ -135,7 +135,7 @@ rule all:
 		# fastqc = expand("qc/fastqc/{sample}_{readgroup}_fastqc.zip", sample = SAMPLES2, readgroup = ['R1', 'R2']),
 		multiqc = expand("qc/STJRI0{lane}_multiqc.html", lane = [1,2,3]),
 		# MAPPING
-		get_ref = expand("data/external/ref/Boleracea_chromosomes.fasta"),
+		get_ref = "data/external/ref/Boleracea_chromosomes.fasta",
 		sort_bam = expand("data/raw/sorted_reads/{sample}.sorted.bam", sample = SAMPLES),
 		bamqc = expand("reports/bamqc/{sample}_stats/qualimapReport.html", sample = SAMPLES),
 		multibamqc = "reports/multisampleBamQcReport.html",
@@ -143,9 +143,14 @@ rule all:
 		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
 		split_intervals = expand("data/processed/scattered_intervals/{count}-scattered.intervals",
 		count = INTERVALS),
-		joint_geno = expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS)
-		### # FILTERING
-		# filter_snps = expand("data/processed/filtered_snps_bpres/{chr}.filtered.snps.vcf", chr = chr),
+		joint_geno = expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS),
+		# FILTERING
+		filtered_snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf", chr = CHR),
+		filtered_invariant = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf", chr = CHR),
+		merge_filtered_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.gz",
+		admix_input = "data/processed/biallelic_snps.geno10.maf05.ldpruned.bed",
+		admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15))
+		# merge_filtered_vcf = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz", chr = CHR)
 		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
 		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
 		# filter_nocall = expand("data/processed/filtered_snps_bpres/{chr}.filtered.nocall.vcf", chr = chr),
@@ -155,7 +160,7 @@ rule all:
 		# cv = expand("models/smc/cv/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1']),
 		# estimate = expand("models/smc/estimate/{pop}/model.final.json", pop = pops),
 		# admix_input = "models/admixture/combined.pruned.bed",
-		# admixture = expand("models/admixture/combined.pruned.{k}.Q", k = range(0, 15))
+		# admixture = expand("models/admixture/biallelic_snps_geno0.1.pruned.{k}.Q", k = range(0, 15))
 		# depth = expand("reports/filtering/dp_{chr}.filtered.dp6_200", chr = chr),
 		# filter_depth = expand("data/processed/filtered_snps/{chr}.filtered.dp6_200.nocall.snps.vcf", chr = chr)
 
@@ -164,11 +169,11 @@ rule all:
 ## Rule files to include
 ################################################################################
 
-include: "rules/fastqc.smk"
-include: "rules/mapping.smk"
-include: "rules/calling.smk"
-# include: "rules/filtering.smk"
-# include: "rules/admixture.smk"
+include: "rules/01-fastqc.smk"
+include: "rules/02-mapping.smk"
+include: "rules/03-calling.smk"
+include: "rules/04-filtering.smk"
+include: "rules/05-pop_structure.smk"
 # include: "rules/smc.smk"
 # include: "rules/msmc.smk"
 # include: "rules/phasing.smk"

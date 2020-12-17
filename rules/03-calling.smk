@@ -17,13 +17,13 @@
 
 rule hap_caller:
 	input:
-		ref = "data/external/ref/Boleracea_chromosomes.fasta",
+		ref = config['ref'],
 		bam = "data/interim/add_rg/{sample}.rg.dedup.bam",
 		bai = "data/interim/add_rg/{sample}.rg.dedup.bai"
 	output:
 		"data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf"
 	params:
-		regions = "data/raw/b_oleracea.interval_list"
+		regions = config['interval_list']
 	run:
 		shell("gatk HaplotypeCaller \
 		-I {input.bam} \
@@ -42,12 +42,12 @@ rule hap_caller:
 
 rule split_intervals:
 	input:
-		ref = "data/external/ref/Boleracea_chromosomes.fasta"
+		ref = config['ref']
 	output:
 		expand("data/processed/scattered_intervals/{count}-scattered.intervals",
 		count = INTERVALS)
 	params:
-		regions = "data/raw/b_oleracea.interval_list",
+		regions = config['interval_list'],
 		count = len(INTERVALS),
 		outdir = "data/processed/scattered_intervals"
 	run:
@@ -95,7 +95,7 @@ rule combine_gvcfs:
 rule joint_geno:
 	input:
 		dir = directory("data/interim/combined_database_bpres/{count}"),
-		ref = "data/external/ref/Boleracea_chromosomes.fasta"
+		ref = config['ref']
 	output:
 		"data/raw/vcf_bpres/{count}.raw.snps.indels.vcf"
 	params:
@@ -111,3 +111,13 @@ rule joint_geno:
 		-G AS_StandardAnnotation \
 		--include-non-variant-sites \
 		-O {output}")
+
+### START HERE
+rule vcf_concat:
+	input:
+		expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS)
+	output:
+		"data/interim/all_samples_unfiltered.vcf.gz"
+	run:
+		shell("bcftools concat {input} -Oz -o {output}")
+		shell("tabix -p vcf {output}")
