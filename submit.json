@@ -116,7 +116,12 @@
       "mem" : "100G",
       "p" : "med2"
     },
-    "merge_filtered_vcf" :
+    "merge_filtered_allsites" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "window_pi" :
     {
       "mem" : "100G",
       "p" : "med2"

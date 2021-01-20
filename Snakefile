@@ -84,43 +84,71 @@ CHR = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
 INTERVALS = ["{:04d}".format(x) for x in list(range(200))]
 
 ################################################################################
+## List of population ids
+################################################################################
+
+POP = ['rupestris',
+'villosa',
+'hilarionis',
+'macrocarpa',
+'montana',
+'insularis',
+'incana',
+'cretica',
+'oleracea',
+'acephala',
+'costata',
+'medullosa',
+'ramosa',
+'palmifolia',
+'sabellica',
+'alboglabra',
+'viridis',
+'capitata',
+'sabauda',
+'gemmifera',
+'gongylodes',
+'italica',
+'botrytis']
+
+################################################################################
 ## dictionaries for SMC++
 # create all of the dictionaries
 # sample ids for each population
 # https://stackoverflow.com/questions/18695605/python-pandas-dataframe-to-dictionary
 ################################################################################
 # read in list of sample/morphotype ids
-df = pd.read_csv('models/smc/population_ids.txt', sep=" ")
-
-# create python dictionary for each morphotype
-
-# popdict = {
-# 'capitata':'capitata:' + capitata,
-# 'gongylodes':'gongylodes:' + gongylodes,
-# 'italica':'italica:' + italica,
-# 'botrytis':'botrytis:' + botrytis,
-# 'alboglabra' : 'alboglabra:' + alboglabra,
-# 'gemmifera' : 'gemmifera:' + gemmifera,
-# 'acephala' : 'acephala:' + acephala,
-# 'sabellica' : 'sabellica:' + sabellica,
-# 'wild' : 'wild:' + wild,
-# }
-
-from collections import defaultdict
-
-pops = defaultdict(list)
-for k, v in zip(df.morph.values,df.Taxa.values):
-    pops[k].append(v)
-
-for key in pops.keys():
-    pops[key] = ','.join(pops[key])
-
-for key, value in pops.items() :
-    pops[key] = key + ':' + value
-
-def pop_choose(WC):
-	list = pops[WC.pop]
-	return list
+# df = pd.read_csv('models/smc/population_ids.txt', sep=" ")
+#
+# # create python dictionary for each morphotype
+#
+# # popdict = {
+# # 'capitata':'capitata:' + capitata,
+# # 'gongylodes':'gongylodes:' + gongylodes,
+# # 'italica':'italica:' + italica,
+# # 'botrytis':'botrytis:' + botrytis,
+# # 'alboglabra' : 'alboglabra:' + alboglabra,
+# # 'gemmifera' : 'gemmifera:' + gemmifera,
+# # 'acephala' : 'acephala:' + acephala,
+# # 'sabellica' : 'sabellica:' + sabellica,
+# # 'wild' : 'wild:' + wild,
+# # }
+#
+# from collections import defaultdict
+#
+# pops = defaultdict(list)
+# for k, v in zip(df.morph.values,df.Taxa.values):
+#     pops[k].append(v)
+#
+# for key in pops.keys():
+#     pops[key] = ','.join(pops[key])
+#
+# for key, value in pops.items() :
+#     pops[key] = key + ':' + value
+#
+# def pop_choose(WC):
+# 	list = pops[WC.pop]
+# 	return list
 
 ## set rule order for fastq2bam and bwa_mem
 # ruleorder: bwa_mem > fastq2bam
@@ -148,8 +176,11 @@ rule all:
 		filtered_snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf", chr = CHR),
 		filtered_invariant = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf", chr = CHR),
 		merge_filtered_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.gz",
+		merge_filtered_allsites = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz", chr = CHR),
+		# POPULATION STRUCTURE
 		admix_input = "data/processed/biallelic_snps.geno10.maf05.ldpruned.bed",
-		admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15))
+		admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15)),
+		window_pi = expand("models/nucleotide_diversity/{chr}_{pop}.windowed.pi", chr = CHR, pop = POP)
 		# merge_filtered_vcf = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz", chr = CHR)
 		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
 		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
