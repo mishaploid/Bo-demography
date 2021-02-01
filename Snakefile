@@ -89,14 +89,10 @@ INTERVALS = ["{:04d}".format(x) for x in list(range(200))]
 
 POP = ['rupestris',
 'villosa',
-'hilarionis',
-'macrocarpa',
-'montana',
 'insularis',
 'incana',
 'cretica',
 'oleracea',
-'acephala',
 'costata',
 'medullosa',
 'ramosa',
@@ -110,6 +106,12 @@ POP = ['rupestris',
 'gongylodes',
 'italica',
 'botrytis']
+
+# excluded pops:
+# 'hilarionis',
+# 'macrocarpa',
+# 'montana',
+# 'acephala',
 
 ################################################################################
 ## dictionaries for SMC++

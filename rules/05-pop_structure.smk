@@ -68,15 +68,16 @@ rule window_pi:
     input:
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz",
         keep = "models/samp_lists/{pop}_samps.txt",
-        remove = "models/samp_lists/sil_drop.txt"
+        remove = "models/sil_drop.txt"
     output:
         window_pi = "models/nucleotide_diversity/{chr}_{pop}.windowed.pi"
     params:
-        chr = "{chr}"
+        chr = "{chr}",
+        out_stem = "models/nucleotide_diversity/{chr}_{pop}"
     run:
         shell("vcftools --gzvcf {input.allsites_vcf} \
         --chr {params.chr} \
         --keep {input.keep} \
         --remove {input.remove} \
-        --out {output.window_pi} \
+        --out {params.out_stem} \
         --window-pi 10000")
