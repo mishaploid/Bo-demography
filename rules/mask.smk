@@ -19,7 +19,7 @@
 
 # how are results for paired end reads affected by assuming single reads for mask?
 # should be more stringent?
-# better to use sampe?
+# better to use sample?
 
 # note had to update gzip.open in makeMappabilityMask.py from 'w' to 'wt'
 

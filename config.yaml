@@ -24,6 +24,12 @@ fastq_source: SRA
 # sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
 sra_info: data/external/Sra_oleracea.csv
 
+# sample and population ids
+pop_ids: models/sample_ids.txt
+
+# list of distinguished individuals
+distinguished_individuals: models/smc/distinguished_individuals.txt
+
 # directory to use as scratch space
 scratch: /scratch/sdturner/
 
@@ -49,3 +55,6 @@ msmc_tools: ../software/msmc-tools
 
 # RAiSD 2.0
 raisd: ../software/RAiSD
+
+# filtering params
+mind: 0.3

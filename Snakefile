@@ -84,76 +84,61 @@ CHR = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
 INTERVALS = ["{:04d}".format(x) for x in list(range(200))]
 
 ################################################################################
-## List of population ids
-################################################################################
-
-POP = ['rupestris',
-'villosa',
-'insularis',
-'incana',
-'cretica',
-'oleracea',
-'costata',
-'medullosa',
-'ramosa',
-'palmifolia',
-'sabellica',
-'alboglabra',
-'viridis',
-'capitata',
-'sabauda',
-'gemmifera',
-'gongylodes',
-'italica',
-'botrytis']
-
-# excluded pops:
-# 'hilarionis',
-# 'macrocarpa',
-# 'montana',
-# 'acephala',
-
-################################################################################
-## dictionaries for SMC++
+## dictionaries for SMC++ cv command
 # create all of the dictionaries
 # sample ids for each population
+# iteration over distinguished individuals
 # https://stackoverflow.com/questions/18695605/python-pandas-dataframe-to-dictionary
 ################################################################################
-# read in list of sample/morphotype ids
-# df = pd.read_csv('models/smc/population_ids.txt', sep=" ")
-#
-# # create python dictionary for each morphotype
-#
-# # popdict = {
-# # 'capitata':'capitata:' + capitata,
-# # 'gongylodes':'gongylodes:' + gongylodes,
-# # 'italica':'italica:' + italica,
-# # 'botrytis':'botrytis:' + botrytis,
-# # 'alboglabra' : 'alboglabra:' + alboglabra,
-# # 'gemmifera' : 'gemmifera:' + gemmifera,
-# # 'acephala' : 'acephala:' + acephala,
-# # 'sabellica' : 'sabellica:' + sabellica,
-# # 'wild' : 'wild:' + wild,
-# # }
-#
-# from collections import defaultdict
-#
-# pops = defaultdict(list)
-# for k, v in zip(df.morph.values,df.Taxa.values):
-#     pops[k].append(v)
-#
-# for key in pops.keys():
-#     pops[key] = ','.join(pops[key])
-#
-# for key, value in pops.items() :
-#     pops[key] = key + ':' + value
-#
-# def pop_choose(WC):
-# 	list = pops[WC.pop]
-# 	return list
 
-## set rule order for fastq2bam and bwa_mem
-# ruleorder: bwa_mem > fastq2bam
+# read in list of sample/morphotype ids
+pop_ids = pd.read_csv(config['pop_ids'], sep="\t", names=['Sample_ID', 'Population'])
+
+# filter for pops with more than 4 samples
+pop_ids = pop_ids.groupby(['Population']).filter(lambda x: len(x) > 4)
+
+# create a list of samples for each population
+pop_list = pop_ids.groupby('Population')['Sample_ID'].apply(lambda x: x.tolist())
+
+# convert sample list to a python dictionary object
+pop_dict = pop_list.to_dict()
+
+# join sample names and separate them with a ','
+from collections import defaultdict
+for key in pop_dict.keys():
+    pop_dict[key] = ','.join(pop_dict[key])
+
+# format input for SMC++
+# Population:sample1,sample2,sample3...samplen
+for key, value in pop_dict.items() :
+    pop_dict[key] = key + ':' + value
+
+# function to print formatted list of population: sample ids using wildcards
+def pop_choose(wildcards):
+	list = pop_dict[wildcards.population]
+	return list
+
+# Distinguished individuals to use for SMC++ input files
+# These are 5 randomly sampled individuals from each population
+# Can be used to estimate a composite likelihood and uncertainty in the recent past
+
+distind_ids = pd.read_table(config['distinguished_individuals'])
+
+distind_list = distind_ids.groupby('Population')['Sample_ID'].apply(lambda x: x.tolist())
+
+distind_dict = distind_list.to_dict()
+
+# create a list of filenames for smc++ input files using different distinguished individuals (output of vcf2smc)
+smc_input_files = [expand('models/smc/input/{population}.{distinguished_ind}.{chr}.smc.gz',
+                    population = key, distinguished_ind = value, chr = CHR)
+                    for key, value in distind_dict.items()]
+
+# create a list of filenames to feed into smc++ cv command
+# want to include all .smc.gz files for each population (includes all chromosomes and distinguished individuals)
+def smc_cv_input(wildcards):
+    files = expand('models/smc/input/{population}.{distinguished_ind}.{chr}.smc.gz', chr=CHR, population=wildcards.population, distinguished_ind=distind_dict[wildcards.population])
+    return files
+
 
 ################################################################################
 ##  a pseudo-rule that collects the target files (expected outputs)
@@ -171,20 +156,22 @@ rule all:
 		multibamqc = "reports/multisampleBamQcReport.html",
 		# CALLING
 		hap_caller = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		split_intervals = expand("data/processed/scattered_intervals/{count}-scattered.intervals",
-		count = INTERVALS),
-		joint_geno = expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS),
+		split_intervals = expand("data/processed/scattered_intervals/{intervals}-scattered.intervals",
+		intervals = INTERVALS),
+		joint_geno = expand("data/raw/vcf_bpres/{intervals}.raw.snps.indels.vcf", intervals = INTERVALS),
 		# FILTERING
-		filtered_snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf", chr = CHR),
-		filtered_invariant = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf", chr = CHR),
-		merge_filtered_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.gz",
-		merge_filtered_allsites = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz", chr = CHR),
+		filtered_snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf", chr = CHR),
+		filtered_invariant = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf", chr = CHR),
+		merge_filtered_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+		merge_filtered_allsites = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz", chr = CHR),
+		ind_stats = "reports/filtered.qual.dp5_200.maxnocall10.imiss",
 		# POPULATION STRUCTURE
 		admix_input = "data/processed/biallelic_snps.geno10.maf05.ldpruned.bed",
 		admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15)),
-		window_pi = expand("models/nucleotide_diversity/{chr}_{pop}.windowed.pi", chr = CHR, pop = POP)
-		# merge_filtered_vcf = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz", chr = CHR)
-		# bgzip_vcf = expand("data/processed/filtered_snps_bpres/{chr}.filtered.dp6_200.nocall.snps.vcf.gz", chr = chr),
+		pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_pi.txt", chr = CHR),
+		# DEMOGRAPHY
+		vcf2smc = smc_input_files
+		# window_pi = expand("models/nucleotide_diversity/{chr}_{population}.windowed.pi", chr = CHR, population = POP)
 		# diagnostics = expand("reports/filtering/gvcf_{chr}.table", chr = chr),
 		# filter_nocall = expand("data/processed/filtered_snps_bpres/{chr}.filtered.nocall.vcf", chr = chr),
 		# diagnostics2 = expand("reports/filtering_bpres/gvcf_{chr}.filtered", chr = chr),
@@ -207,36 +194,10 @@ include: "rules/02-mapping.smk"
 include: "rules/03-calling.smk"
 include: "rules/04-filtering.smk"
 include: "rules/05-pop_structure.smk"
-# include: "rules/smc.smk"
-# include: "rules/msmc.smk"
-# include: "rules/phasing.smk"
-# include: "rules/demography.smk"
-# include: "rules/admixture.smk"
-# include: "rules/angsd.smk"
+include: "rules/06-demography.smk"
+
 
 ### intermediate steps (need to clean up & only include essential outputs in rule_all)
-
-# admix_input
-# "models/admixture/combined.pruned.bed",
-# admixture
-# expand("models/admixture/combined.pruned.{k}.Q", k = [1,2,3,4,5,7,8])
-# # angsd_depth
-# expand("reports/ALL.{chr}.qc.depthGlobal", chr = chr)
-### SMC round 2
-# smc = expand("models/smc/cv_1e3_1e6/{pop}/fold{fold}/model.final.json", pop = pops, fold = ['0','1'])
-# smc = expand("models/smc/estimate_tp/{pop}/model.final.json", pop = pops),
-# vcf2smc = expand("models/smc/input/{pop}.{chr}.smc.gz", pop = pops, chr = chr),
-# jointvcf2smc = expand("models/smc/split/{pop_pair}.{chr}.smc.gz", pop_pair = ['wild_alboglabra', 'alboglabra_wild'], chr = chr)
-# split = "models/smc/split/model.final.json"
-### PHASING
-# phased = expand("data/processed/phased/{chr}.phased.filtered.vcf.gz", chr = chr),
-### MSMC
-# depth = expand("models/msmc/indiv_masks/{sample}.{chr}.depth", sample = SAMP_MSMC, chr = chr),
-# mappability = expand("data/processed/mappability_masks/Boleracea_chr{chr}.mask.bed.gz", chr = chr),
-# masks = expand("models/msmc/indiv_masks/{sample}.{chr}.mask.bed", sample = SAMP_MSMC, chr = chr),
-# phased = expand("models/msmc/vcf/{sample}.{chr}.phased.vcf.gz", sample = SAMP_MSMC, chr = chr),
-# msmcin = expand("models/msmc/input/capitata.{chr}.multihetsep.txt", chr = chr)
-
 
 # # dictionary of population pairs to estimate divergence
 # pop_pair_dict = {'botrytis_italica':['botrytis', 'italica'],

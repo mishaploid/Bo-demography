@@ -44,17 +44,17 @@ rule split_intervals:
 	input:
 		ref = config['ref']
 	output:
-		expand("data/processed/scattered_intervals/{count}-scattered.intervals",
-		count = INTERVALS)
+		expand("data/processed/scattered_intervals/{intervals}-scattered.intervals",
+		intervals = INTERVALS)
 	params:
 		regions = config['interval_list'],
-		count = len(INTERVALS),
+		intervals = len(INTERVALS),
 		outdir = "data/processed/scattered_intervals"
 	run:
 		shell("gatk SplitIntervals \
 		-R {input.ref} \
 		-L {params.regions} \
-		--scatter-count {params.count} \
+		--scatter-count {params.intervals} \
 		-O {params.outdir}")
 
 ################################################################################
@@ -71,12 +71,12 @@ rule split_intervals:
 rule combine_gvcfs:
 	input:
 		gvcfs = expand("data/interim/gvcf_files_bpres/{sample}.raw.snps.indels.g.vcf", sample = SAMPLES),
-		region = "data/processed/scattered_intervals/{count}-scattered.intervals",
+		region = "data/processed/scattered_intervals/{intervals}-scattered.intervals",
 		map = "data/processed/sample_map"
 	output:
-		directory("data/interim/combined_database_bpres/{count}")
+		directory("data/interim/combined_database_bpres/{intervals}")
 	params:
-		tmp = "/scratch/sdturner/genomicsdbimport/{count}"
+		tmp = "/scratch/sdturner/genomicsdbimport/{intervals}"
 	run:
 		shell("mkdir -p {params.tmp}")
 		shell("gatk --java-options \"-Xmx60g -Xms60g\" \
@@ -91,16 +91,17 @@ rule combine_gvcfs:
 
 ################################################################################
 # joint genotyping to produce VCF (raw SNPs & indels)
+################################################################################
 
 rule joint_geno:
 	input:
-		dir = directory("data/interim/combined_database_bpres/{count}"),
+		dir = "data/interim/combined_database_bpres/{intervals}",
 		ref = config['ref']
 	output:
-		"data/raw/vcf_bpres/{count}.raw.snps.indels.vcf"
+		"data/raw/vcf_bpres/{intervals}.raw.snps.indels.vcf"
 	params:
-		db = "gendb://data/interim/combined_database_bpres/{count}",
-		region = "data/processed/scattered_intervals/{count}-scattered.intervals"
+		db = "gendb://data/interim/combined_database_bpres/{intervals}",
+		region = "data/processed/scattered_intervals/{intervals}-scattered.intervals"
 	run:
 		shell("gatk GenotypeGVCFs \
 		-R {input.ref} \
@@ -115,7 +116,7 @@ rule joint_geno:
 ### START HERE
 rule vcf_concat:
 	input:
-		expand("data/raw/vcf_bpres/{count}.raw.snps.indels.vcf", count = INTERVALS)
+		expand("data/raw/vcf_bpres/{intervals}.raw.snps.indels.vcf", intervals = INTERVALS)
 	output:
 		"data/interim/all_samples_unfiltered.vcf.gz"
 	run:

@@ -12,19 +12,21 @@
 rule admix_input:
     input:
     	ref = config['ref'],
-        vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.gz"
+        vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz"
     output:
     	"data/processed/biallelic_snps.geno10.maf05.ldpruned.bed"
     params:
         plink2 = config['plink2'],
         stem = "data/processed/biallelic_snps.geno10.maf05",
-        pruned = "data/processed/biallelic_snps.geno10.maf05.ldpruned"
+        pruned = "data/processed/biallelic_snps.geno10.maf05.ldpruned",
+        mind = config['mind']
     run:
         shell("{params.plink2} --vcf {input.vcf} \
         --allow-extra-chr \
         --max-alleles 2 \
         --vcf-filter \
         --geno 0.1 \
+        --mind {params.mind} \
         --maf 0.05 \
         --make-bed \
         --out {params.stem}")
@@ -59,25 +61,47 @@ rule admixture:
         shell("admixture -B --cv -j{threads} {input.bed} {params.k}")
         shell("mv {params.stem}.{params.k}.* models/admixture")
 
+
 # calculate nucleotide diversity for 10 kb windows
 # in R, to generate sample lists:
 #      samps <- read_delim("sample_ids.txt", delim = "\t")
 #      samps %>% group_by(pop) %>% group_walk(~write_delim(.x, paste0(.y$pop, "_samps.txt"), delim = "\t", col_names = FALSE))
 
-rule window_pi:
+rule pixy_pi:
     input:
-        allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz",
-        keep = "models/samp_lists/{pop}_samps.txt",
-        remove = "models/sil_drop.txt"
+        samps = "models/samp_lists/pixy_input_inbreeding.txt",
+        allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
     output:
-        window_pi = "models/nucleotide_diversity/{chr}_{pop}.windowed.pi"
+        "models/pixy/B_oleracea_inbreeding_{chr}_pi.txt"
     params:
-        chr = "{chr}",
-        out_stem = "models/nucleotide_diversity/{chr}_{pop}"
+        window_size = 10000,
+        chr = "{chr}"
+    threads: 32
     run:
-        shell("vcftools --gzvcf {input.allsites_vcf} \
-        --chr {params.chr} \
-        --keep {input.keep} \
-        --remove {input.remove} \
-        --out {params.out_stem} \
-        --window-pi 10000")
+        shell("tabix -p vcf -f {input.allsites_vcf}")
+        shell("pixy --stats pi \
+        --vcf {input.allsites_vcf} \
+        --populations {input.samps} \
+        --window_size {params.window_size} \
+        --n_cores {threads} \
+        --output_folder models/pixy \
+        --output_prefix B_oleracea_grouped_{params.chr} \
+        --chunk_size 50000")
+
+# rule window_pi:
+#     input:
+#         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
+#         keep = "models/samp_lists/{population}_samps.txt",
+#         samps_to_remove = "models/sil_drop.txt"
+#     output:
+#         window_pi = "models/nucleotide_diversity/{chr}_{population}.windowed.pi"
+#     params:
+#         chr = "{chr}",
+#         out_stem = "models/nucleotide_diversity/{chr}_{population}"
+#     run:
+#         shell("vcftools --gzvcf {input.allsites_vcf} \
+#         --chr {params.chr} \
+#         --keep {input.keep} \
+#         --remove {input.samps_to_remove} \
+#         --out {params.out_stem} \
+#         --window-pi 10000")

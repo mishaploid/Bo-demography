@@ -1,12 +1,19 @@
-# TODO: try out piping in snakemake to avoid writing files to disk
-# https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#piped-output
-# hard filtering
-# https://software.broadinstitute.org/gatk/documentation/article.php?id=2806
-# Note: Variant Quality Score Recalibration is not an option (need truth/training sets)
+################################################################################
+## Rules to perform hard filtering for variant and invariant sites
+## Outputs:
+##		Merged VCF of jointly called SNPs
+##		Merged VCF with variant + invariant sites (for nucleotide diversity)
+## https://software.broadinstitute.org/gatk/documentation/article.php?id=2806
+## Note: Variant Quality Score Recalibration is not an option
+## 		(need truth/training sets)
+## Follows this helpful guide on filtering for non-model organisms:
+## 		https://evodify.com/gatk-in-non-model-organism/
+################################################################################
 
-# remove indels
-# select variant and invariant sites
-# restrict alleles to be biallelic
+################################################################################
+## Select variant sites and restrict alleles to be biallelic
+################################################################################
+
 rule select_variant:
 	input:
 		ref = config['ref'],
@@ -21,6 +28,10 @@ rule select_variant:
 		--restrict-alleles-to BIALLELIC \
 		-O {output}")
 
+################################################################################
+## Select invariant sites
+################################################################################
+
 rule select_invariant:
 	input:
 		ref = config['ref'],
@@ -34,12 +45,12 @@ rule select_invariant:
 		-select-type NO_VARIATION \
 		-O {output}")
 
-# filtering diagnostics
-# https://evodify.com/gatk-in-non-model-organism/
-# NOTE: some annotations cannot be calculated for invariant sites, because
-# they require a mix of ref and alt reads
-# Also, there is no GQ reported for invariant sites
-# https://gatkforums.broadinstitute.org/gatk/discussion/4711/genotype-qualities-qual-scores-for-all-sites
+################################################################################
+## Plot filtering diagnostics (https://evodify.com/gatk-in-non-model-organism/)
+## NOTE: some annotations cannot be calculated for invariant sites, because
+## 		they require a mix of ref and alt reads(and no GQ reported)
+##		https://gatkforums.broadinstitute.org/gatk/discussion/4711/genotype-qualities-qual-scores-for-all-sites
+################################################################################
 
 rule vcf_diagnostics:
 	input:
@@ -63,40 +74,39 @@ rule vcf_diagnostics:
 		-O {output.invariant_stats}")
 		shell("Rscript src/filtering_diagnostics.R")
 
+################################################################################
+## Annotate variants with filtering criteria using base GATK recommendations
+## Resources:
+## https://software.broadinstitute.org/gatk/documentation/article?id=23216#2
+## https://software.broadinstitute.org/gatk/documentation/article.php?id=3225
+## https://informatics.fas.harvard.edu/whole-genome-resquencing-for-population-genomics-fastq-to-vcf.html#filtering
+## https://gatk.broadinstitute.org/hc/en-us/articles/360035531012--How-to-Filter-on-genotype-using-VariantFiltration
+################################################################################
 
-# Annotate variants with filtering criteria
-# using base GATK recommendations
-
-# Resources:
-# https://software.broadinstitute.org/gatk/documentation/article?id=23216#2
-# https://software.broadinstitute.org/gatk/documentation/article.php?id=3225
-# https://informatics.fas.harvard.edu/whole-genome-resquencing-for-population-genomics-fastq-to-vcf.html#filtering
-# https://gatk.broadinstitute.org/hc/en-us/articles/360035531012--How-to-Filter-on-genotype-using-VariantFiltration
-
-# Filters:
-# QD = quality by depth
-#	variant quality score divided by depth of alternate allele
-# QUAL = SNP quality
-# 	phred-scaled quality score; measure in confidence that there is a variation at a site
-# SOR = StrandOddsRatio
-#	high values suggest strand bias
-# FS = Fisher strand
-#	phred-scaled p-values for strand bias; higher values more likely to be false +
-# MQ = RMS Mapping quality
-#	root mean square of mapping quality of reads across samples
-# MQRankSum = Mapping quality rank sum test
-#	U-based z-approx from Mann-Whitney Rank Sum Test for MQ
-# ReadPosRankSum
-#	U-based z-approx from Mann-Whitney Rank Sum Test for distance of alt allele from end of reads
-# 	bases near end of read more likely to have errors
-# 	if all reads with the alt allele are near the end may be errors
+## Filters:
+## 	QD = quality by depth
+## 		variant quality score divided by depth of alternate allele
+## 	QUAL = SNP quality
+## 		phred-scaled quality score; measure in confidence that there is a variation at a site
+## 	SOR = StrandOddsRatio
+## 		high values suggest strand bias
+## 	FS = Fisher strand
+## 		phred-scaled p-values for strand bias; higher values more likely to be false +
+## 	MQ = RMS Mapping quality
+## 		root mean square of mapping quality of reads across samples
+## 	MQRankSum = Mapping quality rank sum test
+## 		U-based z-approx from Mann-Whitney Rank Sum Test for MQ
+## 	ReadPosRankSum
+## 		U-based z-approx from Mann-Whitney Rank Sum Test for distance of alt allele from end of reads
+## 		bases near end of read more likely to have errors
+## 		if all reads with the alt allele are near the end may be errors
 
 rule filter_flags_snps:
 	input:
 		raw_snp_vcf = "data/raw/vcf_bpres/all_samps.raw.snps.vcf"
 	output:
-		snps_flagged = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.vcf"),
-		snps_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.vcf.idx")
+		snps_flagged = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.vcf"),
+		snps_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.vcf.idx")
 	params:
 		chr = "{chr}"
 	run:
@@ -110,17 +120,17 @@ rule filter_flags_snps:
 		-filter \"MQ < 40.0\" --filter-name \"MQ40\" \
 		-filter \"MQRankSum < -12.5\" --filter-name \"MQRankSum-12.5\" \
 		-filter \"ReadPosRankSum < -8.0\" --filter-name \"ReadPosRankSum-8\" \
-		-G-filter \"DP < 6 || DP > 200\" \
-		-G-filter-name \"DP_6-200\" \
+		-G-filter \"DP < 5 || DP > 200\" \
+		-G-filter-name \"DP_5-200\" \
 		-O {output.snps_flagged}")
 
 rule filtered_to_nocall_snps:
 	input:
-		snps_flagged = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.vcf",
-		snps_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.vcf.idx"
+		snps_flagged = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.vcf",
+		snps_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.vcf.idx"
 	output:
-		snps_nocall = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.nocall.vcf"),
-		snps_nocall_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.nocall.vcf.idx")
+		snps_nocall = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.nocall.vcf"),
+		snps_nocall_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.nocall.vcf.idx")
 	run:
 		shell("gatk VariantFiltration \
 		-V {input.snps_flagged} \
@@ -129,12 +139,12 @@ rule filtered_to_nocall_snps:
 
 rule filter_snps:
 	input:
-		snps_nocall = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.nocall.vcf",
-		snps_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.snpsOnly.nocall.vcf.idx",
+		snps_nocall = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.nocall.vcf",
+		snps_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.nocall.vcf.idx",
 		ref = config['ref']
 	output:
-		filtered_snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf",
-		filtered_snps_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.idx"
+		filtered_snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
+		filtered_snps_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.idx"
 	run:
 		shell("gatk SelectVariants \
 		-R {input.ref} \
@@ -149,8 +159,8 @@ rule filter_flags_invariant:
 	input:
 		raw_invariant_vcf = "data/raw/vcf_bpres/all_samps.raw.invariant.vcf"
 	output:
-		invariant_flagged = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariantOnly.vcf"),
-		invariant_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariantOnly.vcf.idx")
+		invariant_flagged = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariantOnly.vcf"),
+		invariant_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariantOnly.vcf.idx")
 	params:
 		chr = "{chr}"
 	run:
@@ -161,17 +171,17 @@ rule filter_flags_invariant:
 		-filter \"MQ < 40.0\" --filter-name \"MQ40\" \
 		-filter \"MQRankSum < -12.5\" --filter-name \"MQRankSum-12.5\" \
 		-filter \"ReadPosRankSum < -8.0\" --filter-name \"ReadPosRankSum-8\" \
-		-G-filter \"DP < 6 || DP > 200\" \
-		-G-filter-name \"DP_6-200\" \
+		-G-filter \"DP < 5 || DP > 200\" \
+		-G-filter-name \"DP_5-200\" \
 		-O {output.invariant_flagged}")
 
 rule filtered_to_nocall_invariant:
 	input:
-		invariant_flagged = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariantOnly.vcf",
-		invariant_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariantOnly.vcf.idx"
+		invariant_flagged = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariantOnly.vcf",
+		invariant_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariantOnly.vcf.idx"
 	output:
-		invariant_nocall = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariant.nocall.vcf"),
-		invariant_nocall_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariant.nocall.vcf.idx")
+		invariant_nocall = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariant.nocall.vcf"),
+		invariant_nocall_idx = temp("data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariant.nocall.vcf.idx")
 	run:
 		shell("gatk VariantFiltration \
 		-V {input.invariant_flagged} \
@@ -180,12 +190,12 @@ rule filtered_to_nocall_invariant:
 
 rule filter_invariant:
 	input:
-		invariant_nocall = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariant.nocall.vcf",
-		invariant_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp6_200.invariant.nocall.vcf.idx",
+		invariant_nocall = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariant.nocall.vcf",
+		invariant_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariant.nocall.vcf.idx",
 		ref = config['ref']
 	output:
-		filtered_invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf",
-		filtered_invariant_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf.idx"
+		filtered_invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf",
+		filtered_invariant_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf.idx"
 	run:
 		shell("gatk SelectVariants \
 		-R {input.ref} \
@@ -196,9 +206,9 @@ rule filter_invariant:
 
 rule merge_filtered_snps:
 	input:
-		snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf", chr = CHR)
+		snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf", chr = CHR)
 	output:
-		merged_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf.gz"
+		merged_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz"
 	params:
 		input = lambda wildcards, input: " -I ".join(input)
 	run:
@@ -208,12 +218,28 @@ rule merge_filtered_snps:
 
 rule merge_filtered_allsites:
 	input:
-		snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.biallelic.snps.vcf",
-		invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.invariant.sites.vcf"
+		snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
+		invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf"
 	output:
-		allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp6_200.maxnocall10.allsites.vcf.gz"
+		allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
 	run:
 		shell("gatk MergeVcfs \
 		-I={input.snps} \
 		-I={input.invariant} \
-		-O={output.merged}")
+		-O={output.allsites_vcf}")
+
+rule ind_stats:
+	input:
+		merged_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz"
+	output:
+		missingness = "reports/filtered.qual.dp5_200.maxnocall10.imiss",
+		heterozygosity = "reports/filtered.qual.dp5_200.maxnocall10.het"
+	run:
+		shell("vcftools \
+		--gzvcf {input.merged_snps} \
+		--missing-indv \
+		--out reports/filtered.qual.dp5_200.maxnocall10")
+		shell("vcftools \
+		--gzvcf {input.merged_snps} \
+		--het \
+		--out reports/filtered.qual.dp5_200.maxnocall10")

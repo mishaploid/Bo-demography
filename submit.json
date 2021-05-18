@@ -2,7 +2,7 @@
     "__default__" :
     {
       "p" : "med2",
-      "time" : "14-00:00",
+      "time" : "6-00:00",
       "name" : "{rule}.{wildcards}",
       "o" : "slurm_out/{rule}_{wildcards}.%j.out"
     },
@@ -84,32 +84,32 @@
     "filter_flags_snps" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "filtered_to_nocall_snps" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "filter_snps" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "filter_flags_invariant" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "filtered_to_nocall_invariant" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "filter_invariant" :
     {
       "mem" : "100G",
-      "p" : "bigmemm"
+      "p" : "med2"
     },
     "merge_filtered_snps" :
     {
@@ -117,6 +117,16 @@
       "p" : "med2"
     },
     "merge_filtered_allsites" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "ind_stats" :
+    {
+      "mem" : "10G",
+      "p" : "med2"
+    },
+    "pixy_pi" :
     {
       "mem" : "100G",
       "p" : "med2"
@@ -191,10 +201,10 @@
       "mem" : "60G",
       "p" : "bigmemm"
     },
-    "marginal_vcf2smc" :
+    "vcf2smc" :
     {
       "mem" : "45G",
-      "p" : "med2"
+      "p" : "bigmemm"
     },
     "smc_estimate" :
     {
