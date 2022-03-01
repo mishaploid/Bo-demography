@@ -1,17 +1,17 @@
 ################################################################################
-## Rules for variant discovery
-## HaplotypeCaller -> GenomicsDBImport -> GenotypeGVCFs
+# Rules for variant calling in GATK
+# HaplotypeCaller -> GenomicsDBImport -> GenotypeGVCFs
 ################################################################################
 
 ################################################################################
 # Run HaplotypeCaller for each sample
-# calls SNPs and indels via local re-assembly of haplotypes
-# able to call difficult regions
-# -L = params file that specifies regions to call
-# -G = annotations to include
+# 	calls SNPs and indels via local re-assembly of haplotypes
+# 	able to call difficult regions
+# 	-L = params file that specifies regions to call
+# 	-G = annotations to include
 #		StandardAnnotation
 #		AS_StandardAnnotation (allele specific)
-# --emit-ref-confidence = mode for emitting reference confidence scores (BP resolution chosen here)
+# 	--emit-ref-confidence = mode for emitting reference confidence scores (BP resolution chosen here)
 # 		see details: https://software.broadinstitute.org/gatk/documentation/article.php?id=4017
 ################################################################################
 
@@ -36,8 +36,8 @@ rule hap_caller:
 
 ################################################################################
 # scatter reference into intervals using SplitIntervals
-# https://gatk.broadinstitute.org/hc/en-us/articles/360036348372-SplitIntervals
-# ``--scatter-count n` splits reference into n intervals
+# 	https://gatk.broadinstitute.org/hc/en-us/articles/360036348372-SplitIntervals
+# 	`--scatter-count n` splits reference into n intervals
 ################################################################################
 
 rule split_intervals:
@@ -59,14 +59,11 @@ rule split_intervals:
 
 ################################################################################
 # combine GVCFs with GenomicsDBImport
-# https://software.broadinstitute.org/gatk/documentation/article?id=11813
-# recommendation is to scatter over number of intervals ~ number of samples
-# snakemake considerations:
-# 	https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
+# 	https://software.broadinstitute.org/gatk/documentation/article?id=11813
+# 	recommendation is to scatter over number of intervals ~ number of samples
+# 	snakemake considerations:
+# 		https://bitbucket.org/snakemake/snakemake/issues/895/combine-multiple-files-for-input-but
 ################################################################################
-
-# files = lambda wildcards, input: " -V ".join(input),
-# 		-V {params.files} \
 
 rule combine_gvcfs:
 	input:
@@ -113,12 +110,15 @@ rule joint_geno:
 		--include-non-variant-sites \
 		-O {output}")
 
-### START HERE
+################################################################################
+# combine intervals into single VCF file and index with tabix
+################################################################################
+
 rule vcf_concat:
 	input:
 		expand("data/raw/vcf_bpres/{intervals}.raw.snps.indels.vcf", intervals = INTERVALS)
 	output:
-		"data/interim/all_samples_unfiltered.vcf.gz"
+		temp("data/interim/all_samples_unfiltered.vcf.gz")
 	run:
 		shell("bcftools concat {input} -Oz -o {output}")
 		shell("tabix -p vcf {output}")

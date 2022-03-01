@@ -17,9 +17,11 @@ module load vcftools
 module load plink/1.90
 module load plink2
 module load angsd
-module load popvae
+# module load popvae
+module load singularity
 
 snakemake --jobs 200 --use-conda \
+--use-singularity \
 --rerun-incomplete \
 --latency-wait 60 \
 --cluster-config submit.json \

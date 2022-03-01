@@ -138,8 +138,8 @@
     },
     "bgzip_vcf" :
     {
-      "mem" : "8G",
-      "p" : "med2"
+      "mem" : "16G",
+      "p" : "bigmemm"
     },
     "combine_vcfs" :
     {
@@ -214,46 +214,36 @@
     "smc_cv" :
     {
       "mem" : "128G",
-      "p" : "med2"
+      "p" : "bigmemm"
     },
     "plot_estimate" :
     {
       "mem" : "1G",
       "p" : "med2"
     },
-    "smc_cv_time" :
+    "smc_bootstrap_input" :
     {
-      "mem" : "128G",
+      "mem" : "160G",
       "p" : "bigmemm"
     },
-    "joint_vcf2smc" :
+    "smc_cv_bootstrap" :
     {
-      "mem" : "30G",
+      "mem" : "50G",
       "p" : "med2"
     },
-    "split" :
+    "create_bed":
     {
-      "mem" : "128G",
-      "p" : "bigmemm"
-    },
-    "beagle_phasing" :
-    {
-      "mem" : "16G",
+      "mem" : "100G",
       "p" : "med2"
     },
-    "subset_vcf" :
+    "raisd" :
     {
-      "mem" : "8G",
+      "mem" : "50G",
       "p" : "med2"
     },
-    "get_depth" :
+    "unzip_vcf" :
     {
-      "mem" : "8G",
-      "p" : "med2"
-    },
-    "indiv_mask" :
-    {
-      "mem" : "8G",
+      "mem" : "50G",
       "p" : "med2"
     }
 }

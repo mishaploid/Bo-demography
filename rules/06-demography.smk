@@ -7,8 +7,7 @@
 #   https://github.com/popgenmethods/smcpp
 
 ################################################################################
-# STEP 1: mask repetitive regions (e.g. centromeres)
-#   SNPable program
+# STEP 1: mask repetitive regions (e.g. centromeres) with SNPable program
 #   generates a mask for single-end reads of length 'k' and stringency 'r'
 #   default is k = 35
 #   Thanks to Li Wang for helpful code!
@@ -22,7 +21,7 @@
 #   use gen_mask function from SNPable to apply stringency (-r)
 #   use makeMappabilityMask.py to convert fasta to bed
 #   requires download of makeMappabilityMask.py from https://github.com/stschiff/msmc-tools
-# NOTE: had to update gzip.open in makeMappabilityMask.py from 'w' to 'wt'
+#   NOTE: had to update gzip.open in makeMappabilityMask.py from 'w' to 'wt'
 ################################################################################
 
 rule make_mask:
@@ -58,15 +57,15 @@ rule make_mask:
 
 # rule distinguished_inds:
 #     input:
-#         pop_ids = config['pop_ids']
+#         pop_ids = config['pruned_pop_ids']
 #     output:
 #         "models/smc/distinguished_individuals.txt"
 #     run:
 #         import pandas as pd
-#         pop_ids = pd.read_table("models/sample_ids.txt", names = ['Sample_ID', 'Population'])
+#         pop_ids = pd.read_table("models/pruned_sample_ids.txt", names = ['Sample_ID', 'Population'])
 #         smc_df = pop_ids.groupby(['Population']).filter(lambda x: len(x) > 4)
 #         distind_ids = smc_df.groupby('Population', as_index = False).apply(pd.DataFrame.sample, n = 5, replace = False)
-#         distind_ids.to_csv('models/smc/distinguished_individuals.txt', header = True, index = False, sep = '\t')
+#         distind_ids.to_csv('smc/distinguished_individuals.txt', header = True, index = False, sep = '\t')
 
 ################################################################################
 # STEP 3
@@ -76,8 +75,8 @@ rule make_mask:
 
 rule vcf2smc:
     input:
-        vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
-        index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.idx",
+        vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+        index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz",
         dist_ind = "models/smc/distinguished_individuals.txt"
     output:
@@ -91,12 +90,120 @@ rule vcf2smc:
         distind = "{distinguished_ind}"
     singularity:
         "docker://terhorst/smcpp:latest"
-    run:
+    shell:
     # argument order:
     # mask, input vcf, output directory, chromosome, population: list of individuals
-        shell("bgzip {input.vcf}")
-        shell("tabix -p vcf {input.vcf}.gz")
-        shell("smc++ vcf2smc \
+        "smc++ vcf2smc \
         --mask {input.mask} \
         -d {params.distind} {params.distind} \
-        {input.vcf}.gz {output} {params.chrom} {params.list}")
+        {input.vcf} {output} {params.chrom} {params.list}"
+
+
+###############################################################################
+# STEP 4
+# Fit population size history to data
+#   cv method uses cross-validation to obtain model parameters
+################################################################################
+
+rule smc_cv:
+    input:
+    	smc_cv_input
+    output:
+    	# cv_folds = expand("models/smc_cv_no_timepoints/{{population}}/fold{fold}/model.final.json", fold = ['0','1']),
+        final_model = "models/smc_cv_no_timepoints/{population}/model.final.json"
+    threads: 16
+    params:
+    	model_in = "models/smc/input/{population}.*",
+    	model_out_dir = "models/smc_cv_no_timepoints/{population}",
+    	mu = config['mu']
+    singularity:
+        "docker://terhorst/smcpp:latest"
+    shell:
+    	"smc++ cv \
+        --cores {threads} \
+        --spline cubic \
+    	-o {params.model_out_dir} {params.mu} {params.model_in}"
+
+################################################################################
+# STEP 5
+# Plot results for population size history estimates
+#   --csv exports a csv formatted file with results
+#   -g specifies the number of years per generation
+################################################################################
+
+rule plot_estimate:
+    input:
+        smc_out = expand("models/smc_cv_no_timepoints/{population}/model.final.json", population = distind_dict.keys())
+    output:
+        "reports/smc_cv_no_timepoints_results.png"
+    params:
+        gen = config['gen']
+    singularity:
+        "docker://terhorst/smcpp:latest"
+    shell:
+        "smc++ plot \
+        --csv \
+        -g {params.gen} \
+        {output} \
+        {input.smc_out}"
+
+################################################################################
+# STEP 6
+# Bootstrap input files to get estimate of uncertainty in recent past
+################################################################################
+
+rule smc_bootstrap_input:
+    input:
+        expand("models/smc/input/{{population}}.{{distinguished_ind}}.{chr}.smc.gz", chr = CHR)
+    output:
+        expand("models/smc/bootstrap_input/{{population}}.{{distinguished_ind}}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz", n_bootstrap = range(1,11), boot_chr = range(1,10))
+    params:
+        population = "{population}",
+        distind = "{distinguished_ind}",
+        nr_bootstraps = 10,
+        chunk_size = 5000000,
+        nr_chr = 9,
+        input_dir = "models/smc/input/{population}.{distinguished_ind}*"
+    shell:
+        "python3 src/smc_bootstrap.py \
+        --nr_bootstraps {params.nr_bootstraps} \
+        --chunk_size {params.chunk_size} \
+        --chunks_per_chromosome 10 \
+        --nr_chromosomes {params.nr_chr} \
+        models/smc/bootstrap_input/{params.population}.{params.distind}_rep \
+        {params.input_dir}"
+
+rule smc_cv_bootstrap:
+    input:
+        smc_cv_boot_input
+    output:
+    	cv_folds = expand("models/smc_cv_bootstrap/{{population}}_{{n_bootstrap}}/fold{fold}/model.final.json", fold = ['0','1']),
+        final_model = "models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json"
+    threads: 16
+    params:
+    	model_in = "models/smc/bootstrap_input/{population}*rep_{n_bootstrap}/*",
+    	model_out_dir = "models/smc_cv_bootstrap/{population}_{n_bootstrap}",
+    	mu = config['mu']
+    singularity:
+        "docker://terhorst/smcpp:latest"
+    shell:
+    	"smc++ cv \
+        --cores {threads} \
+        --spline cubic \
+    	-o {params.model_out_dir} {params.mu} {params.model_in}"
+
+rule plot_bootstrap:
+    input:
+        boot_out = expand("models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json", population = distind_dict.keys(), n_bootstrap = range(1,11))
+    output:
+        "reports/smc_cv_no_timepoints_bootstrap_results.png"
+    params:
+        gen = config['gen']
+    singularity:
+        "docker://terhorst/smcpp:latest"
+    shell:
+        "smc++ plot \
+        --csv \
+        -g {params.gen} \
+        {output} \
+        {input.smc_out}"

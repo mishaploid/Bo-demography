@@ -1,7 +1,7 @@
 ################################################################################
 # run FASTQC for quality control checks on raw sequence data
-# exports an html report and gzipped folder with graphs/tables
-# https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+# 	exports an html report and gzipped folder with graphs/tables
+# 	https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
 ################################################################################
 
 rule fastqc:
@@ -22,10 +22,10 @@ rule fastqc:
 
 ################################################################################
 # aggregate FASTQC reports with multiqc
-# generates a html report with quality statistics for all samples (it's awesome)
-# chose here to generate a separate report for each lane of data,
-# but could also generate a single report for all samples
-# https://multiqc.info/
+# 	generates a html report with quality statistics for all samples (it's awesome)
+# 	chose here to generate a separate report for each lane of data,
+# 	but could also generate a single report for all samples
+# 	https://multiqc.info/
 ################################################################################
 
 rule multiqc:

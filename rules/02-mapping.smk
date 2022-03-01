@@ -1,26 +1,27 @@
 ################################################################################
-## Rules for mapping short reads to a reference
-## This script downloads a reference sequence and maps FASTQ files from either
-## the SRA or a local directory to the reference assembly, sorts the resultant
-## BAM files, add read groups, marks PCR duplicates, and runs a quality check
-## using qualimap.
-## General sequence of steps:
-##      obtain reference/fasterq-dump -> trim reads (trimmomatic) ->
-##      align (bwa-mem) -> sort bam files (SortSam) ->
-##      mark PCR duplicates  (MarkDuplicates) -> quality metrics (qualimap)
+# Rules for mapping short reads to a reference
+#   This script downloads a reference sequence and maps FASTQ files from either
+#   the SRA or a local directory to the reference assembly, sorts the resultant
+#   BAM files, add read groups, marks PCR duplicates, and runs a quality check
+#   using qualimap.
 ################################################################################
 
+# General sequence of steps:
+#      obtain reference/fasterq-dump -> trim reads (trimmomatic) ->
+#      align (bwa-mem) -> sort bam files (SortSam) ->
+#      mark PCR duplicates  (MarkDuplicates) -> quality metrics (qualimap)
+
+
 ################################################################################
-## Get reference and creat indices + dictionary
-# see https://gatkforums.broadinstitute.org/gatk/discussion/2798/howto-prepare-a-reference-for-use-with-bwa-and-gatk
-# download reference (wget)
-# generate BWA index (bwa index)
-#    collection of files used by BWA for alignment
+# Get reference and create indices + dictionary
+#   see https://gatkforums.broadinstitute.org/gatk/discussion/2798/howto-prepare-a-reference-for-use-with-bwa-and-gatk
+#   download reference (wget)
+# generate BWA index (bwa index) - this is a collection of files used by BWA for alignment
 # generate fasta index (samtools faidx) -
-#    .fai file with one record per line for each contig in FASTA reference
-#    contig name | size | location | basesPerLine | bytesPerLine
+#   .fai file with one record per line for each contig in FASTA reference
+#   contig name | size | location | basesPerLine | bytesPerLine
 # create sequence dictionary (gatk CreateSequenceDictionary)
-#    .dict file formatted like SAM header that describes contents of FASTA reference
+#   .dict file formatted like SAM header that describes contents of FASTA reference
 ################################################################################
 
 rule get_ref:

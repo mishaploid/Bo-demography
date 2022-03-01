@@ -143,8 +143,8 @@ rule filter_snps:
 		snps_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.snpsOnly.nocall.vcf.idx",
 		ref = config['ref']
 	output:
-		filtered_snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
-		filtered_snps_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.idx"
+		filtered_snps = temp("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf"),
+		filtered_snps_idx = temp("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.idx")
 	run:
 		shell("gatk SelectVariants \
 		-R {input.ref} \
@@ -204,9 +204,20 @@ rule filter_invariant:
 		--exclude-filtered true \
 		-O {output.filtered_invariant}")
 
+rule bgzip_vcf:
+	input:
+		vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
+		index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.idx"
+	output:
+		"data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+		"data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi"
+	run:
+		shell("bgzip {input}")
+		shell("tabix -p vcf {input}.gz")
+
 rule merge_filtered_snps:
 	input:
-		snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf", chr = CHR)
+		snps = expand("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz", chr = CHR)
 	output:
 		merged_snps = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz"
 	params:
@@ -218,7 +229,7 @@ rule merge_filtered_snps:
 
 rule merge_filtered_allsites:
 	input:
-		snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf",
+		snps = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
 		invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf"
 	output:
 		allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"

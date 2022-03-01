@@ -24,11 +24,19 @@ fastq_source: SRA
 # sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
 sra_info: data/external/Sra_oleracea.csv
 
-# sample and population ids
+# sample and population ids (full list)
 pop_ids: models/sample_ids.txt
+# sample and population ids for (after silhouette pruning)
+pruned_pop_ids: models/pruned_sample_ids.txt
+
+# generation time for SMC++ (years)
+gen: 1
 
 # list of distinguished individuals
 distinguished_individuals: models/smc/distinguished_individuals.txt
+
+# per base per generation mutation rate for SMC++
+mu: 7e-9
 
 # directory to use as scratch space
 scratch: /scratch/sdturner/
@@ -37,24 +45,10 @@ scratch: /scratch/sdturner/
 # plink2
 plink2: ~/software/plink2
 
-# ngsTools (https://github.com/mfumagalli/ngsTools)
-ngsTools: ../software/ngsTools
-
-# FINESTRUCTURE software (v4)
-# wget https://people.maths.bris.ac.uk/~madjl/finestructure/fs_4.0.1.zip
-# unzip fs_4.0.1.zip
-finestructure: ../bin/fs_4.0.1
-
 snpable: ../software/seqbility-20091110
-
-# BEAGLE 5.0
-beagle: ../software/beagle.11Mar19.69c.jar
 
 # msmc-tools (directory for helper scripts)
 msmc_tools: ../software/msmc-tools
-
-# RAiSD 2.0
-raisd: ../software/RAiSD
 
 # filtering params
 mind: 0.3
