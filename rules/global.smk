@@ -133,9 +133,8 @@ def smc_cv_boot_input(wildcards):
     files = expand('models/smc/bootstrap_input/{population}.{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz', population=wildcards.population, distinguished_ind=distind_dict[wildcards.population], n_bootstrap = range(1,11), boot_chr = range(1,10))
     return files
 
-<<<<<<< HEAD
 ################################################################################
-## Create a dictionary of paired populations for SMC++ split 
+## Create a dictionary of paired populations for SMC++ split
 ################################################################################
 
 # dictionary of population pairs to estimate divergence
@@ -171,7 +170,5 @@ smc_split_input_files21 = [expand('models/smc_split_input/{pop_pair}_21.{disting
                     pop_pair = key, distinguished_ind2 = distind_dict[value[1]], chr = CHR)
                     for key, value in pop_pair_dict.items()]
 
-=======
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
 # population specific sample lists for selective sweeps
 # after silhouette pruning
