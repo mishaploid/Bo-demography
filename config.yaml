@@ -1,0 +1,54 @@
+
+# reference genome
+# where to download assembly
+ref_source: http://www.genoscope.cns.fr/externe/plants/data/Boleracea_chromosomes.fasta
+# name of reference fasta
+ref: data/external/ref/Boleracea_chromosomes.fasta
+# dict file for reference assembly
+ref_dict: data/external/ref/Boleracea_chromosomes.dict
+# annotations for reference assembly
+gff_source: http://www.genoscope.cns.fr/externe/plants/data/Boleracea_annotation.gff
+# gff file
+gff: data/external/ref/Boleracea_annotation.gff
+# interval list (if you want to exclude specific regions)
+interval_list: data/raw/b_oleracea.interval_list
+
+# FASTQ source
+# options: 'SRA' or 'local'
+# TODO: add option for 'both'
+fastq_source: SRA
+
+# if FASTQ source = SRA
+# SRA project info file
+# cat SraRunInfo.csv | grep oleracea > Sra_oleracea.csv
+# sed -i "1s/^/$(head -n1 SraRunInfo.csv)\n/" Sra_oleracea.csv
+sra_info: data/external/Sra_oleracea.csv
+
+# sample and population ids (full list)
+pop_ids: models/sample_ids.txt
+# sample and population ids for (after silhouette pruning)
+pruned_pop_ids: models/pruned_sample_ids.txt
+
+# generation time for SMC++ (years)
+gen: 1
+
+# list of distinguished individuals
+distinguished_individuals: models/smc/distinguished_individuals.txt
+
+# per base per generation mutation rate for SMC++
+mu: 7e-9
+
+# directory to use as scratch space
+scratch: /scratch/sdturner/
+
+# add paths for locally installed software
+# plink2
+plink2: ~/software/plink2
+
+snpable: ../software/seqbility-20091110
+
+# msmc-tools (directory for helper scripts)
+msmc_tools: ../software/msmc-tools
+
+# filtering params
+mind: 0.3

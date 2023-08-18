@@ -1,0 +1,259 @@
+{
+    "__default__" :
+    {
+      "p" : "med2",
+      "time" : "6-00:00",
+      "name" : "{rule}.{wildcards}",
+      "o" : "slurm_out/{rule}_{wildcards}.%j.out"
+    },
+    "get_ref" :
+    {
+      "mem" : "18G",
+      "p" : "med2"
+    },
+    "fastqc" :
+    {
+      "mem" : "12G",
+      "p" : "med2"
+    },
+    "multiqc" :
+    {
+      "mem" : "20G",
+      "p" : "med2"
+    },
+    "fastq2bam" :
+    {
+      "mem" : "64G",
+      "p" : "med2"
+    },
+    "bwa_mem" :
+    {
+      "mem" : "24G",
+      "p" : "med2"
+    },
+    "sort_bam" :
+    {
+      "mem" : "20G",
+      "p" : "med2"
+    },
+    "mark_dups" :
+    {
+      "mem" : "60G",
+      "p" : "med2"
+    },
+    "add_rg" :
+    {
+      "mem" : "20G",
+      "p" : "med2"
+    },
+    "bamqc" :
+    {
+      "mem" : "24G",
+      "p" : "med2"
+    },
+    "multibamqc" :
+    {
+      "mem" : "40G",
+      "p" : "med2"
+    },
+    "hap_caller" :
+    {
+      "mem" : "180G",
+      "p" : "med2"
+    },
+    "split_intervals" :
+    {
+      "mem" : "8G",
+      "p" : "med2"
+    },
+    "combine_gvcfs" :
+    {
+      "mem" : "80G",
+      "p" : "med2"
+    },
+    "joint_geno" :
+    {
+      "mem" : "80G",
+      "p" : "med2"
+    },
+    "get_snps" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_flags_snps" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filtered_to_nocall_snps" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filter_snps" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filter_flags_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filtered_to_nocall_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "filter_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "merge_filtered_snps" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "merge_filtered_allsites" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "ind_stats" :
+    {
+      "mem" : "10G",
+      "p" : "med2"
+    },
+    "pixy_pi" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "window_pi" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "bgzip_vcf" :
+    {
+      "mem" : "16G",
+      "p" : "bigmemm"
+    },
+    "combine_vcfs" :
+    {
+      "mem" : "10G",
+      "p" : "med2"
+    },
+    "vcf_concat" :
+    {
+      "mem" : "48G",
+      "p" : "med2"
+    },
+    "select_variant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "select_invariant" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_snps" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "filter_nocall" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "snps_only" :
+    {
+      "mem" : "100G",
+      "p" : "bigmemm"
+    },
+    "diagnostics" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "depth" :
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "make_mask" :
+    {
+      "mem" : "60G",
+      "p" : "med2"
+    },
+    "admix_input" :
+    {
+      "mem" : "60G",
+      "p" : "bigmemm"
+    },
+    "admixture" :
+    {
+      "mem" : "60G",
+      "p" : "bigmemm"
+    },
+    "vcf2smc" :
+    {
+      "mem" : "45G",
+      "p" : "bigmemm"
+    },
+    "smc_estimate" :
+    {
+      "mem" : "60G",
+      "p" : "med2"
+    },
+    "smc_cv" :
+    {
+      "mem" : "128G",
+      "p" : "bigmemm"
+    },
+    "plot_estimate" :
+    {
+      "mem" : "1G",
+      "p" : "med2"
+    },
+    "smc_bootstrap_input" :
+    {
+      "mem" : "160G",
+      "p" : "bigmemm"
+    },
+    "smc_cv_bootstrap" :
+    {
+      "mem" : "50G",
+      "p" : "med2"
+    },
+    "joint_vcf2smc12" :
+    {
+      "mem" : "30G",
+      "p" : "med2"
+    },
+    "joint_vcf2smc21" :
+    {
+      "mem" : "30G",
+      "p" : "med2"
+    },
+    "create_bed":
+    {
+      "mem" : "100G",
+      "p" : "med2"
+    },
+    "raisd" :
+    {
+      "mem" : "50G",
+      "p" : "med2"
+    },
+    "unzip_vcf" :
+    {
+      "mem" : "50G",
+      "p" : "med2"
+    }
+}
