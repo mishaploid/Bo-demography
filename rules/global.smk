@@ -134,7 +134,7 @@ def smc_cv_boot_input(wildcards):
     return files
 
 ################################################################################
-## Create a dictionary of paired populations for SMC++ split
+## Create a dictionary of paired populations for SMC++ split 
 ################################################################################
 
 # dictionary of population pairs to estimate divergence
