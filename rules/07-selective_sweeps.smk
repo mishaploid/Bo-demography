@@ -42,7 +42,6 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" # "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
     output:
-<<<<<<< HEAD
         "models/RAiSD/RAiSD_Report.{population}_{chr}_c2_w500.{chr}"
     params:
         population = "{population}_{chr}_c2",
@@ -51,15 +50,6 @@ rule raisd:
     run:
         shell("RAiSD -R -s -m 0.05 -P -X {input.excluded_sites} -n {params.population} -I {input.allsites_vcf} -S {input.samples} -w 500 -f -c 2")
         shell("mv {params.out}* {params.outdir}")
-=======
-        "models/RAiSD/RAiSD_Report.{population}.{chr}"
-    params:
-        population = "{population}",
-        outdir = "models/RAiSD/"
-    run:
-        shell("RAiSD -R -s -m 0.05 -P -X {input.excluded_sites} -n {params.population} -I {input.allsites_vcf} -S {input.samples} -w 100 -f")
-        shell("mv \"RAiSD\"* {params.outdir}")
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
 
 
 # correct for invariant sites using mop (thanks Silas for the code!!!)

@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 # R files
 *.Rapp.history
 *.Rhistory
 
-=======
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -112,7 +109,4 @@ scratch/
 
 # other
 .ftpconfig
-<<<<<<< HEAD
 .Rproj.user
-=======
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0

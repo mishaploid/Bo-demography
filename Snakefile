@@ -48,17 +48,11 @@ rule all:
 		plot_estimate = "reports/smc_cv_no_timepoints_results.png",
 		smc_bootstrap = smc_bootstrap_input,
 		smc_cv_bootstrap = expand("models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json", population = distind_dict.keys(), n_bootstrap = range(1,11)),
-<<<<<<< HEAD
 		joint_vcf2smc12 = smc_split_input_files12,
         joint_vcf2smc21 = smc_split_input_files21
 	# SELECTIVE SWEEPS
 		# create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
 		# raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_c2_w500.{chr}", population = pop_dict.keys(), chr = CHR)
-=======
-	# SELECTIVE SWEEPS
-		create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
-		raisd = expand("models/RAiSD/RAiSD_Report.{population}.{chr}", population = pop_dict.keys(), chr = CHR)
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
 
 ################################################################################
 ## Rule files to include
@@ -70,8 +64,5 @@ include: "rules/03-calling.smk"
 include: "rules/04-filtering.smk"
 include: "rules/05-pop_structure.smk"
 include: "rules/06-demography.smk"
-<<<<<<< HEAD
 include: "rules/06-split-times.smk"
-=======
->>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
 include: "rules/07-selective_sweeps.smk"
