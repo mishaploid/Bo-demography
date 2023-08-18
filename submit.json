@@ -231,6 +231,7 @@
       "mem" : "50G",
       "p" : "med2"
     },
+<<<<<<< HEAD
     "joint_vcf2smc12" :
     {
       "mem" : "30G",
@@ -241,6 +242,8 @@
       "mem" : "30G",
       "p" : "med2"
     },
+=======
+>>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
     "create_bed":
     {
       "mem" : "100G",

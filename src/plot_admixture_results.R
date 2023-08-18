@@ -65,7 +65,11 @@ q_ordered <- q_df %>%
 # plot the results! -------------------------------------------------------
 
 q_ordered %>% 
+<<<<<<< HEAD
   ggplot(., aes(sample, propx, fill = cluster)) +
+=======
+  ggplot(., aes(sample, prop, fill = cluster)) +
+>>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
   # stacked barplot
   geom_bar(stat = "identity") +
   # use custom colors

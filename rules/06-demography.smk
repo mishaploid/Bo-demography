@@ -207,6 +207,7 @@ rule plot_bootstrap:
         -g {params.gen} \
         {output} \
         {input.smc_out}"
+<<<<<<< HEAD
 
 # ################################################################################
 # # STEP 7
@@ -255,3 +256,5 @@ rule plot_bootstrap:
 #         -d {params.distind2} {params.distind2} \
 #         {input.vcf} {output.out21} {params.chrom} {params.pop_pair_string21}
 #         """
+=======
+>>>>>>> 86e618b2156c55942bad0b79fb75df8e578cc3a0
