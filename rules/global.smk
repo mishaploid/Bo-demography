@@ -170,5 +170,16 @@ smc_split_input_files21 = [expand('models/smc_split_input/{pop_pair}_21.{disting
                     pop_pair = key, distinguished_ind2 = distind_dict[value[1]], chr = CHR)
                     for key, value in pop_pair_dict.items()]
 
+# create string: location of model.final.json for each pop
+
+def smc_split_input(wildcards):
+    pops = pop_pair_dict[wildcards.pop_pair]
+    models = expand("models/smc_estimate_no_timepoints/{population}/model.final.json", population = pops)
+    pop1_input = expand("models/smc_estimate_input/{population}.{distinguished_ind}.{chr}.smc.gz", population=pops[0], distinguished_ind=dist_dict[pops[0]], chr=CHR)
+    pop2_input = expand("models/smc_estimate_input/{population}.{distinguished_ind}.{chr}.smc.gz", population=pops[1], distinguished_ind=dist_dict[pops[1]], chr=CHR)
+    joint_input12 = expand("models/smc_split_input/{pop_pair}_12.{distinguished_ind}.{chr}.smc.gz", pop_pair = wildcards.pop_pair, distinguished_ind=dist_dict[pops[0]], chr = CHR)
+    joint_input21 = expand("models/smc_split_input/{pop_pair}_21.{distinguished_ind}.{chr}.smc.gz", pop_pair = wildcards.pop_pair, distinguished_ind=dist_dict[pops[1]], chr = CHR)
+    return models + pop1_input + pop2_input + joint_input12 + joint_input21
+
 # population specific sample lists for selective sweeps
 # after silhouette pruning
