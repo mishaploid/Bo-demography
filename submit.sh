@@ -12,17 +12,18 @@ module load maven
 module load openjdk/16.0.2
 # module load java
 module load gatk
-module load bcftools
+# module load bcftools/1.13
 module load qualimap/2.2.1
 module load vcftools
 module load plink-ng/2.00a3.7
-module load plink/1.07
+module load conda/plink
 # module load angsd
 # module load popvae
 # module load singularity
-# module load apptainer
+module load apptainer
 
-snakemake --jobs 200 --use-conda \
+snakemake --jobs 200 --rerun-triggers mtime \
+--use-conda \
 --use-singularity \
 --rerun-incomplete \
 --latency-wait 60 \
