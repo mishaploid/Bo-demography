@@ -49,7 +49,8 @@ rule all:
 		smc_bootstrap = smc_bootstrap_input,
 		smc_cv_bootstrap = expand("models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json", population = distind_dict.keys(), n_bootstrap = range(1,11)),
 		joint_vcf2smc12 = smc_split_input_files12,
-        joint_vcf2smc21 = smc_split_input_files21
+        joint_vcf2smc21 = smc_split_input_files21,
+		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys())
 	# SELECTIVE SWEEPS
 		# create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
 		# raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_c2_w500.{chr}", population = pop_dict.keys(), chr = CHR)
