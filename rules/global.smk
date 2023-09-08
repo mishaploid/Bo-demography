@@ -181,5 +181,16 @@ def smc_split_input(wildcards):
     joint_input21 = expand("models/smc_split_input/{pop_pair}_21.{distinguished_ind}.{chr}.smc.gz", pop_pair = wildcards.pop_pair, distinguished_ind=dist_dict[pops[1]], chr = CHR)
     return models + pop1_input + pop2_input + joint_input12 + joint_input21
 
+def smc_split_bootstrap_input(wildcards):
+    pops = pop_pair_dict[wildcards.pop_pair]
+    models = expand("models/smc_estimate_no_timepoints_bootstrap/{population}_{n_bootstrap}/model.final.json", population = pops, n_bootstrap = wildcards.n_bootstrap)
+    pop1_input = expand('models/smc_estimate_bootstrap_input/{population}_{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[0], distinguished_ind=dist_dict[pops[0]],
+    n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
+    pop2_input = expand('models/smc_estimate_bootstrap_input/{population}_{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[1], distinguished_ind=dist_dict[pops[1]],
+    n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
+    joint_input12 = expand("models/smc_split_bootstrap_input/{pop_pair}_12.{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz", pop_pair = wildcards.pop_pair, distinguished_ind=dist_dict[pops[0]], n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
+    joint_input21 = expand("models/smc_split_bootstrap_input/{pop_pair}_21.{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz", pop_pair = wildcards.pop_pair, distinguished_ind=dist_dict[pops[1]], n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
+    return models + pop1_input + pop2_input + joint_input12 + joint_input21
+
 # population specific sample lists for selective sweeps
 # after silhouette pruning
