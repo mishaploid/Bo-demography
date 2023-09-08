@@ -6,7 +6,7 @@ rule joint_vcf2smc12:
         index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
     output:
-        out12 = "models/smc_split_input/{pop_pair}_12.{distinguished_ind1}.{chr}.smc.gz",
+        out12 = "models/smc/split_input/{pop_pair}_12.{distinguished_ind1}.{chr}.smc.gz",
     params:
     	chrom = "{chr}",
         distind1 = "{distinguished_ind1}",
@@ -27,7 +27,7 @@ rule joint_vcf2smc21:
         index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
     output:
-        out21 = "models/smc_split_input/{pop_pair}_21.{distinguished_ind2}.{chr}.smc.gz"
+        out21 = "models/smc/split_input/{pop_pair}_21.{distinguished_ind2}.{chr}.smc.gz"
     params:
     	chrom = "{chr}",
         distind2 = "{distinguished_ind2}",
@@ -61,44 +61,44 @@ rule smc_split:
 # bootstrapping
 rule joint_bootstrap_vcf2smc12:
     input:
-        expand("models/smc_split_input/{{pop_pair}}_12.{{distinguished_ind1}}.{chr}.smc.gz", chr = CHR)
+        expand("models/smc/split_input/{{pop_pair}}_12.{{distinguished_ind1}}.{chr}.smc.gz", chr = CHR)
     output:
-        expand('models/smc_split_bootstrap_input/{{pop_pair}}_12.{{distinguished_ind1}}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz', n_bootstrap = range(1,11), boot_chr = range(1,10)),
+        expand('models/smc/split_bootstrap_input/{{pop_pair}}_12.{{distinguished_ind1}}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz', n_bootstrap = range(1,11), boot_chr = range(1,10)),
     params:
     	pop_pair = "{pop_pair}",
         distind1 = "{distinguished_ind1}",
         nr_bootstraps = 10,
         chunk_size = 5000000,
         nr_chr = 9,
-        input_dir = "models/smc_split_input/{pop_pair}_12.{distinguished_ind1}*"
+        input_dir = "models/smc/split_input/{pop_pair}_12.{distinguished_ind1}*"
     shell:
         "python3 scripts/smc_bootstrap.py \
         --nr_bootstraps {params.nr_bootstraps} \
         --chunk_size {params.chunk_size} \
         --chunks_per_chromosome 10 \
         --nr_chromosomes {params.nr_chr} \
-        models/smc_split_bootstrap_input/{params.pop_pair}_12.{params.distind1}_rep \
+        models/smc/split_bootstrap_input/{params.pop_pair}_12.{params.distind1}_rep \
         {params.input_dir}"
 
 rule joint_bootstrap_vcf2smc21:
     input:
-        expand("models/smc_split_input/{{pop_pair}}_21.{{distinguished_ind1}}.{chr}.smc.gz", chr = CHR)
+        expand("models/smc/split_input/{{pop_pair}}_21.{{distinguished_ind1}}.{chr}.smc.gz", chr = CHR)
     output:
-        expand('models/smc_split_bootstrap_input/{{pop_pair}}_21.{{distinguished_ind1}}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz', n_bootstrap = range(1,11), boot_chr = range(1,10)),
+        expand('models/smc/split_bootstrap_input/{{pop_pair}}_21.{{distinguished_ind1}}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz', n_bootstrap = range(1,11), boot_chr = range(1,10)),
     params:
     	pop_pair = "{pop_pair}",
         distind1 = "{distinguished_ind1}",
         nr_bootstraps = 10,
         chunk_size = 5000000,
         nr_chr = 9,
-        input_dir = "models/smc_split_input/{pop_pair}_21.{distinguished_ind1}*"
+        input_dir = "models/smc/split_input/{pop_pair}_21.{distinguished_ind1}*"
     shell:
         "python3 scripts/smc_bootstrap.py \
         --nr_bootstraps {params.nr_bootstraps} \
         --chunk_size {params.chunk_size} \
         --chunks_per_chromosome 10 \
         --nr_chromosomes {params.nr_chr} \
-        models/smc_split_bootstrap_input/{params.pop_pair}_21.{params.distind1}_rep \
+        models/smc/split_bootstrap_input/{params.pop_pair}_21.{params.distind1}_rep \
         {params.input_dir}"
 
 rule smc_split_bootstrap:
