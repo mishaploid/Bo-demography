@@ -20,7 +20,7 @@ module load plink/1.07
 # module load angsd
 # module load popvae
 # module load singularity
-module load apptainer
+# module load apptainer
 
 snakemake --jobs 200 --use-conda \
 --use-singularity \
