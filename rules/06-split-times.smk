@@ -2,9 +2,9 @@
 
 rule joint_vcf2smc12:
     input:
-        vcf = config['vcf'],
-        index = config['vcf_index'],
-        mask = config['mask']
+        vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+        index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
+        mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
     output:
         out12 = "models/smc_split_input/{pop_pair}_12.{distinguished_ind1}.{chr}.smc.gz",
     params:
@@ -23,9 +23,9 @@ rule joint_vcf2smc12:
 
 rule joint_vcf2smc21:
     input:
-        vcf = config['vcf'],
-        index = config['vcf_index'],
-        mask = config['mask']
+        vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+        index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
+        mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
     output:
         out21 = "models/smc_split_input/{pop_pair}_21.{distinguished_ind2}.{chr}.smc.gz"
     params:
