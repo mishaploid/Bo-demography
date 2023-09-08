@@ -174,7 +174,7 @@ smc_split_input_files21 = [expand('models/smc/split_input/{pop_pair}_21.{disting
 
 def smc_split_input(wildcards):
     pops = pop_pair_dict[wildcards.pop_pair]
-    models = expand("models/smc_estimate_no_timepoints/{population}/model.final.json", population = pops)
+    models = expand("models/smc_cv_no_timepoints/{population}/model.final.json", population = pops)
     pop1_input = expand("models/smc/input/{population}.{distinguished_ind}.{chr}.smc.gz", population=pops[0], distinguished_ind=distind_dict[pops[0]], chr=CHR)
     pop2_input = expand("models/smc/input/{population}.{distinguished_ind}.{chr}.smc.gz", population=pops[1], distinguished_ind=distind_dict[pops[1]], chr=CHR)
     joint_input12 = expand("models/smc/split_input/{pop_pair}_12.{distinguished_ind}.{chr}.smc.gz", pop_pair = wildcards.pop_pair, distinguished_ind=distind_dict[pops[0]], chr = CHR)
@@ -183,7 +183,7 @@ def smc_split_input(wildcards):
 
 def smc_split_bootstrap_input(wildcards):
     pops = pop_pair_dict[wildcards.pop_pair]
-    models = expand("models/smc_estimate_no_timepoints_bootstrap/{population}_{n_bootstrap}/model.final.json", population = pops, n_bootstrap = wildcards.n_bootstrap)
+    models = expand("models/smc_cv_no_timepoints_bootstrap/{population}_{n_bootstrap}/model.final.json", population = pops, n_bootstrap = wildcards.n_bootstrap)
     pop1_input = expand('models/smc/bootstrap_input/{population}_{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[0], distinguished_ind=distind_dict[pops[0]],
     n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
     pop2_input = expand('models/smc/bootstrap_input/{population}_{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[1], distinguished_ind=distind_dict[pops[1]],
