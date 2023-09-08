@@ -12,11 +12,11 @@ module load maven
 module load java
 module load gatk
 module load bcftools
-module load qualimap/2.1.1
+module load qualimap/2.2.1
 module load vcftools
-module load plink/1.90
-module load plink2
-module load angsd
+module load plink-ng/2.00a3.7
+module load plink/1.07
+# module load angsd
 # module load popvae
 module load singularity
 
