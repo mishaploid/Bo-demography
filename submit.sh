@@ -6,11 +6,11 @@ echo $date
 # echo $file
 
 module load fastqc
-module load trimmomatic/0.36
+module load trimmomatic/0.39
 module load R
 module load maven
 module load java
-module load GATK
+module load gatk
 module load bcftools
 module load qualimap/2.1.1
 module load vcftools
