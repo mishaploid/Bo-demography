@@ -9,7 +9,8 @@ module load fastqc
 module load trimmomatic/0.39
 module load R
 module load maven
-module load java
+module load openjdk/16.0.2
+# module load java
 module load gatk
 module load bcftools
 module load qualimap/2.2.1
