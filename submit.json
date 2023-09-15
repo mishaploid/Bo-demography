@@ -241,6 +241,31 @@
       "mem" : "30G",
       "p" : "med2"
     },
+    "smc_split" :
+    {
+      "mem" : "500G",
+      "p" : "bigmemm"
+    },
+    "joint_bootstrap_vcf2smc12" :
+    {
+      "mem" : "80G",
+      "p" : "med2"
+    },
+    "joint_bootstrap_vcf2smc21" :
+    {
+      "mem" : "80G",
+      "p" : "med2"
+    },
+    "smc_split_bootstrap" :
+    {
+      "mem" : "400G",
+      "p" : "bigmemm"
+    },
+    "plot_split" :
+    {
+      "mem" : "1G",
+      "p" : "high2"
+    },
     "create_bed":
     {
       "mem" : "100G",
