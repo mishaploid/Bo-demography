@@ -193,7 +193,7 @@ def smc_split_input(wildcards):
 
 def smc_split_bootstrap_input(wildcards):
     pops = pop_pair_dict[wildcards.pop_pair]
-    models = expand("models/smc_cv_no_timepoints_bootstrap/{population}_{n_bootstrap}/model.final.json", population = pops, n_bootstrap = wildcards.n_bootstrap)
+    models = expand("models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json", population = pops, n_bootstrap = wildcards.n_bootstrap)
     pop1_input = expand('models/smc/bootstrap_input/{population}.{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[0], distinguished_ind=distind_dict[pops[0]],
     n_bootstrap = wildcards.n_bootstrap, boot_chr = range(1,10))
     pop2_input = expand('models/smc/bootstrap_input/{population}.{distinguished_ind}_rep_{n_bootstrap}/bootstrap_chr{boot_chr}.gz',  population=pops[1], distinguished_ind=distind_dict[pops[1]],
