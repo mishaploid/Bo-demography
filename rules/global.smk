@@ -138,7 +138,17 @@ def smc_cv_boot_input(wildcards):
 ################################################################################
 
 # dictionary of population pairs to estimate divergence
-pop_pair_dict = {'alboglabra_italica':['alboglabra', 'italica']}
+pop_pair_dict = {'alboglabra_italica':['alboglabra', 'italica'],
+				 'italica_botrytis':['italica', 'botrytis'],
+				 'capitata_viridis':['capitata', 'viridis'],
+				 'cretica_alboglabra':['B_cretica', 'alboglabra'],
+				 'cretica_sabellica':['B_cretica', 'sabellica'],
+				 'cretica_gongylodes':['B_cretica', 'gongylodes'],
+				 'cretica_capitata':['B_cretica', 'capitata'],
+				 'cretica_italica':['B_cretica', 'italica'],
+				 'cretica_botrytis':['B_cretica', 'botrytis'],
+				 'cretica_viridis':['B_cretica', 'viridis']
+}
 
 # for split time:
 # based on current wildcard, find pop pair in pop_pair_dict
