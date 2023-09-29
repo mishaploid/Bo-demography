@@ -141,13 +141,13 @@ def smc_cv_boot_input(wildcards):
 pop_pair_dict = {'alboglabra_italica':['alboglabra', 'italica'],
 				 'italica_botrytis':['italica', 'botrytis'],
 				 'capitata_viridis':['capitata', 'viridis'],
-				 'cretica_alboglabra':['B_cretica', 'alboglabra'],
-				 'cretica_sabellica':['B_cretica', 'sabellica'],
-				 'cretica_gongylodes':['B_cretica', 'gongylodes'],
-				 'cretica_capitata':['B_cretica', 'capitata'],
-				 'cretica_italica':['B_cretica', 'italica'],
-				 'cretica_botrytis':['B_cretica', 'botrytis'],
-				 'cretica_viridis':['B_cretica', 'viridis']
+				 'cretica_alboglabra':['Brassica_cretica', 'alboglabra'],
+				 'cretica_sabellica':['Brassica_cretica', 'sabellica'],
+				 'cretica_gongylodes':['Brassica_cretica', 'gongylodes'],
+				 'cretica_capitata':['Brassica_cretica', 'capitata'],
+				 'cretica_italica':['Brassica_cretica', 'italica'],
+				 'cretica_botrytis':['Brassica_cretica', 'botrytis'],
+				 'cretica_viridis':['Brassica_cretica', 'viridis']
 }
 
 # for split time:
