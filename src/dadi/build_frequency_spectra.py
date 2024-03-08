@@ -67,7 +67,7 @@ def _cli() -> Dict[str, str]:
 
 def main() -> None:
     args = _cli()
-    model_config = json.loads(open("model_config.json").read())
+    model_config = json.loads(open("src/dadi/model_config.json").read())
     sampling = (
         model_config["subsampling"] if args["subsample"] else model_config["sampling"]
     )
