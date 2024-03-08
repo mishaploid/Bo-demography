@@ -1,4 +1,0 @@
-dadi
-numpy
-pandas
-nlopt

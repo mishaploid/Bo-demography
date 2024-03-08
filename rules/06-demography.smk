@@ -1,3 +1,6 @@
+# TODO: edit input/output files - this is a positive mask that needs to be converted
+
+
 # Demographic history with SMC++
 # adapted from lovely script by cattlefriends Harly Durbin & Troy Rowan
 # Check out SMC++ git repo for additional documentation:
@@ -20,8 +23,6 @@
 #   requires download of makeMappabilityMask.py from https://github.com/stschiff/msmc-tools
 #   NOTE: had to update gzip.open in makeMappabilityMask.py from 'w' to 'wt'
 ################################################################################
-
-# TODO: edit input/output files - this is a positive mask that needs to be converted
 
 rule make_mask:
     input:
@@ -206,3 +207,51 @@ rule plot_bootstrap:
         -g {params.gen} \
         {output} \
         {input.smc_out}"
+
+# ################################################################################
+# # STEP 7
+# # Create input files for smc++ split command
+# # joint site frequency spectrum for two populations
+# ################################################################################
+#
+# rule joint_vcf2smc12:
+#     input:
+#         vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+#         index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
+#         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
+#     output:
+#         out12 = "models/smc_split_input/{pop_pair}_12.{distinguished_ind1}.{chr}.smc.gz",
+#     params:
+#     	chrom = "{chr}",
+#         distind1 = "{distinguished_ind1}",
+#     	pop_pair_string12 = pair_string_choose12
+#     singularity:
+#         "docker://terhorst/smcpp:latest"
+#     shell:
+#         """
+#         smc++ vcf2smc \
+#         --mask {input.mask} \
+#         -d {params.distind1} {params.distind1} \
+#         {input.vcf} {output.out12} {params.chrom} {params.pop_pair_string12}
+#         """
+#
+# rule joint_vcf2smc21:
+#     input:
+#         vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+#         index = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz.tbi",
+#         mask = "data/processed/mappability_masks/scratch/{chr}.mask.bed.gz"
+#     output:
+#         out21 = "models/smc_split_input/{pop_pair}_21.{distinguished_ind2}.{chr}.smc.gz"
+#     params:
+#     	chrom = "{chr}",
+#         distind2 = "{distinguished_ind2}",
+#         pop_pair_string21 = pair_string_choose21
+#     singularity:
+#         "docker://terhorst/smcpp:latest"
+#     shell:
+#         """
+#         smc++ vcf2smc \
+#         --mask {input.mask} \
+#         -d {params.distind2} {params.distind2} \
+#         {input.vcf} {output.out21} {params.chrom} {params.pop_pair_string21}
+#         """Automatic merge failed; fix conflicts and then commit the result.
