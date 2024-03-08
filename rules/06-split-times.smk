@@ -116,27 +116,27 @@ rule smc_split_bootstrap:
         -o {params.model_out_dir} \
         {input}"
 
-# rule plot_split:
-#     input:
-#         smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
-#         smc_split_bootstrap = expand("models/smc_split_bootstrap/{pop_pair}_{n_bootstrap}/model.final.json", pop_pair = pop_pair_dict.keys(), n_bootstrap = range(1,11))
-#     output:
-#         split = "reports/carrot_all_pops_smc_split.png",
-#         bootstrap = "reports/carrot_all_pops_smc_split_bootstrap.png"
-#     params:
-#         gen = config['gen']
-#     singularity:
-#         "docker://terhorst/smcpp:latest"
-#     shell:
-#         """
-#         smc++ plot \
-#         --csv \
-#         -g {params.gen} \
-#         {output.split} \
-#         {input.smc_split}
-#         smc++ plot \
-#         --csv \
-#         -g {params.gen} \
-#         {output.bootstrap} \
-#         {input.smc_split_bootstrap}
-#         """
+rule plot_split:
+    input:
+        smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
+        smc_split_bootstrap = expand("models/smc_split_bootstrap/{pop_pair}_{n_bootstrap}/model.final.json", pop_pair = pop_pair_dict.keys(), n_bootstrap = range(1,11))
+    output:
+        split = "reports/smc_split/brassica_all_pops_smc_split.png",
+        bootstrap = "reports/smc_split/brassica_all_pops_smc_split_bootstrap.png"
+    params:
+        gen = config['gen']
+    singularity:
+        "docker://terhorst/smcpp:latest"
+    shell:
+        """
+        smc++ plot \
+        --csv \
+        -g {params.gen} \
+        {output.split} \
+        {input.smc_split}
+        smc++ plot \
+        --csv \
+        -g {params.gen} \
+        {output.bootstrap} \
+        {input.smc_split_bootstrap}
+        """
