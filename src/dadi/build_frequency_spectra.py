@@ -81,14 +81,15 @@ def main() -> None:
 
     logging.info("Building frequency spectra for each model...")
     for fs in model_config["models"]:
-        print(f"Building sfs for populations: {', '.join(fs['subpops'])}")
+        model_sub = model_config["models"][fs]
+        print(f"Building sfs for populations: {', '.join(model_sub['subpops'])}")
         sfs = dadi.Spectrum.from_data_dict(
             data_dict=data_dict,
-            pop_ids=fs["subpops"],
-            projections=[2 * sampling[pop] for pop in fs["subpops"]],
-            polarized=args["polarized"],
+            pop_ids=model_sub["subpops"],
+            projections=[2 * sampling[pop] for pop in model_sub["subpops"]],
+            polarized=args["polarized"]
         )
-        sfs.to_file(f"./sfs/{fs['sfs_file']}")
+        sfs.to_file(f"models/dadi/sfs/{model_sub['sfs_file']}")
 
 
 if __name__ == "__main__":
