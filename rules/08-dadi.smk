@@ -16,3 +16,18 @@ rule build_sfs:
     	--vcf {input.vcf} \
     	--pop_info {input.pop_file} \
     	--subsample"
+
+################################################################################
+# STEP 2: run demographic models
+################################################################################
+
+rule run_dadi_inference:
+	input:
+		sfs = "models/dadi/sfs/{model}.fs"
+	output:
+		dadi_results = "models/dadi/results/{model}.csv"
+	params:
+		model = "{model}"
+	shell:
+		"python3 src/dadi/run_inference.py \
+		--model {params.model}"

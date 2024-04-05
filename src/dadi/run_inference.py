@@ -41,7 +41,7 @@ def _cli() -> Dict[str, str]:
 
 
 def main() -> None:
-    model_config = json.loads(open("model_config.json").read())
+    model_config = json.loads(open("src/dadi/model_config.json").read())
     model_names = [m for m in model_config["models"]]
     args = _cli()
 
@@ -56,7 +56,7 @@ def main() -> None:
 
     model_info = model_config["models"][args["model"]]
 
-    data = dadi.Spectrum.from_file(f"./sfs/{model_info['sfs_file']}")
+    data = dadi.Spectrum.from_file(f"models/dadi/sfs/{model_info['sfs_file']}")
     ns = data.sample_sizes
     pts_l = [max(ns) + i for i in [10, 20, 30]]
 
@@ -67,7 +67,7 @@ def main() -> None:
     p_init = model_info["p_init"]
     model_func = models[args["model"]]
 
-    with open(f"./results/{args['model']}.csv", "w") as f_out:
+    with open(f"models/dadi/results/{args['model']}.csv", "w") as f_out:
         for r in range(model_config["optimization_reps"]):
             if r % 10 == 0:
                 logging.info(f"\n\n*** Starting rep {r + 1} ***\n\n")
