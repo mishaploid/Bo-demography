@@ -50,8 +50,10 @@ rule all:
 		smc_cv_bootstrap = expand("models/smc_cv_bootstrap/{population}_{n_bootstrap}/model.final.json", population = distind_dict.keys(), n_bootstrap = range(1,11)),
 		joint_vcf2smc12 = smc_split_input_files12,
         joint_vcf2smc21 = smc_split_input_files21,
-		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys())
-		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png"
+		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
+		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
+	# DADI
+		build_sfs = expand("models/dadi/sfs/{pop_pair}.fs", pop_pair = ['cap_gem_vir', 'ital_botr'])
 	# SELECTIVE SWEEPS
 		# create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
 		# raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_c2_w500.{chr}", population = pop_dict.keys(), chr = CHR)
@@ -67,4 +69,5 @@ include: "rules/04-filtering.smk"
 include: "rules/05-pop_structure.smk"
 include: "rules/06-demography.smk"
 include: "rules/07-split-times.smk"
+include: "rules/08-dadi.smk"
 # include: "rules/07-selective_sweeps.smk"
