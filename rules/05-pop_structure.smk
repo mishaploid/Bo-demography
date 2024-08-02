@@ -72,7 +72,9 @@ rule pixy_pi:
         samps = "models/samp_lists/pixy_input_inbreeding.txt",
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
     output:
-        "models/pixy/B_oleracea_inbreeding_{chr}_pi.txt"
+        "models/pixy/B_oleracea_grouped_{chr}_pi.txt",
+        "models/pixy/B_oleracea_grouped_{chr}_dxy.txt",
+        "models/pixy/B_oleracea_grouped_{chr}_fst.txt"
     params:
         window_size = 10000,
         chr = "{chr}"
