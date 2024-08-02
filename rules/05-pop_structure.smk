@@ -79,7 +79,7 @@ rule pixy_pi:
     threads: 32
     run:
         shell("tabix -p vcf -f {input.allsites_vcf}")
-        shell("pixy --stats pi \
+        shell("pixy --stats pi dxy fst \
         --vcf {input.allsites_vcf} \
         --populations {input.samps} \
         --window_size {params.window_size} \
