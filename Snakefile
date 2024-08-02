@@ -41,7 +41,7 @@ rule all:
 	# POPULATION STRUCTURE
 		admix_input = "data/processed/biallelic_snps.geno10.maf05.ldpruned.bed",
 		admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15)),
-		pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_pi.txt", chr = CHR),
+		pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_{stat}.txt", chr = CHR, stat = ['pi', 'dxy', 'fst']),
 	# DEMOGRAPHY
 		vcf2smc = smc_input_files,
 		smc_cv = expand("models/smc_cv_no_timepoints/{population}/model.final.json", population = distind_dict.keys()),
