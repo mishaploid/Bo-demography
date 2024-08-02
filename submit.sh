@@ -11,7 +11,7 @@ module load R
 module load maven
 module load openjdk/16.0.2
 # module load java
-module load gatk/3.8.1
+module load gatk
 # module load bcftools/1.13
 module load qualimap/2.2.1
 module load vcftools
