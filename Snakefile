@@ -53,8 +53,8 @@ rule all:
 		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs = expand("models/dadi/sfs/{pop_pair}.fs", pop_pair = ['cap_gem_vir', 'ital_botr']),
-		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir'])
+		build_sfs = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'ital_botr']),
+		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'ital_botr'])
 	# SELECTIVE SWEEPS
 		# create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
 		# raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_c2_w500.{chr}", population = pop_dict.keys(), chr = CHR)
