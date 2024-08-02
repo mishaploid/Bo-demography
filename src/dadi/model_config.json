@@ -56,6 +56,13 @@
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1],
             "sfs_file": "ital_botr.fs"
+        },
+        "wild_cultivar": {
+            "subpops": [/*Need to decide what to do here...*/],
+            "upper_bounds": [100, 100, 10, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1, 1],
+            "sfs_file": "wild_cultivar.fs"
         }
     }
 }

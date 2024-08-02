@@ -100,7 +100,6 @@ def ital_botr(
     # This is the population for Brussels sprouts
     phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_domest)
 
-    # Split off pop2 (cabbage) after time T_1
     phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
 
     # Integrate population for time T_2
@@ -111,6 +110,59 @@ def ital_botr(
     return sfs
 
 
+@dadi.Numerics.make_extrap_log_func
+def wild_cultivars(
+    params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
+) -> dadi.Spectrum:
+    """
+    A simple, divergence-only model for broccoli and cauliflower.
+
+       wild  cult
+        |     |
+        |     |
+    T2  |     |
+        |     |
+    __  |-----|
+    T1  |
+    __  | N_wild
+
+    Parameters
+    ----------
+    params: Tuple[float, ...]
+        Demographic model parameters.
+    ns: Tuple[int, ...]
+        Sample sizes for each of the subpopulations. Can be obtained from the
+        observed sfs using the ``sample_sizes`` method.
+    pts: List[int]
+        A list of grid sizes for numerically integrating the distribution of
+        allele frequencies.
+
+    Returns
+    -------
+    A ``dadi.Spectrum`` object.
+    """
+    N_wild, N_cult, T_1, T_2 = params
+
+    xx = dadi.Numerics.default_grid(pts)
+    phi = dadi.PhiManip.phi_1D(xx)
+
+    phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_wild)
+
+    phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
+
+    phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_wild, nu2=N_cult)
+
+    sfs = dadi.Spectrum.from_phi(phi, ns, (xx, xx))
+
+    return sfs
+
+
 # Main dictionary containing all models connected to their
-# demographic model function.
-models: Dict[str, Callable] = {"cap_gem_vir": cap_gem_vir, "ital_botr": ital_botr}
+# demographic model function. This gets imported in the ``run_inference.py``
+# script so that the corresponding model can be run. The dictionary key
+# here should match the name in ``model_config.json``.
+models: Dict[str, Callable] = {
+    "cap_gem_vir": cap_gem_vir,
+    "ital_botr": ital_botr,
+    "wild_cultivar": wild_cultivars,
+}

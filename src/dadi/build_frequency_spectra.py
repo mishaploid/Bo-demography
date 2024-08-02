@@ -87,7 +87,7 @@ def main() -> None:
             data_dict=data_dict,
             pop_ids=model_sub["subpops"],
             projections=[2 * sampling[pop] for pop in model_sub["subpops"]],
-            polarized=args["polarized"]
+            polarized=args["polarized"],
         )
         sfs.to_file(f"models/dadi/sfs/{model_sub['sfs_file']}")
 
