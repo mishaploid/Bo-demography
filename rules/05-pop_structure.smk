@@ -81,13 +81,15 @@ rule pixy_pi:
     conda: 
         "pixy"
     threads: 32
-    run:
-        shell("tabix -p vcf -f {input.allsites_vcf}")
-        shell("pixy --stats pi dxy fst \
+    shell:
+        "tabix -p vcf -f {input.allsites_vcf}"
+        """
+        pixy --stats pi dxy fst \
         --vcf {input.allsites_vcf} \
         --populations {input.samps} \
         --window_size {params.window_size} \
         --n_cores {threads} \
         --output_folder models/pixy \
         --output_prefix B_oleracea_grouped_{params.chr} \
-        --chunk_size 50000")
+        --chunk_size 50000
+        """
