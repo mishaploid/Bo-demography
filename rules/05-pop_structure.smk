@@ -81,6 +81,7 @@ rule pixy_pi:
     threads: 32
     run:
         shell("tabix -p vcf -f {input.allsites_vcf}")
+        shell("module load conda/pixy")
         shell("pixy --stats pi dxy fst \
         --vcf {input.allsites_vcf} \
         --populations {input.samps} \
