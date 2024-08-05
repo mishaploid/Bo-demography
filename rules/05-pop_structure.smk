@@ -78,10 +78,11 @@ rule pixy_pi:
     params:
         window_size = 10000,
         chr = "{chr}"
+    conda: 
+        "pixy"
     threads: 32
     run:
         shell("tabix -p vcf -f {input.allsites_vcf}")
-        shell("module load conda/pixy")
         shell("pixy --stats pi dxy fst \
         --vcf {input.allsites_vcf} \
         --populations {input.samps} \
@@ -90,21 +91,3 @@ rule pixy_pi:
         --output_folder models/pixy \
         --output_prefix B_oleracea_grouped_{params.chr} \
         --chunk_size 50000")
-
-# rule window_pi:
-#     input:
-#         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
-#         keep = "models/samp_lists/{population}_samps.txt",
-#         samps_to_remove = "models/sil_drop.txt"
-#     output:
-#         window_pi = "models/nucleotide_diversity/{chr}_{population}.windowed.pi"
-#     params:
-#         chr = "{chr}",
-#         out_stem = "models/nucleotide_diversity/{chr}_{population}"
-#     run:
-#         shell("vcftools --gzvcf {input.allsites_vcf} \
-#         --chr {params.chr} \
-#         --keep {input.keep} \
-#         --remove {input.samps_to_remove} \
-#         --out {params.out_stem} \
-#         --window-pi 10000")
