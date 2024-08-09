@@ -72,11 +72,11 @@ rule pixy_pi:
         samps = "models/samp_lists/pixy_input_inbreeding.txt",
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
     output:
-        "models/pixy/B_oleracea_grouped_{chr}_pi.txt",
-        "models/pixy/B_oleracea_grouped_{chr}_dxy.txt",
-        "models/pixy/B_oleracea_grouped_{chr}_fst.txt"
+        "models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_pi.txt",
+        "models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_dxy.txt",
+        "models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_fst.txt"
     params:
-        window_size = 10000,
+        window_size = "{window_size}",
         chr = "{chr}"
     conda: 
         "pixy"
@@ -90,6 +90,6 @@ rule pixy_pi:
         --window_size {params.window_size} \
         --n_cores {threads} \
         --output_folder models/pixy \
-        --output_prefix B_oleracea_grouped_{params.chr} \
-        --chunk_size 50000
+        --output_prefix B_oleracea_grouped_{params.chr}_{params.window_size}bp \
+        --chunk_size 100000
         """
