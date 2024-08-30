@@ -91,11 +91,6 @@
       "mem" : "100G",
       "p" : "med2"
     },
-    "filter_snps" :
-    {
-      "mem" : "100G",
-      "p" : "med2"
-    },
     "filter_flags_invariant" :
     {
       "mem" : "100G",

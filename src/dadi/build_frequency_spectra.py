@@ -43,6 +43,15 @@ def _cli() -> Dict[str, str]:
         metavar="\b",
         help="Path to pop-info file",
     )
+    required.add_argument(
+        "-m",
+        "--model",
+        action="store",
+        type=str,
+        required=True,
+        metavar="\b",
+        help="String for model specification"
+    )
     additional = parser.add_argument_group("additional")
     additional.add_argument(
         "--suffix",
@@ -80,16 +89,16 @@ def main() -> None:
         data_dict = dadi.Misc.make_data_dict_vcf(args["vcf"], args["pop_info"])
 
     logging.info("Building frequency spectra for each model...")
-    for fs in model_config["models"]:
-        model_sub = model_config["models"][fs]
-        print(f"Building sfs for populations: {', '.join(model_sub['subpops'])}")
-        sfs = dadi.Spectrum.from_data_dict(
-            data_dict=data_dict,
-            pop_ids=model_sub["subpops"],
-            projections=[2 * sampling[pop] for pop in model_sub["subpops"]],
-            polarized=args["polarized"],
-        )
-        sfs.to_file(f"models/dadi/sfs/{model_sub['sfs_file']}")
+
+    model_sub = model_config["models"][args["model"]]
+    print(f"Building sfs for populations: {', '.join(model_sub['subpops'])}")
+    sfs = dadi.Spectrum.from_data_dict(
+        data_dict=data_dict,
+        pop_ids=model_sub["subpops"],
+        projections=[2 * sampling[pop] for pop in model_sub["subpops"]],
+        polarized=args["polarized"]
+    )
+    sfs.to_file(f"models/dadi/sfs/{model_sub['sfs_file']}")
 
 
 if __name__ == "__main__":

@@ -224,8 +224,8 @@ rule merge_filtered_snps:
 		input = lambda wildcards, input: " -I ".join(input)
 	run:
 		shell("gatk MergeVcfs \
-		-I={params.input} \
-		-O={output.merged_snps}")
+		-I {params.input} \
+		-O {output.merged_snps}")
 
 rule merge_filtered_allsites:
 	input:
@@ -235,9 +235,9 @@ rule merge_filtered_allsites:
 		allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
 	run:
 		shell("gatk MergeVcfs \
-		-I={input.snps} \
-		-I={input.invariant} \
-		-O={output.allsites_vcf}")
+		-I {input.snps} \
+		-I {input.invariant} \
+		-O {output.allsites_vcf}")
 
 rule ind_stats:
 	input:
