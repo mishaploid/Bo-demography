@@ -45,7 +45,7 @@ rule raisd:
         "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
     params:
         runid = "{population}_{chr}",
-        tmp_vcf = config['scratch'] + "{params.runid}.vcf"
+        tmp_vcf = config['scratch'] + "{params.runid}.vcf",
         window_size = "{window_size}", # in kb 
         out = "*.{params.runid}_w{window_size}kb.{chr}*",
         outdir = "models/RAiSD/"
