@@ -42,7 +42,7 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
     output:
-        "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
+        RAiSD_out = "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
     params:
         runid = "{population}_{chr}",
         tmp_vcf = config['scratch'] + "{params.runid}.vcf",
