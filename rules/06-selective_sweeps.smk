@@ -17,7 +17,7 @@
 
 rule create_bed:
     input:
-        allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf",
+        allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
         chr_lengths = "data/external/ref/Boleracea_chr_lengths.bed"
     output:
         "models/RAiSD/{chr}_excluded_regions.bed"
@@ -25,7 +25,7 @@ rule create_bed:
         chr = "{chr}"
     shell:
         """
-        cat {input.allsites_vcf} | sed -e 's/chr//' | awk '{{OFS="\\t"; if (!/^#/){{print $1,$2,$2}}}}' | bedtools complement -i stdin -g {input.chr_lengths} | grep {params.chr} > {output}
+        zcat {input.allsites_vcf} | sed -e 's/chr//' | awk '{{OFS="\\t"; if (!/^#/){{print $1,$2,$2}}}}' | bedtools complement -i stdin -g {input.chr_lengths} | grep {params.chr} > {output}
         """
 
 rule raisd:
