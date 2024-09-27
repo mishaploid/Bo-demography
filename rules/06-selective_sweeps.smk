@@ -42,18 +42,19 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
     output:
-        RAiSD_out = "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
+        "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
     params:
-        runid = "{population}_{chr}",
-        tmp_vcf = config['scratch'] + "{params.runid}.vcf",
+        population = "{population}",
+        chr = "{chr}",
         window_size = "{window_size}", # in kb 
+        tmp_vcf = config['scratch'] + "{population}_{chr}.vcf",
         out = "*.{params.runid}_w{window_size}kb.{chr}*",
         outdir = "models/RAiSD/"
     run:
         shell("gunzip -c {input.allsites_vcf} > {params.tmp_vcf}")
         shell("RAiSD -R -s -m 0.05 -P -f -X {input.excluded_sites} \
         -n {params.runid} \
-        -I {params.pop_chr}.vcf \
+        -I {params.tmp_vcf} \
         -S {input.samples} \
         -w {params.window_size}")
         shell("mv {params.out}* {params.outdir}")
