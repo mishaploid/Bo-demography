@@ -21,6 +21,7 @@ module load conda/plink
 # module load popvae
 # module load singularity
 module load apptainer
+module load bedtools2/2.30.0 
 
 snakemake --jobs 200 --rerun-triggers mtime \
 --use-conda \
