@@ -43,7 +43,6 @@ rule raisd:
         out = "*{params.runid}.{chr}*",
         outdir = "models/RAiSD/"
     run:
-        shell("cd models/RAiSD")
         shell("RAiSD -R -s -m 0.05 -f -X {input.excluded_sites} \
         -n {params.runid} \
         -I {input.allsites_vcf} \
