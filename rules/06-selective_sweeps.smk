@@ -39,15 +39,12 @@ rule raisd:
         population = "{population}",
         chr = "{chr}",
         window_size = "{window_size}", # in kb 
-        tmp_vcf = config['scratch'] + "{population}_{chr}.vcf",
         out = "*.{params.runid}_w{window_size}kb.{chr}*",
         outdir = "models/RAiSD/"
     run:
-        shell("gunzip -c {input.allsites_vcf} > {params.tmp_vcf}")
         shell("RAiSD -R -s -m 0.05 -P -f -X {input.excluded_sites} \
         -n {params.runid} \
-        -I {params.tmp_vcf} \
+        -I {input.allsites_vcf} \
         -S {input.samples} \
         -w {params.window_size}")
         shell("mv {params.out}* {params.outdir}")
-        shell("rm -rf {params.tmp_vcf}")
