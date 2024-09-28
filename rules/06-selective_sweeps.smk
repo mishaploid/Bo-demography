@@ -28,6 +28,7 @@ rule create_bed:
         zcat {input.allsites_vcf} | sed -e 's/chr//' | awk '{{OFS="\\t"; if (!/^#/){{print $1,$2,$2}}}}' | bedtools complement -i stdin -g {input.chr_lengths} | grep {params.chr} > {output}
         """
 
+# note: to use gzipped vcf as input, RAiSD must be installed with the install-RAiSD-ZLIB.sh script
 rule raisd:
     input:
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
@@ -42,6 +43,7 @@ rule raisd:
         out = "*.{params.runid}_w{window_size}kb.{chr}*",
         outdir = "models/RAiSD/"
     run:
+        shell("cd models/RAiSD")
         shell("RAiSD -R -s -m 0.05 -P -f -X {input.excluded_sites} \
         -n {params.runid} \
         -I {input.allsites_vcf} \
