@@ -37,10 +37,10 @@ rule raisd:
     output:
         "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
     params:
-        runid = "{population}_{chr}",
+        runid = "{population}_{window_size}kb",
         chr = "{chr}",
         window_size = "{window_size}", # in kb 
-        out = "*.{params.runid}_w{window_size}kb.{chr}*",
+        out = "*{params.runid}.{chr}*",
         outdir = "models/RAiSD/"
     run:
         shell("cd models/RAiSD")
@@ -49,4 +49,4 @@ rule raisd:
         -I {input.allsites_vcf} \
         -S {input.samples} \
         -w {params.window_size}")
-        shell("mv {params.out}* {params.outdir}")
+        shell("mv {params.out} {params.outdir}")
