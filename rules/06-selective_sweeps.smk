@@ -36,7 +36,7 @@ rule raisd:
     output:
         "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
     params:
-        population = "{population}",
+        runid = "{population}_{chr}",
         chr = "{chr}",
         window_size = "{window_size}", # in kb 
         out = "*.{params.runid}_w{window_size}kb.{chr}*",
