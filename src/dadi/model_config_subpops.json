@@ -59,17 +59,17 @@
         },
         "gon_ital_sab": {
             "subpops": ["gongylodes","italica","sabellica"],
-            "upper_bound": [100, 100, 100, 10, 10],
-            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
-            "p_init": [1, 1, 1, 1, 1],
+            "upper_bound": [100, 100, 100, 100, 10, 10, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1, 1, 1, 1, 1],
             "sfs_file": "gon_ital_sab.fs"
         },
-        "sab_alb_vir": {
-            "subpops": ["sabellica","alboglabra","viridis"],
+        "sab_alb": {
+            "subpops": ["sabellica","alboglabra"],
             "upper_bound": [100, 100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1],
-            "sfs_file": "sab_alb_vir.fs"
+            "sfs_file": "sab_alb.fs"
         }
     }
 }

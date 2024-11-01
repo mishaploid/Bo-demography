@@ -165,6 +165,54 @@ def gon_ital_sab(
 
     return sfs
 
+@dadi.Numerics.make_extrap_log_func
+def sab_alb(
+    params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
+) -> dadi.Spectrum:
+    """
+    A simple, divergence-only model for broccoli and cauliflower.
+
+       dom   sab   alb
+        ?     |     |
+        ?     |     |
+    T2  ?     |     |
+        ?     |     |
+    __  |-----|-----|
+    T1  |
+    __  | N_domest
+
+    Parameters
+    ----------
+    params: Tuple[float, ...]
+        Demographic model parameters.
+    ns: Tuple[int, ...]
+        Sample sizes for each of the subpopulations. Can be obtained from the
+        observed sfs using the ``sample_sizes`` method.
+    pts: List[int]
+        A list of grid sizes for numerically integrating the distribution of
+        allele frequencies.
+
+    Returns
+    -------
+    A ``dadi.Spectrum`` object.
+    """
+    N_domest, N_sab, N_alb, T_1, T_2 = params
+
+    xx = dadi.Numerics.default_grid(pts)
+    phi = dadi.PhiManip.phi_1D(xx)
+
+    # Initial change in pop size from ancestral (wild) pop
+    # This is the population for curly kale and Chinese kale
+    phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_domest)
+
+    phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
+
+    # Integrate population for time T_2
+    phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_sab, nu2=N_alb)
+
+    sfs = dadi.Spectrum.from_phi(phi, ns, (xx, xx))
+
+    return sfs
 
 @dadi.Numerics.make_extrap_log_func
 def wild_cultivars(
@@ -221,5 +269,6 @@ models: Dict[str, Callable] = {
     "cap_gem_vir": cap_gem_vir,
     "ital_botr": ital_botr,
     "gon_ital_sab": gon_ital_sab,
+    "sab_alb": sab_alb
     # "wild_cultivar": wild_cultivars
 }
