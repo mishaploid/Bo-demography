@@ -56,8 +56,8 @@ rule all:
 		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'ital_botr']),
-		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'ital_botr'])
+		build_sfs = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'ital_botr', 'gon_ital_sab', 'sab_alb_vir']),
+		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'ital_botr', 'gon_ital_sab', 'sab_alb_vir'])
 
 
 ################################################################################
