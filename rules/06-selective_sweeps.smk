@@ -35,12 +35,11 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
     output:
-        "models/RAiSD/RAiSD_Report.{population}_{chr}_w{window_size}kb.{chr}"
+        "models/RAiSD/RAiSD_Report.{population}_{window_size}kb.{chr}"
     params:
         runid = "{population}_{window_size}kb",
         chr = "{chr}",
         window_size = "{window_size}", # in kb 
-        out = "*{params.runid}.{chr}*",
         outdir = "models/RAiSD/"
     run:
         shell("RAiSD -R -s -m 0.05 -f -X {input.excluded_sites} \
