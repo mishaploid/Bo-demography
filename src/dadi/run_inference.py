@@ -50,10 +50,10 @@ def _cli() -> Dict[str, str]:
 
 
 def main() -> None:
+    args = _cli()
     model_config = json.loads(open(args["model_config_file"]).read())
     model_names = [m for m in model_config["models"]]
-    args = _cli()
-
+    
     # Check to make sure that 'model' argument
     # is in the list of models
     if args["model"] not in model_names:
