@@ -276,7 +276,7 @@
       "mem" : "50G",
       "p" : "med2"
     },
-    "build_sfs" :
+    "build_sfs_subpops" :
     {
      "mem" : "50G",
      "p" : "med2"
