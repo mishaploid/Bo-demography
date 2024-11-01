@@ -44,6 +44,15 @@ def _cli() -> Dict[str, str]:
         help="Path to pop-info file",
     )
     required.add_argument(
+        "-mc",
+        "--model_config_file",
+        action="store",
+        type=str,
+        required=True,
+        metavar="\b",
+        help="Path to model configuration json"
+    )
+    required.add_argument(
         "-m",
         "--model",
         action="store",
@@ -76,7 +85,7 @@ def _cli() -> Dict[str, str]:
 
 def main() -> None:
     args = _cli()
-    model_config = json.loads(open("src/dadi/model_config.json").read())
+    model_config = json.loads(open(args["model_config_file"]).read())
     sampling = (
         model_config["subsampling"] if args["subsample"] else model_config["sampling"]
     )
