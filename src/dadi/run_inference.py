@@ -28,6 +28,15 @@ def _cli() -> Dict[str, str]:
     )
     required = parser.add_argument_group("required")
     required.add_argument(
+        "-mc",
+        "--model_config_file",
+        action="store",
+        type=str,
+        required=True,
+        metavar="\b",
+        help="Path to model configuration json"
+    )
+    required.add_argument(
         "--model",
         action="store",
         type=str,
@@ -41,7 +50,7 @@ def _cli() -> Dict[str, str]:
 
 
 def main() -> None:
-    model_config = json.loads(open("src/dadi/model_config.json").read())
+    model_config = json.loads(open(args["model_config_file"]).read())
     model_names = [m for m in model_config["models"]]
     args = _cli()
 
