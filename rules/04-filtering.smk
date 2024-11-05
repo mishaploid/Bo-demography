@@ -194,8 +194,8 @@ rule filter_invariant:
 		invariant_nocall_idx = "data/interim/filtering/{chr}_allsamps.filtered.qual.dp5_200.invariant.nocall.vcf.idx",
 		ref = config['ref']
 	output:
-		filtered_invariant = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf",
-		filtered_invariant_idx = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf.idx"
+		filtered_invariant = temp("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf"),
+		filtered_invariant_idx = temp("data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.invariant.sites.vcf.idx")
 	run:
 		shell("gatk SelectVariants \
 		-R {input.ref} \
