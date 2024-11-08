@@ -22,7 +22,7 @@ rule build_sfs_subpops:
     	--subsample"
 
 ################################################################################
-# STEP 2: run demographic models
+# STEP 2: run demographic model optimization 
 ################################################################################
 
 rule run_dadi_inference:
@@ -37,3 +37,10 @@ rule run_dadi_inference:
 		"python3 src/dadi/run_inference.py \
 		--model_config_file {input.model_config} \
 		--model {params.model}"
+
+
+# read in csv file, sort by likelihood and select best option (least negative number) 
+# values are in genetic units, need to convert to real units using length of sequence 
+# assumed mutation rate, etc. 
+# sequence length can be size of genome (should remove masked regions)
+# uncertainty estimates around parameters (built in methods in dadi) 

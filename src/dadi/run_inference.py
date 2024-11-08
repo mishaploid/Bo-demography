@@ -63,12 +63,21 @@ def main() -> None:
         )
         raise RuntimeError
 
+    # pull info on selected model 
     model_info = model_config["models"][args["model"]]
 
+    # read in the observed SFS 
     data = dadi.Spectrum.from_file(f"models/dadi/sfs/{model_info['sfs_file']}")
     ns = data.sample_sizes
+    # pts to determine grid size 
+    # taking maximum sample size of each population 
+    # want grid size to be at least as big as the highest number of individuals
+    # also want grid to be slightly larger, add 10 more grid points than highest nubmer of individuals
+    # use 10, 20, and 30 to make sure estimate is continuous for numerical stability 
     pts_l = [max(ns) + i for i in [10, 20, 30]]
 
+    # upper and lower bounds for each parameter 
+    # matches order of parameters in the tuple made in demographic_models.py
     upper_bound = model_info["upper_bound"]
     lower_bound = model_info["lower_bound"]
 
@@ -77,6 +86,7 @@ def main() -> None:
     model_func = models[args["model"]]
 
     with open(f"models/dadi/results/{args['model']}.csv", "w") as f_out:
+        # multiple independent rounds of optimization to explore parameter space 
         for r in range(model_config["optimization_reps"]):
             if r % 10 == 0:
                 logging.info(f"\n\n*** Starting rep {r + 1} ***\n\n")
@@ -85,6 +95,7 @@ def main() -> None:
                 p_init, fold=2, lower_bound=lower_bound, upper_bound=upper_bound
             )
 
+            # run the optimization to maximize likelhood 
             popt, LLopt = dadi.Inference.opt(
                 p0,
                 data,
