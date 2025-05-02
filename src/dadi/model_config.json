@@ -18,7 +18,9 @@
         "ramosa": 6,
         "sabauda": 1,
         "sabellica": 11,
-        "viridis": 13
+        "viridis": 13,
+        "wild": 19,
+        "domesticated": 223
     },
     "subsampling": {
         "Brassica_cretica": 5,
@@ -39,7 +41,9 @@
         "ramosa": 6,
         "sabauda": 1,
         "sabellica": 10,
-        "viridis": 10
+        "viridis": 10,
+        "wild": 19,
+        "domesticated": 30
     },
     "optimization_reps": 100,
     "models": {
@@ -57,12 +61,12 @@
             "p_init": [1, 1, 1, 1, 1],
             "sfs_file": "ital_botr.fs"
         },
-        "wild_cultivar": {
-            "subpops": [/*Need to decide what to do here...*/],
+        "wild_domesticated": {
+            "subpops": ["wild", "domesticated"],
             "upper_bounds": [100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1],
-            "sfs_file": "wild_cultivar.fs"
+            "sfs_file": "wild_domesticated.fs"
         }
     }
 }

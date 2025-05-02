@@ -281,6 +281,11 @@
      "mem" : "50G",
      "p" : "med2"
     },
+    "build_sfs_wild_dom" :
+    {
+     "mem" : "50G",
+     "p" : "med2"
+    },
     "run_dadi_inference" :
      {
       "mem" : "50G",

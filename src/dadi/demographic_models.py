@@ -237,7 +237,7 @@ def sab_alb(
     return sfs
 
 @dadi.Numerics.make_extrap_log_func
-def wild_cultivars(
+def wild_domesticated(
     params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
 ) -> dadi.Spectrum:
     """
@@ -291,6 +291,6 @@ models: Dict[str, Callable] = {
     "cap_gem_vir": cap_gem_vir,
     "ital_botr": ital_botr,
     "gon_ital_sab": gon_ital_sab,
-    "sab_alb": sab_alb
-    # "wild_cultivar": wild_cultivars
+    "sab_alb": sab_alb,
+    "wild_domesticated": wild_domesticated
 }
