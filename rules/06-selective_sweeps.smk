@@ -40,6 +40,7 @@ rule create_bed:
 # -w = window size in SNPs (integer). Default is 50. Only even numbers can be used. 
 # -COT = provides a cut-off threshold for identifying top outliers per report. 
 # -M = missing data handling strategy; 3 = create a mask for valid alleles and ignore allele pairs with N.
+# -y = ploidy level (needed when using -M flag)
 rule raisd:
     input:
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
@@ -59,5 +60,6 @@ rule raisd:
         -S {input.samples} \
         -w {params.window_size} \
         -COT 0.05 \
-        -M 3")
+        -M 3 \
+        -y 2")
         shell("mv {params.out} {params.outdir}")
