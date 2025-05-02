@@ -29,6 +29,17 @@ rule create_bed:
         """
 
 # note: to use gzipped vcf as input, RAiSD must be installed with the install-RAiSD-ZLIB.sh script
+# -R = include additional information in the report file(s). i.e., window start and end, mu-stat factors
+# -s = generate a separate report file per set
+# -m = threshold to exclude snps with minor allele frequency < threshold
+# -f = force overwrite of previous results with same run ID 
+# -X = path to tab-delimited file that contains regions per chromosome to be excluded
+# -n = name of the runid
+# -I = input VCF file
+# -S = sample file, tab delimited 
+# -w = window size in SNPs (integer). Default is 50. Only even numbers can be used. 
+# -COT = provides a cut-off threshold for identifying top outliers per report. 
+# -M = missing data handling strategy; 3 = create a mask for valid alleles and ignore allele pairs with N.
 rule raisd:
     input:
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
@@ -37,14 +48,16 @@ rule raisd:
     output:
         "models/RAiSD/RAiSD_Report.{population}_{window_size}kb.{chr}"
     params:
-        runid = "{population}_{window_size}kb",
+        runid = "{population}_{window_size}bp",
         chr = "{chr}",
-        window_size = "{window_size}", # in kb 
+        window_size = "{window_size}", # in basepairs
         outdir = "models/RAiSD/"
     run:
         shell("RAiSD -R -s -m 0.05 -f -X {input.excluded_sites} \
         -n {params.runid} \
         -I {input.allsites_vcf} \
         -S {input.samples} \
-        -w {params.window_size}")
+        -w {params.window_size} \
+        -COT 0.05 \
+        -M 3")
         shell("mv {params.out} {params.outdir}")
