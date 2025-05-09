@@ -11,18 +11,15 @@ module load trimmomatic/0.39
 module load R
 module load maven
 module load openjdk/16.0.2
-# module load java
 module load gatk
-# module load bcftools/1.13
-module load qualimap/2.2.1
+module load qualimap/2.3
 module load vcftools
 module load plink-ng/2.00a3.7
-module load conda/plink
-# module load angsd
+# module load conda/plink
 # module load popvae
 # module load singularity
 module load apptainer
-module load bedtools2/2.30.0 
+module load bedtools2/2.31.1
 
 snakemake --jobs 200 --rerun-triggers mtime \
 --use-conda \
