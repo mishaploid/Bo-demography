@@ -27,4 +27,4 @@ snakemake --jobs 200 --rerun-triggers mtime \
 --rerun-incomplete \
 --latency-wait 60 \
 --cluster-config submit.json \
---cluster "sbatch -p {cluster.p} -o {cluster.o} --mem {cluster.mem} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file
+--cluster "sbatch -v CONDA_AUTO_ACTIVATE_BASE=false -p {cluster.p} -o {cluster.o} --mem {cluster.mem} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file
