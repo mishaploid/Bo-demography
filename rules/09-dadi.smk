@@ -13,9 +13,11 @@ rule build_sfs_subpops:
 		pop_file = "models/pruned_sample_ids.txt",
 		model_config = "src/dadi/model_config_subpops.json"
 	output:
-		joint_sfs = "models/dadi/sfs/{subpop_model}.fs"
+		joint_sfs = "models/dadi/sfs/{model}.fs"
 	params:
-		model = "{subpop_model}"
+		model = "{model}"
+	wildcard_constraints:
+        model = "cap_gem_vir|sab_palm_alb|ital_botr"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -30,9 +32,11 @@ rule build_sfs_wild_dom:
 		pop_file = "models/pruned_sample_ids_wild_dom.txt",
 		model_config = "src/dadi/model_config_subpops.json"
 	output:
-		joint_sfs = "models/dadi/sfs/{wild_model}.fs"
+		joint_sfs = "models/dadi/sfs/{model}.fs"
 	params:
-		model = "{wild_model}"
+		model = "{model}"
+	wildcard_constraints:
+        model = "wild_domesticated"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -47,9 +51,11 @@ rule build_sfs_kales:
 		pop_file = "models/pruned_sample_ids_wild_kale.txt",
 		model_config = "src/dadi/model_config_subpops.json"
 	output:
-		joint_sfs = "models/dadi/sfs/{kale_model}.fs"
+		joint_sfs = "models/dadi/sfs/{model}.fs"
 	params:
-		model = "{kale_model}"
+		model = "{model}"
+	wildcard_constraints:
+        model = "kale"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
