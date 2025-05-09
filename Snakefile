@@ -58,8 +58,8 @@ rule all:
 	# DADI
 		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr']),
 		build_sfs_wild_dom = expand("models/dadi/sfs/{model}.fs", model = ['wild_domesticated']),
-		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['wild_kale', 'gong_ital_kale'])
-		# run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr', 'wild_domesticated', 'wild_kale', 'gong_ital_kale'])
+		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['wild_kale', 'gong_ital_kale']),
+		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr', 'wild_domesticated', 'wild_kale', 'gong_ital_kale'])
 
 
 ################################################################################
