@@ -70,12 +70,12 @@ rule build_sfs_kales:
 
 rule run_dadi_inference:
 	input:
-		sfs = "models/dadi/sfs/{model_all}.fs",
+		sfs = "models/dadi/sfs/{model}.fs",
 		model_config = "src/dadi/model_config_subpops.json"
 	output:
-		dadi_results = "models/dadi/results/{model_all}.csv"
+		dadi_results = "models/dadi/results/{model}.csv"
 	params:
-		model = "{model_all}"
+		model = "{model}"
 	shell:
 		"python3 src/dadi/run_inference.py \
 		--model_config_file {input.model_config} \
