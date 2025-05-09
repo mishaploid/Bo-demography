@@ -55,7 +55,7 @@ rule build_sfs_kales:
 	params:
 		model = "{model}"
 	wildcard_constraints:
-		model = "[*kale*]"
+		model = "wild_kale|gong_ital_kale"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
