@@ -24,11 +24,27 @@ rule build_sfs_subpops:
 		--model {params.model} \
     	--subsample"
 
-
 rule build_sfs_wild_dom:
 	input: 
 		vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
 		pop_file = "models/pruned_sample_ids_wild_dom.txt",
+		model_config = "src/dadi/model_config_subpops.json"
+	output:
+		joint_sfs = "models/dadi/sfs/{model}.fs"
+	params:
+		model = "{model}"
+	shell:
+		"python3 src/dadi/build_frequency_spectra.py \
+    	--vcf {input.vcf} \
+    	--pop_info {input.pop_file} \
+		--model_config_file {input.model_config} \
+		--model {params.model} \
+    	--subsample"
+
+rule build_sfs_kales:
+	input: 
+		vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+		pop_file = "models/pruned_sample_ids_wild_kale.txt",
 		model_config = "src/dadi/model_config_subpops.json"
 	output:
 		joint_sfs = "models/dadi/sfs/{model}.fs"
@@ -71,3 +87,6 @@ rule run_dadi_inference:
 # def bootstraps_subsample_vcf
 # (
 # vcf_filename, popinfo_filename, subsample, Nboot, chunk_size, pop_ids, filter=True, flanking_info=[None, None], mask_corners=True, polarized=True)
+# maximum likelihood parameter estimates + boostrapped samples of SFS 
+# uses ML parameter estimates and bootstrapped SFS to explore likelihood surface around best estimates to acquire confidence intervals 
+# approximates properties of likelihood surface for CIs without redoing inference 

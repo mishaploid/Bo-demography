@@ -44,7 +44,7 @@ rule all:
 	# 	pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_{stat}.txt", chr = CHR, window_size = [10000, 50000, 100000], stat = ['pi', 'dxy', 'fst']),
 	# SELECTIVE SWEEPS
 		create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
-		raisd = expand("models/RAiSD/RAiSD_Report.{population}_{window_size}kb.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50]),
+		raisd = expand("models/RAiSD/RAiSD_Report.{population}_{window_size}bp.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50]),
 	# DEMOGRAPHY
 		vcf2smc = smc_input_files,
 		smc_cv = expand("models/smc_cv_no_timepoints/{population}/model.final.json", population = distind_dict.keys()),
@@ -56,8 +56,10 @@ rule all:
 		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'ital_botr', 'gon_ital_sab', 'sab_alb']),
-		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'ital_botr', 'gon_ital_sab', 'sab_alb'])
+		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr']),
+		build_sfs_wild_dom = expand("models/dadi/sfs/{model}.fs", model = ['wild_domesticated']),
+		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['wild_kale', 'gong_ital_kale']),
+		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr', 'wild_domesticated', 'wild_kale', 'gong_ital_kale'])
 
 
 ################################################################################

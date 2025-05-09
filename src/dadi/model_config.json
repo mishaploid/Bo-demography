@@ -20,7 +20,8 @@
         "sabellica": 11,
         "viridis": 13,
         "wild": 19,
-        "domesticated": 223
+        "domesticated": 223,
+        "kale": 31
     },
     "subsampling": {
         "Brassica_cretica": 5,
@@ -43,7 +44,8 @@
         "sabellica": 10,
         "viridis": 10,
         "wild": 19,
-        "domesticated": 30
+        "domesticated": 30,
+        "kale": 31
     },
     "optimization_reps": 100,
     "models": {
@@ -54,6 +56,20 @@
             "p_init": [1, 1, 1, 1, 1, 1, 1],
             "sfs_file": "cap_gem_vir.fs"
         },
+        "gong_ital_kale": {
+            "subpops": ["gongylodes", "italica", "kale"],
+            "upper_bound": [100, 100, 100, 100, 10, 10, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1, 1, 1, 1, 1],
+            "sfs_file": "gong_ital_kale.fs"
+        },
+        "sab_palm_alb": {
+            "subpops": ["sabellica", "palmifolia", "alboglabra"],
+            "upper_bound": [100, 100, 100, 100, 10, 10, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1, 1, 1, 1, 1],
+            "sfs_file": "sab_palm_alb.fs"
+        },
         "ital_botr": {
             "subpops": ["italica","botrytis"],
             "upper_bound": [100, 100, 100, 10, 10],
@@ -63,10 +79,17 @@
         },
         "wild_domesticated": {
             "subpops": ["wild", "domesticated"],
-            "upper_bounds": [100, 100, 10, 10],
+            "upper_bound": [100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1],
             "sfs_file": "wild_domesticated.fs"
+        }, 
+        "wild_kale": {
+            "subpops": ["wild", "kale"],
+            "upper_bound": [100, 100, 10, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1, 1],
+            "sfs_file": "wild_kale.fs"
         }
     }
 }
