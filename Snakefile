@@ -56,9 +56,9 @@ rule all:
 		smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr']),
-		build_sfs_wild_dom = expand("models/dadi/sfs/{model2}.fs", model2 = ['wild_domesticated']),
-		# build_sfs_kales = expand("models/dadi/sfs/{model3}.fs", model3 = ['wild_kale', 'gong_ital_kale']),
+		build_sfs_subpops = expand("models/dadi/sfs/{subpop_models}.fs", subpop_models = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr']),
+		build_sfs_wild_dom = expand("models/dadi/sfs/{wild_model}.fs", wild_model = ['wild_domesticated']),
+		build_sfs_kales = expand("models/dadi/sfs/{kale_models}.fs", kale_models = ['wild_kale', 'gong_ital_kale']),
 		run_dadi_inference = expand("models/dadi/results/{model_all}.csv", model_all = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr', 'wild_domesticated', 'wild_kale', 'gong_ital_kale'])
 
 
