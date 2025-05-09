@@ -47,7 +47,7 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
     output:
-        "models/RAiSD/RAiSD_Report.{population}_{window_size}kb.{chr}"
+        "models/RAiSD/RAiSD_Report.{population}_{window_size}bp.{chr}"
     params:
         runid = "{population}_{window_size}bp",
         chr = "{chr}",
