@@ -14,7 +14,7 @@ module load openjdk/16.0.2
 module load gatk
 module load qualimap/2.3
 module load vcftools
-module load plink-ng/2.00a3.7
+# module load plink-ng/2.00a3.7
 # module load conda/plink
 # module load popvae
 # module load singularity
@@ -27,4 +27,4 @@ snakemake --jobs 200 --rerun-triggers mtime \
 --rerun-incomplete \
 --latency-wait 60 \
 --cluster-config submit.json \
---cluster "sbatch -v CONDA_AUTO_ACTIVATE_BASE=false -p {cluster.p} -o {cluster.o} --mem {cluster.mem} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file
+--cluster "sbatch -p {cluster.p} -o {cluster.o} --mem {cluster.mem} --time {cluster.time} --job-name {cluster.name}" # -p &>> $file
