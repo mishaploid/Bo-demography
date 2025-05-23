@@ -21,15 +21,12 @@ rule build_sfs_subpops:
 	conda:
 		"bo-demography"
 	shell:
-		"""
-		python3 -c "import sys; print('\\n'.join(sys.path))"
-		"""
-		# "python3 src/dadi/build_frequency_spectra.py \
-    	# --vcf {input.vcf} \
-    	# --pop_info {input.pop_file} \
-		# --model_config_file {input.model_config} \
-		# --model {params.model} \
-    	# --subsample"
+		"python3 src/dadi/build_frequency_spectra.py \
+    	--vcf {input.vcf} \
+    	--pop_info {input.pop_file} \
+		--model_config_file {input.model_config} \
+		--model {params.model} \
+    	--subsample"
 
 rule build_sfs_wild_dom:
 	input: 
