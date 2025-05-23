@@ -19,12 +19,13 @@ rule build_sfs_subpops:
 	wildcard_constraints:
 		model = "cap_gem_vir|sab_palm_alb|ital_botr"
 	shell:
-		"python3 src/dadi/build_frequency_spectra.py \
-    	--vcf {input.vcf} \
-    	--pop_info {input.pop_file} \
-		--model_config_file {input.model_config} \
-		--model {params.model} \
-    	--subsample"
+		"python -c 'import sys; print('\n'.join(sys.path))'"
+		# "python3 src/dadi/build_frequency_spectra.py \
+    	# --vcf {input.vcf} \
+    	# --pop_info {input.pop_file} \
+		# --model_config_file {input.model_config} \
+		# --model {params.model} \
+    	# --subsample"
 
 rule build_sfs_wild_dom:
 	input: 
