@@ -18,6 +18,8 @@ rule build_sfs_subpops:
 		model = "{model}"
 	wildcard_constraints:
 		model = "cap_gem_vir|sab_palm_alb|ital_botr"
+	conda:
+		"bo-demography"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
