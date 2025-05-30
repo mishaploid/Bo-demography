@@ -18,8 +18,10 @@ rule build_sfs_subpops:
 		model = "{model}"
 	wildcard_constraints:
 		model = "cap_gem_vir|sab_palm_alb|ital_botr"
+	resources:
+		mem_mb = 50000
 	conda:
-		"bo-demography"
+		"../environment.yaml"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -39,6 +41,10 @@ rule build_sfs_wild_dom:
 		model = "{model}"
 	wildcard_constraints:
 		model = "wild_domesticated"
+	resources:
+		mem_mb = 50000
+	conda:
+		"../environment.yaml"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -58,6 +64,10 @@ rule build_sfs_kales:
 		model = "{model}"
 	wildcard_constraints:
 		model = "wild_kale|gong_ital_kale"
+	resources:
+		mem_mb = 50000
+	conda:
+		"../environment.yaml"
 	shell:
 		"python3 src/dadi/build_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -78,6 +88,10 @@ rule run_dadi_inference:
 		dadi_results = "models/dadi/results/{model}.csv"
 	params:
 		model = "{model}"
+	resources:
+		mem_mb = 50000
+	conda:
+		"../environment.yaml"
 	shell:
 		"python3 src/dadi/run_inference.py \
 		--model_config_file {input.model_config} \

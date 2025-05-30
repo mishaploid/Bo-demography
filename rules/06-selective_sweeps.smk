@@ -53,6 +53,8 @@ rule raisd:
         chr = "{chr}",
         window_size = "{window_size}", # in basepairs
         outdir = "models/RAiSD/"
+    resources:
+        mem_mb = 50000
     run:
         shell("RAiSD -R -s -m 0.05 -f -X {input.excluded_sites} \
         -n {params.runid} \
