@@ -1,0 +1,16 @@
+executor: slurm
+restart-times: "3"
+max-jobs-per-second: "1"
+max-status-checks-per-second: "10"
+local-cores: 1
+latency-wait: "60"
+use-conda: "True"
+use-singularity: "True"
+jobs: "200"
+printshellcmds: "True"
+rerun-incomplete: "True"
+default-resources:
+  account: jrigrp
+  runtime: 10 # 10080
+  mem_mb: 6000
+  slurm_partition: "med2"

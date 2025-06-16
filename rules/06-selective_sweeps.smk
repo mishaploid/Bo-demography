@@ -47,16 +47,16 @@ rule raisd:
         samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
         excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
     output:
-        "models/RAiSD/RAiSD_Report.{population}_{window_size}bp.{chr}"
+        "models/RAiSD/RAiSD_Report.{population}_{chr}_{window_size}bp.{chr}"
     params:
-        runid = "{population}_{window_size}bp",
+        runid = "{population}_{chr}_{window_size}bp",
         chr = "{chr}",
         window_size = "{window_size}", # in basepairs
         outdir = "models/RAiSD/"
     resources:
         mem_mb = 50000
     run:
-        shell("RAiSD -R -s -m 0.05 -f -X {input.excluded_sites} \
+        shell("RAiSD -R -s -f -m 0.05 -X {input.excluded_sites} \
         -n {params.runid} \
         -I {input.allsites_vcf} \
         -S {input.samples} \
@@ -64,4 +64,4 @@ rule raisd:
         -COT 0.05 \
         -M 3 \
         -y 2")
-        shell("mv {params.out} {params.outdir}")
+        shell("mv RAiSD*{params.runid}* {params.outdir}")
