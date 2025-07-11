@@ -3,14 +3,14 @@
 date=$(date "+%Y_%m_%d")
 echo $date
 
-module load conda
+# R and GATK are in module jail because they interfere with the default python3 path and that is RUDE
 module load gsl/2.7.1
 module load fastqc
 module load trimmomatic/0.39
-module load R
+# module load R
 module load maven
 module load openjdk/16.0.2
-module load gatk
+# module load gatk
 module load qualimap/2.3
 module load vcftools
 module load apptainer
