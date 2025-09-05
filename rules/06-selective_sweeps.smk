@@ -65,3 +65,33 @@ rule raisd:
         -M 3 \
         -y 2")
         shell("mv RAiSD*{params.runid}* {params.outdir}")
+
+# are results comparable across populations if only including doubletons in some? 
+# 	-c	Provides the slack for the SFS edges to be used for the calculation of mu_SFS. The default value is 1 (singletons and S-1 snp class, where S is the sample size).
+
+rule raisd_doubletons:
+    input:
+        allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz",
+        samples = "models/RAiSD/pruned_sample_lists/{population}.txt",
+        excluded_sites = "models/RAiSD/{chr}_excluded_regions.bed" 
+    output:
+        "models/RAiSD_w_doubletons/RAiSD_Report.{population}_{chr}_{window_size}bp_c2.{chr}"
+    params:
+        runid = "{population}_{chr}_{window_size}bp_c2",
+        chr = "{chr}",
+        window_size = "{window_size}", # in basepairs
+        outdir = "models/RAiSD_w_doubletons/"
+    resources:
+        mem_mb = 50000
+    run:
+        shell("RAiSD -R -s -f -m 0.05 -X {input.excluded_sites} \
+        -n {params.runid} \
+        -I {input.allsites_vcf} \
+        -S {input.samples} \
+        -w {params.window_size} \
+        -c 2 \
+        -COT 0.05 \
+        -M 3 \
+        -y 2")
+        shell("mv RAiSD*{params.runid}* {params.outdir}")
+    

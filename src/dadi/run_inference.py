@@ -83,6 +83,8 @@ def main() -> None:
 
     # Initial guess for parameter values (will be randomly perturbed)
     p_init = model_info["p_init"]
+    inbreeding_coef = model_info["inbreeding_coef"]
+    fixed_params = [None]*len(p_init)+inbreeding_coef
     model_func = models[args["model"]]
 
     with open(f"models/dadi/results/{args['model']}.csv", "w") as f_out:
@@ -94,6 +96,7 @@ def main() -> None:
             p0 = dadi.Misc.perturb_params(
                 p_init, fold=2, lower_bound=lower_bound, upper_bound=upper_bound
             )
+            p0 = p0 + inbreeding_coef
 
             # run the optimization to maximize likelhood 
             popt, LLopt = dadi.Inference.opt(
@@ -101,6 +104,7 @@ def main() -> None:
                 data,
                 model_func,
                 pts_l,
+                fixed_params=fixed_params,
                 lower_bound=lower_bound,
                 upper_bound=upper_bound,
                 verbose=20,

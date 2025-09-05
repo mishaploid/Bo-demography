@@ -11,6 +11,6 @@ printshellcmds: True
 rerun-incomplete: True
 default-resources:
   account: jrigrp
-  runtime: 10080
+  runtime: 20160
   mem_mb: 6000
   slurm_partition: "med2"

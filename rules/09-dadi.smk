@@ -83,7 +83,7 @@ rule run_dadi_inference:
 	params:
 		model = "{model}"
 	resources:
-		mem_mb = 50000
+		mem_mb = 100000
 	shell:
 		"python3 src/dadi/run_inference.py \
 		--model_config_file {input.model_config} \
@@ -148,4 +148,60 @@ rule bootstrap_sfs_subpops:
 		--model_config_file {input.model_config} \
 		--model {params.model} \
 		--subsample"
+
+rule bootstrap_sfs_wild_domesticated:
+	input:
+		vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+		pop_file = "models/pruned_sample_ids_wild_dom.txt",
+		model_config = "src/dadi/model_config.json"	
+	output:
+		bootstrapped_sfs = expand("models/dadi/sfs_bootstrap/{{model}}_{rep}.fs", rep = range(0,9))
+	params:
+		model = "{model}",
+		rep = range(0,9)
+	resources:
+		mem_mb = 50000
+	wildcard_constraints:
+		model = "wild_domesticated"
+	shell: 
+		"python3 src/dadi/bootstrap_frequency_spectra.py \
+    	--vcf {input.vcf} \
+    	--pop_info {input.pop_file} \
+		--model_config_file {input.model_config} \
+		--model {params.model} \
+		--subsample"
+
+rule bootstrap_sfs_wild_kale:
+	input:
+		vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz",
+		pop_file = "models/pruned_sample_ids_wild_kale.txt",
+		model_config = "src/dadi/model_config.json"	
+	output:
+		bootstrapped_sfs = expand("models/dadi/sfs_bootstrap/{{model}}_{rep}.fs", rep = range(0,9))
+	params:
+		model = "{model}",
+		rep = range(0,9)
+	resources:
+		mem_mb = 50000
+	wildcard_constraints:
+		model = "wild_kale|wild_domesticated"
+	shell: 
+		"python3 src/dadi/bootstrap_frequency_spectra.py \
+    	--vcf {input.vcf} \
+    	--pop_info {input.pop_file} \
+		--model_config_file {input.model_config} \
+		--model {params.model} \
+		--subsample"
+
+# rule dadi_est_uncertainty:
+	
+
+
+# uncert = dadi.Godambe.GIM_uncert(func_ex, grid_pts, all_boot, p0, data, log, multinom, eps, return_GIM)
+# func_ex = model config 
+# grid_pts = same as previous
+# all_boot = bootstrap output 
+# Here func_ex is the model function, grid_pts is the set of grid points used in extrapolation, all_boot is a list containing bootstrapped data sets, p0 is the best-fit parameters, and data is the original data. If log = True, then uncertainties will be calculated for the logs of the parameters; these can be interpreted as relative uncertainties for the parameters themselves. If multinom = True, it is assumed that θ
+#  is not an explicit parameter of the model (this is the most common case). eps is the relative step size to use when taking numerical derivatives; the default value is often sufficient. The returned uncert is an array equal in length to p0, where each entry in uncert is the estimated standard deviation of the parameter it corresponds to in p0. If multinom = True, there will be one extra entry in uncert, corresponding to θ
+# . If return_GIM = True, then the return value will be (uncert, GIM), where GIM is the full Godambe Information Matrix, for use in propagating uncertainties.
 
