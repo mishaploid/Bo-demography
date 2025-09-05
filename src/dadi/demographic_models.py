@@ -222,6 +222,56 @@ def two_pop_domes(
     return sfs
 
 @dadi.Numerics.make_extrap_log_func
+def two_pop_domes_F(
+    params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
+) -> dadi.Spectrum:
+    """
+    A simple, divergence-only model for two domesticated populations.
+
+       dom  pop1   pop2
+        ?     |     |
+        ?     |     |
+    T2  ?     |     |
+        ?     |     |
+    __  |-----|-----|
+    T1  |
+    __  | N_domest
+
+    Parameters
+    ----------
+    params: Tuple[float, ...]
+        Demographic model parameters.
+    ns: Tuple[int, ...]
+        Sample sizes for each of the subpopulations. Can be obtained from the
+        observed sfs using the ``sample_sizes`` method.
+    pts: List[int]
+        A list of grid sizes for numerically integrating the distribution of
+        allele frequencies.
+
+    Returns
+    -------
+    A ``dadi.Spectrum`` object.
+    """
+    # F values represent inbreeding coefficients for each population 
+    N_domest, N_pop1, N_pop2, T_1, T_2, F_1, F_2 = params
+
+    xx = dadi.Numerics.default_grid(pts)
+    phi = dadi.PhiManip.phi_1D(xx)
+
+    # Initial change in pop size from ancestral (wild) pop
+    # This is the population for pop1 and pop2
+    phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_domest)
+
+    phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
+
+    # Integrate population for time T_2
+    phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_pop1, nu2=N_pop2)
+
+    sfs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F_1, F_2), (2, 2))
+
+    return sfs
+
+@dadi.Numerics.make_extrap_log_func
 def wild_domesticated(
     params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
 ) -> dadi.Spectrum:
@@ -275,7 +325,7 @@ def wild_domesticated(
 models: Dict[str, Callable] = {
     "cap_gem_vir": three_pop_F,
     "gong_ital_kale": three_pop_F,
-    "ital_botr": two_pop_domes,
+    "ital_botr": two_pop_domes_F,
     "gon_ital_sab": three_pop_F,
     "sab_palm_alb": three_pop_F,
     "wild_domesticated": wild_domesticated,
