@@ -74,6 +74,9 @@ rule build_sfs_kales:
 # STEP 2: run demographic model optimization 
 ################################################################################
 
+# added inbreeding coefficients as parameters
+# plink2 --vcf ../../data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz --het --out allsamps_inbreeding_coef --allow-extra-chr
+
 rule run_dadi_inference:
 	input:
 		sfs = "models/dadi/sfs/{model}.fs",

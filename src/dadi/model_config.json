@@ -54,7 +54,7 @@
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.577, 0.326, 0.203], 
             "sfs_file": "cap_gem_vir.fs"
         },
         "gong_ital_kale": {
@@ -62,7 +62,7 @@
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.539, 0.701, 0.258], 
             "sfs_file": "gong_ital_kale.fs"
         },
         "sab_palm_alb": {
@@ -70,7 +70,7 @@
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.370, 0.271, 0.487], 
             "sfs_file": "sab_palm_alb.fs"
         },
         "ital_botr": {
@@ -78,7 +78,7 @@
             "upper_bound": [100, 100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.701, 0.639], 
             "sfs_file": "ital_botr.fs"
         },
         "wild_domesticated": {
@@ -86,7 +86,7 @@
             "upper_bound": [100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.240, 0.492], 
             "sfs_file": "wild_domesticated.fs"
         }, 
         "wild_kale": {
@@ -94,7 +94,7 @@
             "upper_bound": [100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1],
-            "inbreeding_coef": [], 
+            "inbreeding_coef": [0.240, 0.258], 
             "sfs_file": "wild_kale.fs"
         }
     }
