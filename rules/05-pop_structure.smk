@@ -11,7 +11,7 @@
 
 rule admix_input:
     input:
-    	ref = config['ref'],
+        ref = config['ref'],
         vcf = "data/processed/filtered_vcf_bpres/allsamps.filtered.qual.dp5_200.maxnocall10.biallelic.snps.vcf.gz"
     output:
     	"data/processed/biallelic_snps.geno10.maf05.ldpruned.bed"

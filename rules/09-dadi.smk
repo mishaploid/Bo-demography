@@ -187,7 +187,7 @@ rule bootstrap_sfs_wild_kale:
 	resources:
 		mem_mb = 50000
 	wildcard_constraints:
-		model = "wild_kale|wild_domesticated"
+		model = "wild_kale|gong_ital_kale"
 	shell: 
 		"python3 src/dadi/bootstrap_frequency_spectra.py \
     	--vcf {input.vcf} \

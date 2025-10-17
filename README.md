@@ -59,9 +59,16 @@ Implemented as a Snakemake workflow (https://snakemake.readthedocs.io/en/stable/
 **To run the workflow:**
 
 1. Create a conda environment (only need to do this once)  
-`conda env create bo-demography --file environment.yaml`
-    + to access for future use, start a screen session with `screen` and use:  
-    `source activate bo-demography`
+`conda create -c conda-forge -c bioconda -n bodem snakemake`
+
+install the SLURM executor plugin 
+`conda install -c bioconda snakemake-executor-plugin-slurm`
+
+install dadi python module
+`conda install -c conda-forge dadi`
+
+to access for future use, start a screen session with `screen` and use:  
+`source activate bodem`
 
 2. If running on a cluster, update the cluster config file (submit.json)
 

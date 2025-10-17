@@ -3,6 +3,7 @@
 import argparse
 import json
 import logging
+import numpy as np
 from typing import Dict
 
 import dadi
@@ -76,16 +77,18 @@ def main() -> None:
     # use 10, 20, and 30 to make sure estimate is continuous for numerical stability 
     pts_l = [max(ns) + i for i in [10, 20, 30]]
 
-    # upper and lower bounds for each parameter 
-    # matches order of parameters in the tuple made in demographic_models.py
-    upper_bound = model_info["upper_bound"]
-    lower_bound = model_info["lower_bound"]
-
     # Initial guess for parameter values (will be randomly perturbed)
     p_init = model_info["p_init"]
     inbreeding_coef = model_info["inbreeding_coef"]
     fixed_params = [None]*len(p_init)+inbreeding_coef
     model_func = models[args["model"]]
+    print(len(inbreeding_coef), len(fixed_params), len(p_init))
+
+    # upper and lower bounds for each parameter 
+    # matches order of parameters in the tuple made in demographic_models.py
+    p_init = p_init + inbreeding_coef
+    upper_bound = model_info["upper_bound"] + inbreeding_coef
+    lower_bound = model_info["lower_bound"] + inbreeding_coef 
 
     with open(f"models/dadi/results/{args['model']}.csv", "w") as f_out:
         # multiple independent rounds of optimization to explore parameter space 
@@ -96,7 +99,6 @@ def main() -> None:
             p0 = dadi.Misc.perturb_params(
                 p_init, fold=2, lower_bound=lower_bound, upper_bound=upper_bound
             )
-            p0 = p0 + inbreeding_coef
 
             # run the optimization to maximize likelhood 
             popt, LLopt = dadi.Inference.opt(
