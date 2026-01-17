@@ -368,11 +368,14 @@ def wild_domesticated_F(
 # script so that the corresponding model can be run. The dictionary key
 # here should match the name in ``model_config.json``.
 models: Dict[str, Callable] = {
-    "cap_gem_vir": three_pop_F,
-    "gong_ital_kale": three_pop_F,
+    "gem_cap_vir": three_pop_F,
+    # "cap_gem_vir": three_pop_F,
+    "ital_gong_kale": three_pop_F,
+    # "gong_ital_kale": three_pop_F,
     "ital_botr": two_pop_domes_F,
-    "gon_ital_sab": three_pop_F,
-    "sab_palm_alb": three_pop_F,
+    # "gon_ital_sab": three_pop_F,
+    "alb_sab_palm": three_pop_F,
+    # "sab_palm_alb": three_pop_F,
     "wild_domesticated": wild_domesticated_F,
     "wild_kale": wild_domesticated_F
 }

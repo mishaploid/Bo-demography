@@ -57,13 +57,13 @@ rule all:
 	# 	smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr']),
+		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr']),
 		build_sfs_wild_dom = expand("models/dadi/sfs/{model}.fs", model = ['wild_domesticated']),
-		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['wild_kale', 'gong_ital_kale']), 
-		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr', 'wild_domesticated', 'wild_kale', 'gong_ital_kale']),
-		bootstrap_sfs_subpops = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['cap_gem_vir', 'sab_palm_alb', 'ital_botr'], rep = range(0,9)),
+		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['ital_gong_kale']), 
+		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr', 'wild_domesticated', 'ital_gong_kale']),
+		bootstrap_sfs_subpops = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr'], rep = range(0,9)),
 		bootstrap_sfs_wild_domesticated = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['wild_domesticated'], rep = range(0,9)),
-		bootstrap_sfs_wild_kale = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['wild_kale', 'gong_ital_kale'], rep = range(0,9))
+		bootstrap_sfs_wild_kale = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['ital_gong_kale'], rep = range(0,9))
 
 
 ################################################################################

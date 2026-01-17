@@ -19,9 +19,9 @@
         "sabauda": 1,
         "sabellica": 11,
         "viridis": 13,
-        "wild": 19,
+        "wild": 5,
         "domesticated": 223,
-        "kale": 31
+        "kale": 24
     },
     "subsampling": {
         "Brassica_cretica": 5,
@@ -43,35 +43,35 @@
         "sabauda": 1,
         "sabellica": 10,
         "viridis": 10,
-        "wild": 19,
+        "wild": 5,
         "domesticated": 30,
-        "kale": 31
+        "kale": 24
     },
     "optimization_reps": 100,
     "models": {
-        "cap_gem_vir": {
-            "subpops": ["capitata", "gemmifera", "viridis"],
+        "gem_cap_vir": {
+            "subpops": ["gemmifera", "capitata", "viridis"],
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [0.577, 0.326, 0.203], 
-            "sfs_file": "cap_gem_vir.fs"
+            "inbreeding_coef": [0.326, 0.577, 0.203], 
+            "sfs_file": "gem_cap_vir.fs"
         },
-        "gong_ital_kale": {
-            "subpops": ["gongylodes", "italica", "kale"],
+        "ital_gong_kale": {
+            "subpops": ["italica", "gongylodes", "kale"],
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [0.539, 0.701, 0.258], 
-            "sfs_file": "gong_ital_kale.fs"
+            "inbreeding_coef": [0.701, 0.539, 0.288], 
+            "sfs_file": "ital_gong_kale.fs"
         },
-        "sab_palm_alb": {
-            "subpops": ["sabellica", "palmifolia", "alboglabra"],
+        "alb_sab_palm": {
+            "subpops": ["alboglabra", "sabellica", "palmifolia"],
             "upper_bound": [100, 100, 100, 100, 10, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1, 1, 1, 1],
-            "inbreeding_coef": [0.370, 0.271, 0.487], 
-            "sfs_file": "sab_palm_alb.fs"
+            "inbreeding_coef": [0.487, 0.370, 0.271],  
+            "sfs_file": "alb_sab_palm.fs"
         },
         "ital_botr": {
             "subpops": ["italica","botrytis"],
@@ -86,16 +86,8 @@
             "upper_bound": [100, 100, 10, 10],
             "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
             "p_init": [1, 1, 1, 1],
-            "inbreeding_coef": [0.240, 0.492], 
+            "inbreeding_coef": [0.263, 0.492], 
             "sfs_file": "wild_domesticated.fs"
-        }, 
-        "wild_kale": {
-            "subpops": ["wild", "kale"],
-            "upper_bound": [100, 100, 10, 10],
-            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
-            "p_init": [1, 1, 1, 1],
-            "inbreeding_coef": [0.240, 0.258], 
-            "sfs_file": "wild_kale.fs"
-        }
+        } 
     }
 }
