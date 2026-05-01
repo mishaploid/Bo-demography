@@ -75,25 +75,25 @@
         },
         "ital_botr": {
             "subpops": ["italica","botrytis"],
-            "upper_bound": [100, 100, 100, 10, 10],
-            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3, 1e-3],
-            "p_init": [1, 1, 1, 1, 1],
+            "upper_bound": [100, 100, 10],
+            "lower_bound": [1e-3, 1e-3, 1e-3],
+            "p_init": [1, 1, 1],
             "inbreeding_coef": [0.701, 0.639], 
             "sfs_file": "ital_botr.fs"
         },
         "wild_domesticated": {
             "subpops": ["wild", "domesticated"],
-            "upper_bound": [100, 100, 10, 10],
-            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
-            "p_init": [1, 1, 1, 1],
+            "upper_bound": [100, 10],
+            "lower_bound": [1e-3, 1e-3],
+            "p_init": [1, 1],
             "inbreeding_coef": [0.263, 0.492], 
             "sfs_file": "wild_domesticated.fs"
         },
         "wild_kale": {
             "subpops": ["wild", "kale"],
-            "upper_bound": [100, 100, 10, 10],
-            "lower_bound": [1e-3, 1e-3, 1e-3, 1e-3],
-            "p_init": [1, 1, 1, 1],
+            "upper_bound": [100, 10],
+            "lower_bound": [1e-3, 1e-3],
+            "p_init": [1, 1],
             "inbreeding_coef": [0.263, 0.288], 
             "sfs_file": "wild_kale.fs"
         } 

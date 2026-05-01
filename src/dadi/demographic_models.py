@@ -36,23 +36,23 @@ def three_pop(
     A ``dadi.Spectrum`` object.
     """
     # N_domest = parameter for effective population size of ancestral population (unobserved domesticated ancestor)
-    # N_population = the parameter for the effective population size of a group 
-    # T_n = parameter for time interval between population splits 
+    # N_population = the parameter for the effective population size of a group
+    # T_n = parameter for time interval between population splits
     # parameter estimation works by tweaking values and passing to function to get new SFS
-    # compare simulated SFS to observed SFS to calculate likelihood 
+    # compare simulated SFS to observed SFS to calculate likelihood
     # arrive at best parameter estimates by continually changing parameters and tweaking to achieve best likelihood estimation
-    # for each parameter, only need starting value along with upper and lower bounds 
-    # Define a tuple to store parameters 
+    # for each parameter, only need starting value along with upper and lower bounds
+    # Define a tuple to store parameters
     # this corresponds to the order of numbers in the upper_bound and lower_bound entries in the model_config.json file
     N_domest, N_pop1, N_pop2, N_pop3, T_1, T_2, T_3 = params
 
     # for estimation, start with equilibrium site frequency spectrum
     # this is estimated using grid points that say what the values should be for an equilibrium population
-    # starts with those parameters and simulates forward to compare a simulated multidimensional SFS to the observed SFS 
-    # this is why we test different parameter spaces to best match observations in the data 
-    # more points = finer resolution estimation, but comes with a cost in computation 
+    # starts with those parameters and simulates forward to compare a simulated multidimensional SFS to the observed SFS
+    # this is why we test different parameter spaces to best match observations in the data
+    # more points = finer resolution estimation, but comes with a cost in computation
     xx = dadi.Numerics.default_grid(pts)
-    # create a 1D SFS from default grid 
+    # create a 1D SFS from default grid
     # phi stores the distribution of the allele frequency spectrum based on given parameters
     #   SFS is discrete counts, phi is the distribution of allele frequencies between 0 and 1
     phi = dadi.PhiManip.phi_1D(xx)
@@ -70,21 +70,22 @@ def three_pop(
     # Integrate population for time T_2
     phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_domest, nu2=N_pop1)
 
-    # Split ancestral domesticated population into pop 2 and pop 3 
+    # Split ancestral domesticated population into pop 2 and pop 3
     # Occupies dimensions 1 and 3 of the SFS (nu1 and nu3)
     # Phylogenetic explanation: domesticated population has pop1 split off, domesticated population continues
     #   ancestor of pop2 and pop1 split from the ancestral population, to produce four tips
-    #   don't have samples in present of ancestral population, this is equivalent to where the domesticated population 
+    #   don't have samples in present of ancestral population, this is equivalent to where the domesticated population
     #   ends and diverges directly into pops 2 and 3 (spots 1 and 3 in the SFS)
     phi = dadi.PhiManip.phi_2D_to_3D_split_1(xx, phi)
 
     phi = dadi.Integration.three_pops(phi, xx, T_3, nu1=N_pop2, nu2=N_pop1, nu3=N_pop3)
 
     # return the SFS from the model estimation using the defined allele frequency spectrum parameters
-    # this will feed into the likelihood optimization step for parameter tuning 
+    # this will feed into the likelihood optimization step for parameter tuning
     sfs = dadi.Spectrum.from_phi(phi, ns, (xx, xx, xx))
 
     return sfs
+
 
 @dadi.Numerics.make_extrap_log_func
 def three_pop_F(
@@ -119,24 +120,24 @@ def three_pop_F(
     A ``dadi.Spectrum`` object.
     """
     # N_domest = parameter for effective population size of ancestral population (unobserved domesticated ancestor)
-    # N_population = the parameter for the effective population size of a group 
-    # T_n = parameter for time interval between population splits 
+    # N_population = the parameter for the effective population size of a group
+    # T_n = parameter for time interval between population splits
     # parameter estimation works by tweaking values and passing to function to get new SFS
-    # compare simulated SFS to observed SFS to calculate likelihood 
+    # compare simulated SFS to observed SFS to calculate likelihood
     # arrive at best parameter estimates by continually changing parameters and tweaking to achieve best likelihood estimation
-    # for each parameter, only need starting value along with upper and lower bounds 
-    # Define a tuple to store parameters 
+    # for each parameter, only need starting value along with upper and lower bounds
+    # Define a tuple to store parameters
     # this corresponds to the order of numbers in the upper_bound and lower_bound entries in the model_config.json file
-    # F values represent inbreeding coefficients for each population 
+    # F values represent inbreeding coefficients for each population
     N_domest, N_pop1, N_pop2, N_pop3, T_1, T_2, T_3, F_1, F_2, F_3 = params
 
     # for estimation, start with equilibrium site frequency spectrum
     # this is estimated using grid points that say what the values should be for an equilibrium population
-    # starts with those parameters and simulates forward to compare a simulated multidimensional SFS to the observed SFS 
-    # this is why we test different parameter spaces to best match observations in the data 
-    # more points = finer resolution estimation, but comes with a cost in computation 
+    # starts with those parameters and simulates forward to compare a simulated multidimensional SFS to the observed SFS
+    # this is why we test different parameter spaces to best match observations in the data
+    # more points = finer resolution estimation, but comes with a cost in computation
     xx = dadi.Numerics.default_grid(pts)
-    # create a 1D SFS from default grid 
+    # create a 1D SFS from default grid
     # phi stores the distribution of the allele frequency spectrum based on given parameters
     #   SFS is discrete counts, phi is the distribution of allele frequencies between 0 and 1
     phi = dadi.PhiManip.phi_1D(xx)
@@ -154,23 +155,26 @@ def three_pop_F(
     # Integrate population for time T_2
     phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_domest, nu2=N_pop1)
 
-    # Split ancestral domesticated population into pop 2 and pop 3 
+    # Split ancestral domesticated population into pop 2 and pop 3
     # Occupies dimensions 1 and 3 of the SFS (nu1 and nu3)
     # Phylogenetic explanation: domesticated population has pop1 split off, domesticated population continues
     #   ancestor of pop2 and pop1 split from the ancestral population, to produce four tips
-    #   don't have samples in present of ancestral population, this is equivalent to where the domesticated population 
+    #   don't have samples in present of ancestral population, this is equivalent to where the domesticated population
     #   ends and diverges directly into pops 2 and 3 (spots 1 and 3 in the SFS)
     phi = dadi.PhiManip.phi_2D_to_3D_split_1(xx, phi)
 
     phi = dadi.Integration.three_pops(phi, xx, T_3, nu1=N_pop2, nu2=N_pop1, nu3=N_pop3)
 
     # return the SFS from the model estimation using the defined allele frequency spectrum parameters
-    # this will feed into the likelihood optimization step for parameter tuning 
+    # this will feed into the likelihood optimization step for parameter tuning
     # sfs = dadi.Spectrum.from_phi(phi, ns, (xx, xx, xx))
-    # adjust to include tuples of inbreeding coefficients and ploidies 
-    sfs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx, xx), (F_1, F_2, F_3), (2, 2, 2))
+    # adjust to include tuples of inbreeding coefficients and ploidies
+    sfs = dadi.Spectrum.from_phi_inbreeding(
+        phi, ns, (xx, xx, xx), (F_1, F_2, F_3), (2, 2, 2)
+    )
 
     return sfs
+
 
 @dadi.Numerics.make_extrap_log_func
 def two_pop_domes(
@@ -221,6 +225,7 @@ def two_pop_domes(
 
     return sfs
 
+
 @dadi.Numerics.make_extrap_log_func
 def two_pop_domes_F(
     params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
@@ -228,14 +233,14 @@ def two_pop_domes_F(
     """
     A simple, divergence-only model for two domesticated populations.
 
-       dom  pop1   pop2
-        ?     |     |
-        ?     |     |
-    T2  ?     |     |
-        ?     |     |
-    __  |-----|-----|
-    T1  |
-    __  | N_domest
+       pop1   pop2
+        |     |
+        |     |
+    T1  |     |
+        |     |
+        |-----|
+           |
+           |
 
     Parameters
     ----------
@@ -252,24 +257,21 @@ def two_pop_domes_F(
     -------
     A ``dadi.Spectrum`` object.
     """
-    # F values represent inbreeding coefficients for each population 
-    N_domest, N_pop1, N_pop2, T_1, T_2, F_1, F_2 = params
+    # F values represent inbreeding coefficients for each population
+    N_pop1, N_pop2, T_1, F_1, F_2 = params
 
     xx = dadi.Numerics.default_grid(pts)
     phi = dadi.PhiManip.phi_1D(xx)
 
-    # Initial change in pop size from ancestral (wild) pop
-    # This is the population for pop1 and pop2
-    phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_domest)
-
     phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
 
-    # Integrate population for time T_2
-    phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_pop1, nu2=N_pop2)
+    # Integrate population for time T_1
+    phi = dadi.Integration.two_pops(phi, xx, T_1, nu1=N_pop1, nu2=N_pop2)
 
     sfs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F_1, F_2), (2, 2))
 
     return sfs
+
 
 @dadi.Numerics.make_extrap_log_func
 def wild_domesticated(
@@ -317,6 +319,7 @@ def wild_domesticated(
 
     return sfs
 
+
 @dadi.Numerics.make_extrap_log_func
 def wild_domesticated_F(
     params: Tuple[float, ...], ns: Tuple[int, ...], pts: List[int]
@@ -324,14 +327,14 @@ def wild_domesticated_F(
     """
     A simple, divergence-only model for wild and domesticated popuations.
 
-       wild  domes
-        |     |
-        |     |
-    T2  |     |
-        |     |
-    __  |-----|
-    T1  |
-    __  | N_wild
+       wild  domes/kale
+        |         |
+        |         |
+    T1  |         |
+        |         |
+        |---------|
+             |
+             |
 
     Parameters
     ----------
@@ -348,34 +351,29 @@ def wild_domesticated_F(
     -------
     A ``dadi.Spectrum`` object.
     """
-    N_wild, N_cult, T_1, T_2, F_1, F_2 = params
+    N_domes, T_1, F_1, F_2 = params
 
     xx = dadi.Numerics.default_grid(pts)
     phi = dadi.PhiManip.phi_1D(xx)
 
-    phi = dadi.Integration.one_pop(phi, xx, T_1, nu=N_wild)
-
     phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
 
-    phi = dadi.Integration.two_pops(phi, xx, T_2, nu1=N_wild, nu2=N_cult)
+    phi = dadi.Integration.two_pops(phi, xx, T_1, nu1=1.0, nu2=N_domes)
 
     sfs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F_1, F_2), (2, 2))
 
     return sfs
+
 
 # Main dictionary containing all models connected to their
 # demographic model function. This gets imported in the ``run_inference.py``
 # script so that the corresponding model can be run. The dictionary key
 # here should match the name in ``model_config.json``.
 models: Dict[str, Callable] = {
-    "gem_cap_vir": three_pop_F,
-    # "cap_gem_vir": three_pop_F,
-    "ital_gong_kale": three_pop_F,
-    # "gong_ital_kale": three_pop_F,
+    "cap_gem_vir": three_pop_F,
+    "gong_ital_kale": three_pop_F,
     "ital_botr": two_pop_domes_F,
-    # "gon_ital_sab": three_pop_F,
-    "alb_sab_palm": three_pop_F,
-    # "sab_palm_alb": three_pop_F,
+    "sab_alb_palm": three_pop_F,
     "wild_domesticated": wild_domesticated_F,
-    "wild_kale": wild_domesticated_F
+    "wild_kale": wild_domesticated_F,
 }
