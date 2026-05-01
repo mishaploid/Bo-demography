@@ -69,7 +69,7 @@ rule admixture:
 
 rule pixy_pi:
     input:
-        samps = "models/samp_lists/pixy_input_inbreeding.txt",
+        samps = "models/samp_lists/pixy_input_grouped.txt",
         allsites_vcf = "data/processed/filtered_vcf_bpres/{chr}_allsamps.filtered.qual.dp5_200.maxnocall10.allsites.vcf.gz"
     output:
         "models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_pi.txt",
@@ -79,7 +79,7 @@ rule pixy_pi:
         window_size = "{window_size}",
         chr = "{chr}"
     conda: 
-        "pixy"
+        "../workflow/envs/pixy.yaml"
     threads: 32
     shell:
         "tabix -p vcf -f {input.allsites_vcf}"

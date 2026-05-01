@@ -41,11 +41,11 @@ rule all:
 	# # POPULATION STRUCTURE
 	# 	admix_input = "data/processed/biallelic_snps.geno10.maf05.ldpruned.bed",
 	# 	admixture = expand("models/admixture/biallelic_snps.geno10.maf05.ldpruned.{k}.Q", k = range(2, 15)),
-	# 	pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_{stat}.txt", chr = CHR, window_size = [10000, 50000, 100000], stat = ['pi', 'dxy', 'fst']),
+	 	pixy_pi = expand("models/pixy/B_oleracea_grouped_{chr}_{window_size}bp_{stat}.txt", chr = CHR, window_size = [10000, 50000, 100000], stat = ['pi', 'dxy', 'fst'])
 	# SELECTIVE SWEEPS
 		# create_bed = expand("models/RAiSD/{chr}_excluded_regions.bed", chr = CHR),
-		raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_{window_size}bp.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50]),
-		raisd_doubletons = expand("models/RAiSD_w_doubletons/RAiSD_Report.{population}_{chr}_{window_size}bp_c2.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50]),
+		# raisd = expand("models/RAiSD/RAiSD_Report.{population}_{chr}_{window_size}bp.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50]),
+		# raisd_doubletons = expand("models/RAiSD_w_doubletons/RAiSD_Report.{population}_{chr}_{window_size}bp_c2.{chr}", population = pop_dict.keys(), chr = CHR, window_size = [20,50])
 	# # DEMOGRAPHY
 	# 	vcf2smc = smc_input_files,
 	# 	smc_cv = expand("models/smc_cv_no_timepoints/{population}/model.final.json", population = distind_dict.keys()),
@@ -57,13 +57,13 @@ rule all:
 	# 	smc_split = expand("models/smc_split/{pop_pair}/model.final.json", pop_pair = pop_pair_dict.keys()),
 		# plot_split = "reports/smc_split/brassica_all_pops_smc_split.png",
 	# DADI
-		build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr']),
-		build_sfs_wild_dom = expand("models/dadi/sfs/{model}.fs", model = ['wild_domesticated']),
-		build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['ital_gong_kale']), 
-		run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr', 'wild_domesticated', 'ital_gong_kale']),
-		bootstrap_sfs_subpops = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr'], rep = range(0,9)),
-		bootstrap_sfs_wild_domesticated = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['wild_domesticated'], rep = range(0,9)),
-		bootstrap_sfs_wild_kale = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['ital_gong_kale'], rep = range(0,9))
+		# build_sfs_subpops = expand("models/dadi/sfs/{model}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr']),
+		# build_sfs_wild_dom = expand("models/dadi/sfs/{model}.fs", model = ['wild_domesticated']),
+		# build_sfs_kales = expand("models/dadi/sfs/{model}.fs", model = ['ital_gong_kale']), 
+		# run_dadi_inference = expand("models/dadi/results/{model}.csv", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr', 'wild_domesticated', 'ital_gong_kale']),
+		# bootstrap_sfs_subpops = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['gem_cap_vir', 'alb_sab_palm', 'ital_botr'], rep = range(0,9)),
+		# bootstrap_sfs_wild_domesticated = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['wild_domesticated'], rep = range(0,9)),
+		# bootstrap_sfs_wild_kale = expand("models/dadi/sfs_bootstrap/{model}_{rep}.fs", model = ['ital_gong_kale'], rep = range(0,9))
 
 
 ################################################################################
@@ -78,5 +78,5 @@ include: "rules/05-pop_structure.smk"
 include: "rules/06-selective_sweeps.smk"
 # include: "rules/07-demography.smk"
 # include: "rules/08-split-times.smk"
-include: "rules/09-dadi.smk"
+# include: "rules/09-dadi.smk"
 

@@ -10,7 +10,11 @@ jobs: "200"
 printshellcmds: True
 rerun-incomplete: True
 default-resources:
-  account: "jrigrp"
+  slurm_account: "jrigrp"
   runtime: 20160
   mem_mb: 6000
   slurm_partition: "high"
+shared-fs-usage:
+  - input-output
+  - software-deployment
+  - sources
