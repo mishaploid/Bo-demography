@@ -17,7 +17,7 @@ rule build_sfs_subpops:
 	params:
 		model = "{model}"
 	wildcard_constraints:
-		model = "gem_cap_vir|alb_sab_palm|ital_botr"
+		model = "cap_gem_vir|sab_alb_palm|ital_botr"
 	resources:
 		mem_mb = 50000
 	shell:
@@ -59,7 +59,7 @@ rule build_sfs_kales:
 	params:
 		model = "{model}"
 	wildcard_constraints:
-		model = "ital_gong_kale"
+		model = "gong_ital_kale"
 	resources:
 		mem_mb = 50000
 	shell:
@@ -143,7 +143,7 @@ rule bootstrap_sfs_subpops:
 	resources:
 		mem_mb = 50000
 	wildcard_constraints:
-		model = "gem_cap_vir|alb_sab_palm|ital_botr"
+		model = "cap_gem_vir|sab_alb_palm|ital_botr"
 	shell: 
 		"python3 src/dadi/bootstrap_frequency_spectra.py \
     	--vcf {input.vcf} \
@@ -187,7 +187,7 @@ rule bootstrap_sfs_wild_kale:
 	resources:
 		mem_mb = 50000
 	wildcard_constraints:
-		model = "ital_gong_kale"
+		model = "gong_ital_kale"
 	shell: 
 		"python3 src/dadi/bootstrap_frequency_spectra.py \
     	--vcf {input.vcf} \
